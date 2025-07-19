@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 6: Control and Coordination - Biology Notes</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Detailed notes and interactive content for Chapter 6: Control and Coordination in Biology. Explore the nervous system, plant hormones, animal hormones, and feedback mechanisms.">
+    <meta name="keywords" content="Control and Coordination, Biology, Class 10, Nervous System, Neurons, Reflex Actions, Human Brain, Plant Hormones, Auxin, Ethylene, Animal Hormones, Insulin, Glucagon, Endocrine System, Feedback Mechanisms, CBSE, ICSE, Science Notes">
+    <meta name="author" content="Your Name/Organization Name">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://arlabs07.github.io/Learning-labs.github.io/sb2-s.html">
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://arlabs07.github.io/Learning-labs.github.io/sb2-s.html">
+    <meta property="og:title" content="Chapter 6: Control and Coordination - Biology Notes">
+    <meta property="og:description" content="Detailed notes and interactive content for Chapter 6: Control and Coordination in Biology. Explore the nervous system, plant hormones, animal hormones, and feedback mechanisms.">
+    <meta property="og:image" content="https://placehold.co/1200x630/8b5cf6/ffffff?text=Control+Coordination"> <!-- Placeholder image -->
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://arlabs07.github.io/Learning-labs.github.io/sb2-s.html">
+    <meta property="twitter:title" content="Chapter 6: Control and Coordination - Biology Notes">
+    <meta property="twitter:description" content="Detailed notes and interactive content for Chapter 6: Control and Coordination in Biology. Explore the nervous system, plant hormones, animal hormones, and feedback mechanisms.">
+    <meta property="twitter:image" content="https://placehold.co/1200x675/8b5cf6/ffffff?text=Control+Coordination"> <!-- Placeholder image -->
+
+    <!-- Favicon (using Font Awesome icon as a placeholder) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 576 512'><path fill='%238b5cf6' d='M576 240c0 11.5-2.5 22.4-7.1 32.5L472 472c-1.3 2.5-3.1 4.8-5.1 6.6L348.8 509.3c-1.8 1.6-4 2.7-6.4 3.4-1.3 .4-2.7 .7-4.1 .7H240c-13.3 0-24-10.7-24-24V240c0-13.3 10.7-24 24-24h96c13.3 0 24 10.7 24 24v16c0 13.3 10.7 24 24 24h32c13.3 0 24-10.7 24-24V240c0-13.3 10.7-24 24-24h96c13.3 0 24 10.7 24 24zM0 272c0-11.5 2.5-22.4 7.1-32.5L104 40c1.3-2.5 3.1-4.8 5.1-6.6L227.2 2.7c1.8-1.6 4-2.7 6.4-3.4 1.3-.4 2.7-.7 4.1-.7H336c13.3 0 24 10.7 24 24V272c0 13.3-10.7 24-24 24h-96c-13.3 0-24-10.7-24-24V256c0-13.3-10.7-24-24-24h-32c-13.3 0-24 10.7-24 24V272c0 13.3-10.7 24-24 24H24c-13.3 0-24-10.7-24-24z'/></svg>" type="image/svg+xml">
+
+
+    <!-- Tailwind CSS CDN for utility-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AOS (Animate On Scroll) library for subtle animations -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        /* Apply Inter font family to the entire body */
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7; /* Increased line-height for better readability */
+            /* Ensure full height for progress bar calculation */
+            min-height: 100vh;
+        }
+        /* Custom CSS for purple gradient text effect */
+        .gradient-text {
+            /* Define a linear gradient from a lighter purple to a darker purple */
+            background-image: linear-gradient(to right, #a78bfa, #8b5cf6); /* Tailwind's purple-400 to purple-600 */
+            /* Clip the background to the text, making the text itself transparent */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* Standard properties for broader browser support */
+            background-clip: text;
+            color: transparent; /* Fallback for browsers that don't support text-fill-color */
+        }
+        /* Ensure list items have proper spacing and appearance */
+        ul.list-disc li, ul.list-circle li, ul.list-square li {
+            margin-bottom: 0.6rem; /* Add more space between list items */
+        }
+        /* Style for the back-to-top button */
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: rgba(139, 92, 246, 0.7); /* Semi-transparent purple */
+            backdrop-filter: blur(8px); /* Blurred background */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            border: 1px solid rgba(167, 139, 250, 0.5); /* Border with lighter purple */
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 9999px; /* Fully rounded */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease, transform 0.3s ease, opacity 0.3s ease, border-color 0.3s ease; /* Added opacity and border-color transition */
+            opacity: 0; /* Start hidden for smooth fade-in */
+        }
+        #backToTop.show {
+            opacity: 1; /* Show with fade-in */
+        }
+        #backToTop:hover {
+            background-color: rgba(167, 139, 250, 0.8); /* Lighter purple on hover */
+            transform: translateY(-3px);
+            border-color: #a78bfa; /* Change border color on hover */
+        }
+        /* Sticky Table of Contents */
+        .toc-container {
+            position: sticky;
+            top: 1rem; /* Distance from the top of the viewport */
+            align-self: flex-start; /* Aligns the item to the start of the flex container */
+            max-height: calc(100vh - 2rem); /* Max height to fit viewport, with padding */
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: thin; /* Firefox */
+            scrollbar-color: #8b5cf6 #1f2937; /* Thumb and track color for Firefox */
+            transition: all 0.3s ease-in-out; /* Smooth transitions for content blocks */
+        }
+        /* Custom scrollbar for Webkit browsers */
+        .toc-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .toc-container::-webkit-scrollbar-track {
+            background: #1f2937; /* Dark gray for track */
+            border-radius: 10px;
+        }
+        .toc-container::-webkit-scrollbar-thumb {
+            background-color: #8b5cf6; /* Purple for thumb */
+            border-radius: 10px;
+            border: 2px solid #1f2937;
+        }
+
+        /* Liquid Glass Card Style for content sections */
+        .glass-card {
+            background-color: rgba(45, 55, 72, 0.7); /* Semi-transparent dark gray */
+            backdrop-filter: blur(12px); /* Stronger blur for liquid glass effect */
+            -webkit-backdrop-filter: blur(12px); /* Safari support */
+            border-radius: 1rem; /* More rounded corners */
+            border: 1px solid rgba(139, 92, 246, 0.5); /* Semi-transparent purple border */
+            box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.4); /* Stronger, diffused shadow */
+            padding: 2rem; /* More internal padding */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .glass-card:hover {
+            transform: translateY(-8px); /* Lift effect on hover */
+            box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.5); /* More pronounced shadow on hover */
+        }
+
+        /* Styling for sub-section headings within a glass-card */
+        .glass-card h3 {
+            border-top: 1px solid rgba(167, 139, 250, 0.4); /* Subtle top border for separation */
+            padding-top: 1.5rem; /* Space above border */
+            margin-top: 2rem; /* Space from previous content */
+        }
+        /* Remove top border for the very first h3 in a glass-card */
+        .glass-card h3:first-of-type {
+            border-top: none;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        /* Skip to content link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -999px;
+            left: 0;
+            background: #8b5cf6;
+            color: white;
+            padding: 8px;
+            z-index: 9999;
+            text-decoration: none;
+            transition: top 0.3s ease-in-out;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Flowchart specific styles */
+        .flowchart-container {
+            display: flex;
+            flex-direction: column; /* Default to vertical for small screens */
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: rgba(30, 40, 50, 0.6); /* Slightly darker background for flow chart */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .flowchart-step {
+            background-color: rgba(70, 80, 90, 0.8); /* Step background */
+            color: #e2e8f0;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(167, 139, 250, 0.7);
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            width: 90%; /* Responsive width for steps */
+            max-width: 350px; /* Max width for consistency */
+        }
+
+        .flowchart-step:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .flowchart-arrow {
+            color: #8b5cf6; /* Purple-600 */
+            font-size: 2rem; /* Arrow size */
+            animation: bounce-vertical 1.5s infinite ease-in-out; /* Vertical bounce for small screens */
+            margin: 0.5rem 0;
+        }
+
+        @keyframes bounce-vertical {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Responsive adjustments for flowchart */
+        @media (min-width: 768px) {
+            .flowchart-container {
+                flex-direction: row; /* Horizontal layout on medium screens and up */
+                flex-wrap: wrap; /* Allow wrapping if too many steps */
+                justify-content: center;
+                gap: 2.5rem; /* More space between steps */
+            }
+            .flowchart-arrow {
+                transform: rotate(90deg); /* Rotate arrows for horizontal flow */
+                animation: bounce-horizontal 1.5s infinite ease-in-out; /* Horizontal bounce */
+                margin: 0 1rem;
+            }
+            @keyframes bounce-horizontal {
+                0%, 100% { transform: rotate(90deg) translateX(0); }
+                50% { transform: rotate(90deg) translateX(-8px); }
+            }
+            .flowchart-step {
+                width: auto; /* Auto width for horizontal flow */
+                flex-shrink: 0; /* Prevent shrinking */
+            }
+            /* Hide the last arrow in horizontal layout */
+            .flowchart-container .flowchart-arrow:last-of-type {
+                display: none;
+            }
+        }
+
+        /* Loading Spinner Styles */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #8b5cf6; /* Purple spinner */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 5rem auto;
+            display: block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Reading Progress Bar */
+        #progressBar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 5px;
+            background-image: linear-gradient(to right, #a78bfa, #8b5cf6);
+            z-index: 1050;
+            transition: width 0.1s linear;
+        }
+
+        /* Social Share Buttons */
+        .social-share-container {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        .social-share-btn {
+            background-color: rgba(139, 92, 246, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(167, 139, 250, 0.5);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .social-share-btn:hover {
+            background-color: rgba(167, 139, 250, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<!-- Body with black background, white text, and responsive padding -->
+<body class="bg-black text-white p-4 sm:p-8">
+
+    <!-- Reading Progress Bar -->
+    <div id="progressBar"></div>
+
+    <!-- Skip to Main Content Link for Accessibility -->
+    <a href="#main-content" class="skip-link rounded-md">Skip to Main Content</a>
+
+    <!-- Header section with centered, gradient-colored chapter title -->
+    <header class="text-center mb-12" data-aos="fade-down">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold gradient-text pb-2 rounded-lg">
+            <i class="fas fa-book-open mr-4 text-purple-400"></i> Chapter 6: Control and Coordination
+        </h1>
+    </header>
+
+    <!-- Main content area, centered and with a maximum width for readability -->
+    <div class="flex flex-col lg:flex-row gap-8 w-full px-4 lg:px-8">
+
+        <!-- Table of Contents (Sticky on larger screens) -->
+        <nav id="toc-nav" class="toc-container w-full lg:w-1/4 glass-card" data-aos="fade-right" aria-label="Table of Contents">
+            <h2 class="text-2xl font-semibold mb-4 gradient-text"><i class="fas fa-list-ul mr-2 text-purple-400"></i> Table of Contents</h2>
+            <ul id="toc-list" class="space-y-2 text-gray-300">
+                <!-- TOC links will be dynamically generated here -->
+            </ul>
+        </nav>
+
+        <!-- Main content sections container -->
+        <main id="main-content" class="w-full lg:w-3/4 space-y-10" role="main">
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="spinner"></div>
+            <!-- Content will be dynamically loaded here by JavaScript -->
+        </main>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="flex items-center justify-center" aria-label="Back to top of page">
+        <i class="fas fa-arrow-up text-xl"></i> <!-- Increased icon size -->
+    </button>
+
+    <!-- AOS (Animate On Scroll) initialization script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // --- Chapter Content Data (Simulating Fetch from an external source) ---
+        // In a real deployment, you might fetch this from a JSON file:
+        // fetch('/path/to/chapter6_content.json').then(response => response.json()).then(data => { chapterContent = data; renderContent(); });
+        const chapterContent = [
+            {
+                id: "intro",
+                title: "1. Introduction to Control and Coordination",
+                icon: "fas fa-info-circle",
+                sections: [
+                    {
+                        type: "list",
+                        items: [
+                            "Living organisms exhibit various movements:",
+                            { type: "list", style: "circle", items: [
+                                "Some are <strong>growth-dependent</strong> (e.g., plant growth).",
+                                "Others are <strong>not</strong> (e.g., animal movement)."
+                            ]},
+                            "All movements are responses to environmental changes, necessitating control and coordination.",
+                            "Multicellular organisms use specialized tissues for these functions."
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "animals-nervous-system",
+                title: "2. Animals - Nervous System",
+                icon: "fas fa-brain",
+                sections: [
+                    {
+                        id: "basic-principles",
+                        title: "2.1 Basic Principles of Nervous Control",
+                        type: "list",
+                        items: [
+                            "Control and coordination in animals are managed by <strong>nervous</strong> and <strong>muscular</strong> tissues.",
+                            "<strong>Receptors</strong>: Specialized nerve cell tips in sense organs (e.g., gustatory for taste, olfactory for smell) detect environmental information.",
+                            "<strong>Nerve Cells (Neurons)</strong>:",
+                            { type: "list", style: "circle", items: [
+                                "<strong>Structure</strong>: Dendrite, Cell body, Axon, Nerve ending.",
+                                "<strong>Impulse Transmission</strong>: Electrical impulse generated at dendrite, travels through cell body and axon.",
+                                "<strong>Synapse</strong>: Chemicals (neurotransmitters) released at axon's end cross this gap to transmit impulse to next neuron.",
+                                "<strong>Neuromuscular Junction</strong>: Synapse-like connection between neuron and muscle/gland cell."
+                            ]},
+                            "Nervous tissue, composed of neurons, is specialized for rapid electrical information conduction."
+                        ]
+                    },
+                    {
+                        id: "reflex-actions",
+                        title: "2.2 Reflex Actions",
+                        type: "list",
+                        items: [
+                            "<strong>Definition</strong>: Sudden, involuntary responses to stimuli, occurring without conscious thought.",
+                            "<strong>Purpose</strong>: Rapid protective mechanisms.",
+                            "<strong>Reflex Arc</strong>: Neural pathway mediating these actions; direct connection between sensory input and motor output.",
+                            "<strong>Location</strong>: Typically formed in the spinal cord, allowing quick responses.",
+                            "<strong>Efficiency</strong>: Crucial for immediate reactions and protection."
+                        ]
+                    },
+                    {
+                        id: "human-brain",
+                        title: "2.3 Human Brain",
+                        type: "list",
+                        items: [
+                            "<strong>Central Nervous System (CNS)</strong>: Comprises the brain and spinal cord; main coordinating center.",
+                            { type: "list", style: "circle", items: [
+                                "Integrates information from body parts.",
+                                "Sends out commands for voluntary actions (e.g., writing, talking)."
+                            ]},
+                            "<strong>Peripheral Nervous System (PNS)</strong>: Cranial and spinal nerves facilitate communication between CNS and body.",
+                            "<strong>Major Brain Parts</strong>:",
+                            { type: "list", style: "circle", items: [
+                                "<strong>Fore-brain</strong>:",
+                                { type: "list", style: "square", items: [
+                                    "Main thinking part.",
+                                    "Receives sensory impulses (hearing, smell, sight).",
+                                    "Interprets information in association areas.",
+                                    "Makes decisions and controls voluntary muscle movements.",
+                                    "Contains centers for sensations like hunger and feeling full.",
+                                    "<strong>Cerebrum</strong>: The largest part of the fore-brain, responsible for voluntary actions, memory, intelligence, and sensory perception."
+                                ]},
+                                "<strong>Mid-brain</strong>: Controls many involuntary actions in conjunction with the hind-brain.",
+                                "<strong>Hind-brain</strong>: Responsible for various involuntary actions, body balance, and posture.",
+                                { type: "list", style: "square", items: [
+                                    "<strong>Pons</strong>: Relays signals between forebrain and cerebellum; regulates breathing.",
+                                    "<strong>Medulla</strong>: Controls vital involuntary actions (blood pressure, salivation, vomiting).",
+                                    "<strong>Cerebellum</strong>: Ensures precision of voluntary actions and maintains body posture and balance (e.g., walking, cycling)."
+                                ]},
+                                "<strong>Hypothalamus</strong>: A crucial part of the brain that links the nervous system to the endocrine system via the pituitary gland. It controls body temperature, hunger, thirst, fatigue, sleep, and circadian rhythms. It also produces releasing and inhibiting hormones that regulate the secretion of hormones from the pituitary gland.",
+                                "<strong>Pituitary Gland</strong>: Often called the 'master gland,' it secretes various hormones that control other endocrine glands."
+                            ]},
+                            "<strong>Protection</strong>:",
+                            { type: "list", style: "circle", items: [
+                                "<strong>Brain</strong>: Bony cranium (skull), <strong>Meninges</strong> (three protective membranes - dura mater, arachnoid mater, pia mater), and <strong>Cerebrospinal Fluid (CSF)</strong> (fluid-filled spaces for shock absorption).",
+                                "<strong>Spinal Cord</strong>: Vertebral column (backbone)."
+                            ]}
+                        ]
+                    },
+                    {
+                        id: "nervous-tissue-action",
+                        title: "2.4 How Nervous Tissue Causes Action",
+                        type: "list",
+                        items: [
+                            "Nervous tissue collects, processes, and transmits information, then conveys decisions to muscles.",
+                            "Muscle tissue performs the final movement.",
+                            "Muscle cells change shape and shorten due to special proteins that alter their arrangement in response to nervous electrical impulses, leading to contraction."
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "coordination-plants",
+                title: "3. Coordination in Plants",
+                icon: "fas fa-leaf",
+                sections: [
+                    {
+                        id: "types-plant-movements",
+                        title: "3.1 Types of Plant Movements",
+                        type: "list",
+                        items: [
+                            "<strong>Growth-Independent</strong>: Rapid movements (e.g., sensitive plant leaf folding).",
+                            "<strong>Growth-Dependent</strong>: Directional growth (e.g., growing towards light)."
+                        ]
+                    },
+                    {
+                        id: "immediate-response",
+                        title: "3.2 Immediate Response to Stimulus (Growth-Independent)",
+                        type: "list",
+                        items: [
+                            "Example: <em>Mimosa pudica</em> (touch-me-not plant) shows rapid movement.",
+                            "<strong>Mechanism</strong>: Electro-chemical communication between cells (no specialized nervous/muscle tissue).",
+                            "Plant cells change shape by altering water content (swelling/shrinking)."
+                        ]
+                    },
+                    {
+                        id: "movement-due-to-growth",
+                        title: "3.3 Movement Due to Growth (Tropic Movements)",
+                        type: "list",
+                        items: [
+                            "Plants respond slowly through directional growth (tropism).",
+                            "<strong>Thigmotropism</strong>: Tendrils coiling around support.",
+                            "<strong>Types of Tropism</strong>:",
+                            { type: "list", style: "circle", items: [
+                                "<strong>Phototropism</strong>: Growth towards light (shoots positive, roots negative).",
+                                "<strong>Geotropism</strong>: Growth in response to gravity (roots positive, shoots negative).",
+                                "<strong>Hydrotropism</strong>: Growth towards water.",
+                                "<strong>Chemotropism</strong>: Growth in response to chemicals (e.g., pollen tube towards ovules)."
+                            ]},
+                            "<strong>Speed</strong>: Immediate responses are quick; growth-related movements are slower."
+                        ]
+                    },
+                    {
+                        id: "chemical-plants",
+                        title: "3.4 Chemical Communication in Plants (Plant Hormones)",
+                        type: "list",
+                        items: [
+                            "Electrical impulses have limitations in plants (limited reach, reset time).",
+                            "Plants use chemical communication via hormones for widespread and sustained effects.",
+                            "Hormones are synthesized in one part and diffuse to others, coordinating growth, development, and environmental responses.",
+                            "<strong>Examples of Plant Hormones</strong>:",
+                            { type: "list", style: "circle", items: [
+                                "<strong>Auxin</strong>: Promotes cell elongation; crucial for phototropism (diffuses to shaded side).",
+                                "<strong>Gibberellins</strong>: Promote stem growth.",
+                                "<strong>Cytokinins</strong>: Promote cell division; high concentration in fruits and seeds.",
+                                "<strong>Abscisic acid</strong>: Inhibitory hormone; promotes dormancy, causes leaf wilting.",
+                                "<strong>Ethylene</strong>: Gaseous hormone involved in fruit ripening, senescence (aging), and abscission (shedding)."
+                            ]}
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "hormones-animals",
+                title: "4. Hormones in Animals (Endocrine System)",
+                icon: "fas fa-heartbeat",
+                sections: [
+                    {
+                        id: "chemical-animals",
+                        title: "4.1 Chemical Coordination in Animals",
+                        type: "list",
+                        items: [
+                            "Animals use chemical (hormonal) communication for widespread, sustained responses (e.g., 'fight or flight').",
+                            "<strong>Adrenaline</strong>: Secreted by adrenal glands directly into blood.",
+                            { type: "list", style: "circle", items: [
+                                "Prepares body for action: increases heart rate, oxygen supply to muscles, blood diversion to skeletal muscles, increased breathing."
+                            ]},
+                            "<strong>Endocrine System</strong>: Glands secrete hormones directly into the bloodstream."
+                        ]
+                    },
+                    {
+                        id: "important-animal-hormones",
+                        title: "4.2 Important Animal Hormones and Glands",
+                        type: "list",
+                        items: [
+                            "Animal hormones regulate growth and development.",
+                            "<strong>Thyroxin</strong>: From thyroid gland; requires iodine; regulates carbohydrate, protein, fat metabolism. Deficiency causes goitre.",
+                            "<strong>Growth hormone</strong>: From pituitary gland; regulates growth and development. Deficiency causes dwarfism.",
+                            "<strong>Testosterone</strong>: Male sex hormone from testes; responsible for male puberty changes.",
+                            "<strong>Oestrogen</strong>: Female sex hormone from ovaries; responsible for female sex organ development and menstrual cycle regulation.",
+                            "<strong>Progesterone</strong>: Female sex hormone from ovaries; crucial for menstrual cycle, pregnancy, and embryonic development.",
+                            "<strong>Insulin</strong>: From pancreas; <em>lowers</em> blood sugar by promoting glucose uptake. Insufficient insulin causes diabetes.",
+                            "<strong>Glucagon</strong>: From pancreas; <em>raises</em> blood sugar by stimulating liver to convert stored glycogen to glucose."
+                        ]
+                    },
+                    {
+                        id: "feedback-mechanisms",
+                        title: "4.3 Feedback Mechanisms",
+                        type: "custom", // Custom type for flowchart
+                        items: [
+                            "Regulate timing and amount of hormone release.",
+                            "For example, the regulation of blood sugar levels by insulin and glucagon is a classic feedback loop."
+                        ],
+                        flowchart: [
+                            "High Blood Sugar Detected",
+                            "Pancreas Releases More Insulin",
+                            "Blood Sugar Level Falls",
+                            "Insulin Secretion Reduced",
+                            "Homeostasis Maintained"
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // --- DOM Elements ---
+        const mainContentDiv = document.getElementById('main-content');
+        const tocList = document.getElementById('toc-list');
+        const loadingSpinner = document.getElementById('loading-spinner');
+        const progressBar = document.getElementById('progressBar');
+        const backToTopButton = document.getElementById('backToTop');
+
+        // --- Function to create list items (recursive for nested lists) ---
+        function createListItems(items, parentUl) {
+            items.forEach(item => {
+                const li = document.createElement('li');
+                if (typeof item === 'string') {
+                    li.innerHTML = item;
+                } else if (item.type === 'list') {
+                    li.innerHTML = item.heading || ''; // Add a heading if provided for nested list
+                    const nestedUl = document.createElement('ul');
+                    nestedUl.className = `list-${item.style || 'disc'} list-inside ml-4`;
+                    createListItems(item.items, nestedUl);
+                    li.appendChild(nestedUl);
+                }
+                parentUl.appendChild(li);
+            });
+        }
+
+        // --- Function to render content dynamically ---
+        function renderContent() {
+            return new Promise(resolve => {
+                mainContentDiv.innerHTML = ''; // Clear existing content
+                tocList.innerHTML = ''; // Clear existing TOC
+                loadingSpinner.style.display = 'block'; // Show spinner
+
+                // Simulate network delay for fetching content
+                setTimeout(() => {
+                    chapterContent.forEach(chapterSection => {
+                        // Create main section element
+                        const sectionElem = document.createElement('section');
+                        sectionElem.id = chapterSection.id;
+                        sectionElem.className = 'glass-card';
+                        sectionElem.setAttribute('data-aos', 'fade-up');
+
+                        // Add main heading
+                        const h2 = document.createElement('h2');
+                        h2.className = 'text-3xl sm:text-4xl font-semibold mb-4 gradient-text';
+                        h2.innerHTML = `<i class="${chapterSection.icon} mr-2 text-purple-400"></i> ${chapterSection.title}`;
+                        sectionElem.appendChild(h2);
+
+                        // Add TOC main link
+                        const tocMainLi = document.createElement('li');
+                        const tocMainLink = document.createElement('a');
+                        tocMainLink.href = `#${chapterSection.id}`;
+                        tocMainLink.className = 'hover:text-purple-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-sm';
+                        tocMainLink.textContent = chapterSection.title;
+                        tocMainLi.appendChild(tocMainLink);
+                        tocList.appendChild(tocMainLi);
+
+                        const tocSubList = document.createElement('ul');
+                        tocSubList.className = 'ml-4 space-y-1';
+
+                        chapterSection.sections.forEach((subSection, index) => {
+                            // Add sub-section heading
+                            if (subSection.id && subSection.title) {
+                                const h3 = document.createElement('h3');
+                                h3.id = subSection.id;
+                                h3.className = 'text-2xl sm:text-3xl font-medium gradient-text mb-3';
+                                sectionElem.appendChild(h3);
+                                h3.innerHTML = subSection.title;
+
+                                // Add TOC sub-link
+                                const tocSubLi = document.createElement('li');
+                                const tocSubLink = document.createElement('a');
+                                tocSubLink.href = `#${subSection.id}`;
+                                tocSubLink.className = 'hover:text-purple-400 transition-colors duration-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 rounded-sm';
+                                tocSubLink.textContent = subSection.title;
+                                tocSubLi.appendChild(tocSubLink);
+                                tocSubList.appendChild(tocSubLi);
+                            }
+
+                            // Render content based on type
+                            if (subSection.type === "list") {
+                                const ul = document.createElement('ul');
+                                ul.className = 'list-disc list-inside space-y-2 text-gray-300 mt-4'; // Added mt-4 for spacing
+                                createListItems(subSection.items, ul);
+                                sectionElem.appendChild(ul);
+                            } else if (subSection.type === "custom" && subSection.flowchart) {
+                                const p = document.createElement('p');
+                                p.className = 'list-disc list-inside space-y-2 text-gray-300 mt-4'; // Added mt-4 for spacing
+                                p.innerHTML = subSection.items.join('<br>'); // Join text items
+                                sectionElem.appendChild(p);
+
+                                const flowchartContainer = document.createElement('div');
+                                flowchartContainer.className = 'flowchart-container';
+                                flowchartContainer.setAttribute('data-aos', 'zoom-in');
+
+                                subSection.flowchart.forEach((stepText, stepIndex) => {
+                                    const stepDiv = document.createElement('div');
+                                    stepDiv.className = 'flowchart-step';
+                                    stepDiv.textContent = stepText;
+                                    flowchartContainer.appendChild(stepDiv);
+
+                                    if (stepIndex < subSection.flowchart.length - 1) {
+                                        const arrowIconHorizontal = document.createElement('i');
+                                        arrowIconHorizontal.className = 'fas fa-arrow-right flowchart-arrow hidden md:block';
+                                        flowchartContainer.appendChild(arrowIconHorizontal);
+
+                                        const arrowIconVertical = document.createElement('i');
+                                        arrowIconVertical.className = 'fas fa-arrow-down flowchart-arrow md:hidden';
+                                        flowchartContainer.appendChild(arrowIconVertical);
+                                    }
+                                });
+                                sectionElem.appendChild(flowchartContainer);
+                            }
+                        });
+                        mainContentDiv.appendChild(sectionElem);
+                        if (tocSubList.children.length > 0) {
+                            tocMainLi.appendChild(tocSubList);
+                        }
+                    });
+
+                    loadingSpinner.style.display = 'none'; // Hide spinner
+                    resolve(); // Resolve the promise
+                }, 500); // Simulate 0.5 second loading time
+            });
+        }
+
+        // --- Reading Progress Bar Logic ---
+        function updateProgressBar() {
+            const scrollPx = document.documentElement.scrollTop || document.body.scrollTop;
+            const winHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollPx / winHeight) * 100;
+            progressBar.style.width = scrolled + '%';
+        }
+        window.addEventListener('scroll', updateProgressBar);
+        window.addEventListener('resize', updateProgressBar); // Update on resize too
+
+        // --- Smooth Scrolling & Back to Top Logic ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Render content first
+            await renderContent();
+
+            // Initialize AOS after content is rendered
+            AOS.init({
+                duration: 800,
+                once: true,
+            });
+
+            // Attach smooth scrolling for dynamically loaded links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        const offsetTop = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                        window.scrollTo({
+                            top: offsetTop - 20, // Small offset for better viewing
+                            behavior: 'smooth'
+                        });
+                        history.pushState(null, '', targetId);
+                    }
+                });
+            });
+
+            // Initial progress bar update
+            updateProgressBar();
+        });
+
+        // Show/hide back to top button based on scroll position
+        window.onscroll = function() {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        };
+
+        // Scroll to top when button is clicked
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
+    
+</html>
