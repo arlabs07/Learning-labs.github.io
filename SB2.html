@@ -3,909 +3,1427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Weather v2</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Control and Coordination - Biology Notes</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Comprehensive notes on Control and Coordination in Biology for class 10. Covers nervous system, hormones in animals and plants, reflex actions, brain functions, and endocrine system.">
+    <meta name="keywords" content="Control and Coordination, Biology, Class 10, Nervous System, Hormones, Plants, Animals, Reflex Action, Brain, Endocrine System, CBSE, ICSE, Study Notes, Arlabs07">
+    <meta name="author" content="Arlabs07">
+    <link rel="canonical" href="https://arlabs07.github.io/Learning-labs.github.io/SB2.html">
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Control and Coordination - Biology Notes">
+    <meta property="og:description" content="Comprehensive notes on Control and Coordination in Biology for class 10. Covers nervous system, hormones in animals and plants, reflex actions, brain functions, and endocrine system.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://arlabs07.github.io/Learning-labs.github.io/SB2.html">
+    <meta property="og:image" content="https://placehold.co/1200x630/6b46c1/ffffff?text=Control+and+Coordination"> <!-- Placeholder for OG image -->
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Chart.js for interactive charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
-
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Base Styling */
+        /* Custom styles for Inter font, dark theme, gradient text, and smooth transitions */
         body {
             font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            background-color: #1a202c; /* Dark background */
+            color: #e2e8f0; /* Light gray text */
         }
-
-        /* Main container for the app with dynamic background */
-        #app-container {
-            transition: background 1.5s ease-in-out;
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif; /* Headings with Montserrat */
         }
-
-        /* Keyframes for animated gradient background */
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Glassmorphism effect for UI cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(25px);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* Hide scrollbar but allow scrolling */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Horizontal snap scrolling for locations */
-        .snap-container {
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-        }
-        .snap-child {
-            scroll-snap-align: start;
-            flex-shrink: 0;
-        }
-        
-        /* Search overlay styling */
-        #search-overlay {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        /* --- Dynamic Weather Icon Styles --- */
-        .weather-icon-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-        }
-
-        /* Sun */
-        .sun {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #FFD700, #FFA500);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 40px #FFD700, 0 0 80px #FFA500;
-            animation: pulse 4s infinite ease-in-out;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
-        }
-
-        /* Moon */
-        .moon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            background: #f4f4f4;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0, inset -15px -15px 0 0 #c0c0c0;
-        }
-
-        /* Clouds */
-        .cloud {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50px;
-            opacity: 0.8;
-            animation: drift 20s infinite linear;
-        }
-        .cloud.front {
-            width: 120px; height: 40px;
-            top: 100px; left: 20px;
-            z-index: 2;
-        }
-        .cloud.back {
-            width: 150px; height: 50px;
-            top: 70px; left: 60px;
-            opacity: 0.6;
-            animation-duration: 30s;
-            z-index: 1;
-        }
-        .cloud:before, .cloud:after {
-            content: '';
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50%;
-        }
-        .cloud.front:before { width: 60px; height: 60px; top: -30px; left: 20px; }
-        .cloud.front:after { width: 80px; height: 80px; top: -40px; right: 10px; }
-        .cloud.back:before { width: 80px; height: 80px; top: -40px; left: 30px; }
-        .cloud.back:after { width: 100px; height: 100px; top: -50px; right: 20px; }
-
-        @keyframes drift {
-            from { transform: translateX(-50px); }
-            to { transform: translateX(50px); }
-        }
-        
-        /* Rain */
-        .rain, .snow {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            overflow: hidden;
-            z-index: 3;
-        }
-        .drop {
-            position: absolute;
-            bottom: 100%;
-            width: 2px;
-            height: 20px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(173,216,230,0.7));
-            animation: fall 1s linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(300px); }
-        }
-
-        /* Snow */
-        .flake {
-            position: absolute;
-            top: -20px;
-            width: 5px;
-            height: 5px;
-            background: white;
-            border-radius: 50%;
-            animation: snowfall 10s linear infinite;
-        }
-        @keyframes snowfall {
-            to { transform: translateY(200px) translateX(var(--x-end)); }
-        }
-
-        /* Lightning */
-        .lightning {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #fff;
+        .content-section {
             opacity: 0;
-            z-index: 4;
-            animation: flash 5s infinite;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smoother transition */
+            display: none; /* Hidden by default */
         }
-        @keyframes flash {
-            0%, 100% { opacity: 0; }
-            5%, 10%, 15% { opacity: 0.6; }
-            7%, 12% { opacity: 0; }
+        .content-section.active {
+            opacity: 1;
+            transform: translateY(0);
+            display: block; /* Shown when active */
+        }
+        .nav-link {
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: #2d3748; /* Slightly lighter dark gray on hover */
+            color: #ffffff; /* White text on hover */
+            transform: translateX(5px); /* Subtle slide effect on hover */
+        }
+        .nav-link.active-nav {
+            background-color: #6b46c1; /* Purple for active link */
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Subtle shadow for active */
+        }
+
+        /* Purple Gradient Text for Headings */
+        .gradient-text {
+            background-image: linear-gradient(to right, #a78bfa, #8b5cf6, #7c3aed); /* Purple gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: #a78bfa; /* Fallback color for non-webkit browsers */
+        }
+
+        /* Specific styling for list items and table cells for better readability */
+        ul.list-disc li, ol.list-decimal li, ul.list-circle li, ul.list-square li, ul.list-alpha li, ul.list-roman li {
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+            padding-left: 0.25rem; /* Small padding for list markers */
+        }
+        /* Custom list styles for nested lists */
+        ul.list-circle { list-style-type: circle; }
+        ul.list-square { list-style-type: square; }
+        ol.list-alpha { list-style-type: lower-alpha; }
+        ol.list-roman { list-style-type: lower-roman; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #4a5568; /* Darker border for table */
+        }
+        th {
+            background-color: #2d3748; /* Darker background for table header */
+            font-weight: 600;
+            color: #cbd5e0; /* Lighter text for table header */
+        }
+        /* Styling for question/activity boxes */
+        .question-box, .activity-box {
+            background-color: #2d3748; /* Darker background for boxes */
+            border-left: 4px solid #8b5cf6; /* Purple border */
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.75rem; /* Slightly more rounded */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* More pronounced shadow */
+            transition: transform 0.3s ease; /* Subtle hover effect */
+        }
+        .question-box:hover, .activity-box:hover {
+            transform: translateY(-3px); /* Lift effect on hover */
+        }
+        .question-box h4, .activity-box h4 {
+            color: #d8b4fe; /* Light purple heading */
+            margin-bottom: 1rem;
+        }
+        .image-container {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .image-container img {
+            max-width: 100%; /* Ensure image fits container */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Remove extra space below image */
+            margin: 0 auto; /* Center image within its container */
+            border-radius: 1rem; /* More rounded corners for images */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.35); /* Deeper shadow for images */
+            cursor: pointer; /* Indicate clickable */
+            transition: transform 0.2s ease-in-out;
+            object-fit: contain; /* Squeeze image to fit without cropping */
+        }
+        .image-container img:hover {
+            transform: scale(1.02); /* Slight zoom on hover */
+        }
+        .image-container figcaption {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #a0aec0; /* Lighter gray for caption */
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 1024px) { /* Large screens (desktop) */
+            .main-layout {
+                grid-template-columns: 280px 1fr; /* Wider sidebar for desktop */
+            }
+            .content-area {
+                padding: 2.5rem;
+            }
+        }
+        @media (max-width: 1023px) { /* Tablet and mobile */
+            .main-layout {
+                grid-template-columns: 1fr; /* Stacked layout */
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #4a5568; /* Darker border */
+                padding: 1rem;
+                overflow-x: auto; /* Allow horizontal scrolling for nav on small screens */
+                white-space: nowrap; /* Prevent wrapping of nav items */
+            }
+            .sidebar-nav {
+                flex-direction: row; /* Horizontal nav for small screens */
+                justify-content: center;
+            }
+            .sidebar-nav a {
+                padding: 0.75rem 1rem;
+                margin: 0 0.5rem;
+                display: inline-block; /* For horizontal layout */
+            }
+            .content-area {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Image Overlay (Modal) Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: hidden; /* Prevent scroll on modal itself */
+            background-color: rgba(0, 0, 0, 0.7); /* Black w/ opacity */
+            backdrop-filter: blur(8px); /* Dark blur background */
+            -webkit-backdrop-filter: blur(8px); /* For Safari */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .modal-content {
+            position: relative;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 90%;
+            max-height: 90%;
+            background-color: #2d3748; /* Dark background for modal content */
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            animation: slideIn 0.4s ease-out;
+        }
+        .modal-content img {
+            max-width: 100%;
+            max-height: 70vh; /* Limit image height in modal */
+            display: block;
+            margin-bottom: 1rem;
+            border-radius: 0.75rem;
+            object-fit: contain; /* Ensure image fits without cropping within modal */
+        }
+        .modal-caption {
+            color: #cbd5e0;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        .modal-controls {
+            display: flex;
+            gap: 1.5rem; /* Increased gap for better spacing */
+            margin-top: 1rem;
+        }
+        .modal-btn {
+            background-color: transparent; /* Transparent background for icon buttons */
+            color: white;
+            padding: 0.75rem; /* Padding around icons */
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1.5rem; /* Larger icons */
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .modal-btn:hover {
+            color: #a78bfa; /* Purple on hover */
+            transform: translateY(-2px);
+        }
+        .modal-btn:disabled {
+            color: #6b7280; /* Gray out disabled buttons */
+            cursor: not-allowed;
+            transform: none;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #cbd5e0;
+            font-size: 35px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #a78bfa;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white overflow-hidden">
+<body class="bg-gray-900 text-gray-100">
 
-    <div id="app-container" class="w-full h-screen overflow-hidden">
-        <!-- Main horizontal scroller for locations -->
-        <div id="location-scroller" class="snap-container w-full h-full flex overflow-x-auto no-scrollbar">
-            <!-- Location pages will be injected here by JavaScript -->
-        </div>
+    <div class="min-h-screen flex flex-col lg:grid main-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar bg-gray-800 shadow-xl lg:border-r border-gray-700 p-6">
+            <h2 class="text-2xl font-bold gradient-text mb-6 pb-2 rounded-md">Control & Coordination</h2>
+            <nav class="sidebar-nav flex flex-col space-y-2" id="sidebarNav">
+                <!-- Navigation links will be rendered here by JavaScript -->
+            </nav>
+        </aside>
 
-        <!-- Top bar with search, location buttons, and dots -->
-        <div class="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50">
-            <button id="search-button" class="w-10 h-10 flex items-center justify-center glass-card rounded-full text-lg">
-                <i class="fas fa-search"></i>
-            </button>
-            <div id="location-dots" class="flex justify-center items-center space-x-2 flex-grow">
-                <!-- Dots will be injected here -->
-            </div>
-            <button id="detect-location-button" class="w-10 h-10 flex items-center justify-center glass-card rounded-full text-lg">
-                <i class="fas fa-location-arrow"></i>
-            </button>
-        </div>
+        <!-- Main Content Area -->
+        <main class="content-area flex-1 p-8 lg:p-10 bg-gray-800 overflow-y-auto" id="mainContent">
+            <!-- Content sections will be rendered here by JavaScript -->
+        </main>
     </div>
 
-    <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed inset-0 bg-black bg-opacity-50 -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); z-50 flex items-start justify-center p-4 opacity-0 invisible">
-        <div class="w-full max-w-md mt-16">
-            <div class="relative">
-                <input type="text" id="search-input" placeholder="Search for a city..." class="w-full p-4 pr-12 bg-white bg-opacity-20 rounded-full border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white text-white placeholder-gray-300">
-                <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
-            </div>
-            <div id="search-results-container" class="mt-4 max-h-[70vh] overflow-y-auto no-scrollbar">
-                <!-- Saved locations or search results will be populated here -->
+    <!-- Image Overlay (Modal) Structure -->
+    <div id="imageModal" class="modal fixed inset-0 flex items-center justify-center hidden">
+        <span class="close-button" role="button" aria-label="Close image viewer">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="">
+            <p id="modalCaption" class="modal-caption"></p>
+            <div class="modal-controls">
+                <button id="prevImageBtn" class="modal-btn" aria-label="Previous image"><i class="fas fa-arrow-left"></i></button>
+                <button id="nextImageBtn" class="modal-btn" aria-label="Next image"><i class="fas fa-arrow-right"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Template for a location page -->
-    <template id="location-page-template">
-        <div class="snap-child w-full h-full p-4 pt-20 overflow-y-auto no-scrollbar">
-            <div class="w-full max-w-lg mx-auto flex flex-col items-center text-center">
-                
-                <!-- Location Name -->
-                <h1 class="location-name text-3xl font-bold tracking-wider"></h1>
-                <p class="weather-description text-lg font-light opacity-80"></p>
-
-                <!-- Dynamic Weather Icon -->
-                <div class="weather-icon-container my-4"></div>
-
-                <!-- Main Temperature -->
-                <div class="current-temp text-8xl font-thin -mt-4">
-                    <span class="temperature"></span>&deg;
-                </div>
-                
-                <!-- Min/Max Temp -->
-                <div class="flex space-x-4 text-lg opacity-80">
-                    <p>H: <span class="temp-max"></span>&deg;</p>
-                    <p>L: <span class="temp-min"></span>&deg;</p>
-                </div>
-
-                <!-- Hourly Forecast with Chart -->
-                <div class="w-full glass-card rounded-2xl p-4 mt-8">
-                    <h3 class="text-sm font-semibold opacity-70 mb-3 text-left">HOURLY FORECAST</h3>
-                    <div class="h-32 mb-4">
-                        <canvas class="hourly-chart"></canvas>
-                    </div>
-                    <div class="hourly-forecast-container flex overflow-x-auto space-x-6 pb-2 no-scrollbar">
-                        <!-- Hourly items will be injected here -->
-                    </div>
-                </div>
-
-                <!-- 7-Day Forecast -->
-                <div class="w-full glass-card rounded-2xl p-4 mt-4">
-                    <h3 class="text-sm font-semibold opacity-70 mb-2 text-left">7-DAY FORECAST</h3>
-                    <div class="daily-forecast-container space-y-2">
-                        <!-- Daily items will be injected here -->
-                    </div>
-                </div>
-
-                <!-- Other Details -->
-                <div class="w-full grid grid-cols-2 gap-4 mt-4 mb-20">
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">SUNRISE</h4>
-                        <p class="text-2xl font-light sunrise-time"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">SUNSET</h4>
-                        <p class="text-2xl font-light sunset-time"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">HUMIDITY</h4>
-                        <p class="text-2xl font-light humidity"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">WIND</h4>
-                        <p class="text-2xl font-light wind-speed"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">FEELS LIKE</h4>
-                        <p class="text-2xl font-light feels-like"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">PRESSURE</h4>
-                        <p class="text-2xl font-light pressure"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">VISIBILITY</h4>
-                        <p class="text-2xl font-light visibility"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">UV INDEX</h4>
-                        <p class="text-2xl font-light uv-index"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </template>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const appContainer = document.getElementById('app-container');
-    const locationScroller = document.getElementById('location-scroller');
-    const locationDots = document.getElementById('location-dots');
-    const searchButton = document.getElementById('search-button');
-    const detectLocationButton = document.getElementById('detect-location-button');
-    const searchOverlay = document.getElementById('search-overlay');
-    const searchInput = document.getElementById('search-input');
-    const searchResultsContainer = document.getElementById('search-results-container');
-    const locationPageTemplate = document.getElementById('location-page-template');
-
-    // --- State ---
-    let locations = [];
-    let currentSlide = 0;
-    let searchTimeout;
-    let charts = [];
-
-    // --- Constants ---
-    const CURRENT_LOCATION_NAME = "Current Location";
-
-    // --- Weather Code Mapping ---
-    const weatherCodeMap = {
-        0: { description: 'Clear sky', icon: 'sunny', background: 'clear-day' },
-        1: { description: 'Mainly clear', icon: 'sunny', background: 'clear-day' },
-        2: { description: 'Partly cloudy', icon: 'partly-cloudy', background: 'cloudy-day' },
-        3: { description: 'Overcast', icon: 'cloudy', background: 'overcast-day' },
-        45: { description: 'Fog', icon: 'fog', background: 'foggy' },
-        48: { description: 'Depositing rime fog', icon: 'fog', background: 'foggy' },
-        51: { description: 'Light drizzle', icon: 'rain', background: 'rainy' },
-        53: { description: 'Moderate drizzle', icon: 'rain', background: 'rainy' },
-        55: { description: 'Dense drizzle', icon: 'rain', background: 'rainy' },
-        61: { description: 'Slight rain', icon: 'rain', background: 'rainy' },
-        63: { description: 'Moderate rain', icon: 'rain', background: 'rainy' },
-        65: { description: 'Heavy rain', icon: 'rain', background: 'rainy' },
-        71: { description: 'Slight snow', icon: 'snow', background: 'snowy' },
-        73: { description: 'Moderate snow', icon: 'snow', background: 'snowy' },
-        75: { description: 'Heavy snow', icon: 'snow', background: 'snowy' },
-        80: { description: 'Slight rain showers', icon: 'rain', background: 'rainy' },
-        81: { description: 'Moderate rain showers', icon: 'rain', background: 'rainy' },
-        82: { description: 'Violent rain showers', icon: 'rain', background: 'rainy' },
-        85: { description: 'Slight snow showers', icon: 'snow', background: 'snowy' },
-        86: { description: 'Heavy snow showers', icon: 'snow', background: 'snowy' },
-        95: { description: 'Thunderstorm', icon: 'thunderstorm', background: 'stormy' },
-        96: { description: 'Thunderstorm with slight hail', icon: 'thunderstorm', background: 'stormy' },
-        99: { description: 'Thunderstorm with heavy hail', icon: 'thunderstorm', background: 'stormy' },
-    };
-    
-    // --- Background Gradients ---
-    const backgroundGradients = {
-        'clear-day': 'linear-gradient(to top, #3b82f6, #60a5fa, #93c5fd)',
-        'clear-night': 'linear-gradient(to top, #1e3a8a, #1e40af, #1d4ed8)',
-        'cloudy-day': 'linear-gradient(to top, #6b7280, #9ca3af, #d1d5db)',
-        'cloudy-night': 'linear-gradient(to top, #374151, #4b5563, #6b7280)',
-        'overcast-day': 'linear-gradient(to top, #9ca3af, #d1d5db, #e5e7eb)',
-        'overcast-night': 'linear-gradient(to top, #4b5563, #6b7280, #9ca3af)',
-        'rainy': 'linear-gradient(to top, #4b5563, #6b7280, #9ca3af)',
-        'stormy': 'linear-gradient(to top, #1f2937, #374151, #4b5563)',
-        'snowy': 'linear-gradient(to top, #d1d5db, #e5e7eb, #f9fafb)',
-        'foggy': 'linear-gradient(to top, #d1d5db, #e5e7eb, #f3f4f6)',
-    };
-
-    // --- Event Listeners ---
-    searchButton.addEventListener('click', toggleSearchOverlay);
-    searchOverlay.addEventListener('click', (e) => {
-        if (e.target === searchOverlay) toggleSearchOverlay();
-    });
-    searchInput.addEventListener('input', handleSearchInput);
-    detectLocationButton.addEventListener('click', handleDetectLocationClick);
-    locationScroller.addEventListener('scroll', updateCurrentSlide);
-
-    // --- Initialization ---
-    function init() {
-        const savedLocations = JSON.parse(localStorage.getItem('weatherLocationsV2'));
-        if (savedLocations && savedLocations.length > 0) {
-            locations = savedLocations;
-            renderAllLocations();
-        } else {
-            handleDetectLocationClick();
-        }
-    }
-
-    // --- Location Handling ---
-    function handleDetectLocationClick() {
-        const existingCurrentLocationIndex = locations.findIndex(loc => loc.isCurrent);
-        if (existingCurrentLocationIndex !== -1) {
-            scrollToLocation(existingCurrentLocationIndex);
-            fetchWeather(locations[existingCurrentLocationIndex], existingCurrentLocationIndex);
-        } else {
-            getUserLocation();
-        }
-    }
-
-    function getUserLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const newLocation = { name: CURRENT_LOCATION_NAME, latitude, longitude, isCurrent: true };
-                    addLocation(newLocation, true);
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    if (locations.length === 0) {
-                        addLocation({ name: 'London', latitude: 51.5074, longitude: -0.1278 });
-                    }
-                }
-            );
-        } else {
-            console.error("Geolocation is not supported.");
-             if (locations.length === 0) {
-                addLocation({ name: 'New York', latitude: 40.7128, longitude: -74.0060 });
-            }
-        }
-    }
-
-    function addLocation(location, addToStart = false) {
-        const existingIndex = locations.findIndex(l => l.name.toLowerCase() === location.name.toLowerCase());
-        if (existingIndex !== -1) {
-            scrollToLocation(existingIndex);
-            return;
-        }
-        
-        if (addToStart) {
-            locations.unshift(location);
-        } else {
-            locations.push(location);
-        }
-        
-        saveLocations();
-        renderAllLocations();
-        setTimeout(() => {
-            const newIndex = addToStart ? 0 : locations.length - 1;
-            scrollToLocation(newIndex);
-        }, 100);
-    }
-
-    function deleteLocation(indexToDelete) {
-        locations.splice(indexToDelete, 1);
-        saveLocations();
-        renderAllLocations();
-        if (locations.length === 0) {
-            toggleSearchOverlay(); // Keep search open if no locations left
-        }
-    }
-    
-    function saveLocations() {
-        localStorage.setItem('weatherLocationsV2', JSON.stringify(locations));
-    }
-    
-    function scrollToLocation(index) {
-        locationScroller.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
-    }
-
-    // --- Rendering ---
-    function renderAllLocations() {
-        charts.forEach(chart => chart.destroy());
-        charts = [];
-        locationScroller.innerHTML = '';
-        locations.forEach((loc, index) => {
-            const page = createLocationPage(loc, index);
-            locationScroller.appendChild(page);
-            fetchWeather(loc, index);
-        });
-        updateDots();
-        if (locations.length > 0) {
-            updateBackground();
-        } else {
-            // Handle empty state
-            appContainer.style.background = backgroundGradients['clear-day'];
-        }
-    }
-
-    function createLocationPage(location, index) {
-        const pageClone = locationPageTemplate.content.cloneNode(true);
-        const pageElement = pageClone.querySelector('.snap-child');
-        pageElement.dataset.index = index;
-        pageElement.querySelector('.location-name').textContent = location.name;
-        return pageElement;
-    }
-    
-    function updateDots() {
-        locationDots.innerHTML = '';
-        locations.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50'}`;
-            dot.addEventListener('click', () => scrollToLocation(index));
-            locationDots.appendChild(dot);
-        });
-    }
-
-    function updateCurrentSlide() {
-        const scrollLeft = locationScroller.scrollLeft;
-        const width = window.innerWidth;
-        const newSlide = Math.round(scrollLeft / width);
-        if (newSlide !== currentSlide && newSlide >= 0 && newSlide < locations.length) {
-            currentSlide = newSlide;
-            updateDots();
-            updateBackground();
-        }
-    }
-
-    // --- Weather Data Fetching & Population ---
-    async function fetchWeather(location, index) {
-        const { latitude, longitude } = location;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,surface_pressure,visibility&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_probability_max&timezone=auto`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            populateWeatherData(data, index);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-        }
-    }
-
-    function populateWeatherData(data, index) {
-        const page = locationScroller.querySelector(`.snap-child[data-index='${index}']`);
-        if (!page) return;
-
-        const { current, hourly, daily } = data;
-        const weatherInfo = weatherCodeMap[current.weather_code] || weatherCodeMap[0];
-        
-        page.dataset.weatherCode = current.weather_code;
-        page.dataset.isDay = current.is_day;
-
-        // Main info
-        page.querySelector('.weather-description').textContent = weatherInfo.description;
-        page.querySelector('.temperature').textContent = Math.round(current.temperature_2m);
-        page.querySelector('.temp-max').textContent = Math.round(daily.temperature_2m_max[0]);
-        page.querySelector('.temp-min').textContent = Math.round(daily.temperature_2m_min[0]);
-        
-        // Details grid
-        const sunrise = new Date(daily.sunrise[0]);
-        const sunset = new Date(daily.sunset[0]);
-        page.querySelector('.sunrise-time').textContent = sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        page.querySelector('.sunset-time').textContent = sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        page.querySelector('.humidity').textContent = `${current.relative_humidity_2m}%`;
-        page.querySelector('.wind-speed').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-        page.querySelector('.feels-like').textContent = `${Math.round(current.apparent_temperature)}°`;
-        page.querySelector('.pressure').textContent = `${Math.round(current.surface_pressure)} hPa`;
-        page.querySelector('.visibility').textContent = `${(current.visibility / 1000).toFixed(1)} km`;
-        page.querySelector('.uv-index').textContent = Math.round(daily.uv_index_max[0]);
-        
-        // Dynamic icon
-        createDynamicWeatherIcon(page.querySelector('.weather-icon-container'), weatherInfo.icon, current.is_day);
-
-        // Hourly forecast
-        populateHourlyForecast(page.querySelector('.hourly-forecast-container'), hourly);
-        
-        // Daily forecast
-        populateDailyForecast(page.querySelector('.daily-forecast-container'), daily);
-
-        // Chart
-        const canvas = page.querySelector('.hourly-chart');
-        createHourlyChart(canvas, hourly);
-
-        if (index === currentSlide) {
-            updateBackground();
-        }
-    }
-
-    function populateHourlyForecast(container, hourly) {
-        container.innerHTML = '';
-        const now = new Date();
-        const currentHour = now.getHours();
-        let hourlyCount = 0;
-        for (let i = 0; i < hourly.time.length && hourlyCount < 24; i++) {
-            const hourTime = new Date(hourly.time[i]);
-            if (hourTime >= now) {
-                const hourEl = document.createElement('div');
-                hourEl.className = 'flex flex-col items-center space-y-1 text-center flex-shrink-0 w-16';
-                const displayHour = hourTime.getHours();
-                hourEl.innerHTML = `
-                    <p class="text-sm opacity-80">${displayHour === currentHour ? 'Now' : (displayHour % 12 || 12) + (displayHour < 12 ? 'am' : 'pm')}</p>
-                    <i class="fas ${getIconForWeatherCode(hourly.weather_code[i])} text-xl my-1"></i>
-                    <p class="font-semibold">${Math.round(hourly.temperature_2m[i])}°</p>
-                    ${hourly.precipitation_probability[i] > 10 ? `<p class="text-xs text-blue-300">${hourly.precipitation_probability[i]}%</p>` : ''}
-                `;
-                container.appendChild(hourEl);
-                hourlyCount++;
-            }
-        }
-    }
-
-    function populateDailyForecast(container, daily) {
-        container.innerHTML = '';
-        daily.time.forEach((day, i) => {
-            if (i > 6) return;
-            const dayDate = new Date(day);
-            const dayName = i === 0 ? 'Today' : dayDate.toLocaleDateString('en-US', { weekday: 'long' });
-            const dayEl = document.createElement('div');
-            dayEl.className = 'flex items-center justify-between text-lg';
-            dayEl.innerHTML = `
-                <p class="w-1/3 text-left font-medium">${dayName}</p>
-                <div class="flex items-center gap-2">
-                    <i class="fas ${getIconForWeatherCode(daily.weather_code[i])} text-xl"></i>
-                    ${daily.precipitation_probability_max[i] > 15 ? `<span class="text-xs text-blue-300">${daily.precipitation_probability_max[i]}%</span>` : ''}
-                </div>
-                <div class="w-1/3 text-right">
-                    <span class="font-medium">${Math.round(daily.temperature_2m_max[i])}°</span>
-                    <span class="opacity-60 ml-2">${Math.round(daily.temperature_2m_min[i])}°</span>
-                </div>
-            `;
-            container.appendChild(dayEl);
-        });
-    }
-
-    // --- Dynamic UI Updates ---
-    function updateBackground() {
-        const currentPage = locationScroller.querySelector(`.snap-child[data-index='${currentSlide}']`);
-        if (!currentPage) return;
-
-        const weatherCode = currentPage.dataset.weatherCode;
-        const isDay = currentPage.dataset.isDay === '1';
-        const weatherInfo = weatherCodeMap[weatherCode] || weatherCodeMap[0];
-        
-        let backgroundType = weatherInfo.background;
-        if (backgroundType.includes('-day')) {
-            backgroundType = isDay ? backgroundType : backgroundType.replace('-day', '-night');
-        }
-
-        appContainer.style.background = backgroundGradients[backgroundType] || backgroundGradients['clear-day'];
-    }
-
-    function createDynamicWeatherIcon(container, type, isDay) {
-        container.innerHTML = '';
-        switch(type) {
-            case 'sunny':
-                container.innerHTML = isDay ? '<div class="sun"></div>' : '<div class="moon"></div>';
-                break;
-            case 'partly-cloudy':
-                container.innerHTML = `
-                    ${isDay ? '<div class="sun" style="width:80px; height:80px; top:40%; left:40%;"></div>' : '<div class="moon" style="width:80px; height:80px; top:40%; left:40%;"></div>'}
-                    <div class="cloud front"></div>
-                `;
-                break;
-            case 'cloudy':
-                container.innerHTML = `
-                    <div class="cloud front"></div>
-                    <div class="cloud back"></div>
-                `;
-                break;
-            case 'rain':
-                container.innerHTML = `
-                    <div class="cloud front" style="top:60px;"></div>
-                    <div class="cloud back" style="top:40px;"></div>
-                    <div class="rain"></div>
-                `;
-                for (let i = 0; i < 30; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'drop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDelay = `${Math.random() * 2}s`;
-                    drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
-                    container.querySelector('.rain').appendChild(drop);
-                }
-                break;
-            case 'snow':
-                container.innerHTML = `
-                    <div class="cloud front" style="top:60px;"></div>
-                    <div class="cloud back" style="top:40px;"></div>
-                    <div class="snow"></div>
-                `;
-                for (let i = 0; i < 50; i++) {
-                    const flake = document.createElement('div');
-                    flake.className = 'flake';
-                    flake.style.left = `${Math.random() * 100}%`;
-                    flake.style.setProperty('--x-end', `${(Math.random() * 200) - 100}px`);
-                    flake.style.animationDelay = `${Math.random() * 10}s`;
-                    flake.style.animationDuration = `${5 + Math.random() * 5}s`;
-                    container.querySelector('.snow').appendChild(flake);
-                }
-                break;
-            case 'thunderstorm':
-                container.innerHTML = `
-                    <div class="cloud front" style="background:#555; top:60px;"></div>
-                    <div class="cloud back" style="background:#333; top:40px;"></div>
-                    <div class="rain"></div>
-                    <div class="lightning"></div>
-                `;
-                 for (let i = 0; i < 40; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'drop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDelay = `${Math.random() * 2}s`;
-                    container.querySelector('.rain').appendChild(drop);
-                }
-                break;
-            case 'fog':
-                 container.innerHTML = `
-                    <div class="cloud front" style="opacity:0.4; width:180px; animation-duration: 40s;"></div>
-                    <div class="cloud back" style="opacity:0.3; width:200px; animation-duration: 50s;"></div>
-                `;
-                break;
-        }
-    }
-
-    function getIconForWeatherCode(code) {
-        const mapping = {
-            0: 'fa-sun', 1: 'fa-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud',
-            45: 'fa-smog', 48: 'fa-smog',
-            51: 'fa-cloud-rain', 53: 'fa-cloud-rain', 55: 'fa-cloud-showers-heavy',
-            61: 'fa-cloud-rain', 63: 'fa-cloud-rain', 65: 'fa-cloud-showers-heavy',
-            71: 'fa-snowflake', 73: 'fa-snowflake', 75: 'fa-snowflake',
-            80: 'fa-cloud-sun-rain', 81: 'fa-cloud-sun-rain', 82: 'fa-cloud-showers-heavy',
-            85: 'fa-snowflake', 86: 'fa-snowflake',
-            95: 'fa-bolt', 96: 'fa-bolt', 99: 'fa-bolt'
-        };
-        return mapping[code] || 'fa-question-circle';
-    }
-
-    // --- Search Functionality ---
-    function toggleSearchOverlay() {
-        if (searchOverlay.classList.contains('invisible')) {
-            searchOverlay.classList.remove('invisible', 'opacity-0');
-            searchInput.focus();
-            handleSearchInput(); // To show saved locations immediately
-        } else {
-            searchOverlay.classList.add('invisible', 'opacity-0');
-            searchInput.value = '';
-            searchResultsContainer.innerHTML = '';
-        }
-    }
-
-    function handleSearchInput() {
-        clearTimeout(searchTimeout);
-        const query = searchInput.value.trim();
-        if (query.length === 0) {
-            displaySavedLocations();
-            return;
-        }
-        if (query.length < 3) {
-            searchResultsContainer.innerHTML = '';
-            return;
-        }
-        searchTimeout = setTimeout(() => {
-            performSearch(query);
-        }, 300);
-    }
-
-    function displaySavedLocations() {
-        searchResultsContainer.innerHTML = '';
-        if (locations.length > 0) {
-            const list = document.createElement('div');
-            list.className = 'space-y-3';
-            locations.forEach((loc, index) => {
-                const locEl = document.createElement('div');
-                locEl.className = 'glass-card rounded-2xl p-4 flex items-center justify-between cursor-pointer';
-                locEl.innerHTML = `
-                    <div>
-                        <p class="font-semibold text-lg">${loc.name}</p>
-                        <p class="text-sm opacity-70">${loc.isCurrent ? 'Your current location' : 'Saved location'}</p>
-                    </div>
-                    <button data-index="${index}" class="delete-btn w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-red-500/50 transition-colors">
-                        <i class="fas fa-trash-alt pointer-events-none"></i>
-                    </button>
-                `;
-                locEl.addEventListener('click', (e) => {
-                    if (!e.target.closest('.delete-btn')) {
-                        scrollToLocation(index);
-                        toggleSearchOverlay();
-                    }
-                });
-                list.appendChild(locEl);
-            });
-            searchResultsContainer.appendChild(list);
-            
-            // Add event listeners to delete buttons
-            searchResultsContainer.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const indexToDelete = parseInt(e.currentTarget.dataset.index, 10);
-                    deleteLocation(indexToDelete);
-                    // Re-render the saved locations list
-                    displaySavedLocations();
-                });
-            });
-        } else {
-            searchResultsContainer.innerHTML = '<p class="text-center text-gray-300 p-4">Add a location to see it here.</p>';
-        }
-    }
-
-    async function performSearch(query) {
-        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            displaySearchResults(data.results || []);
-        } catch (error) {
-            console.error('Error searching for city:', error);
-        }
-    }
-    
-    function displaySearchResults(results) {
-        searchResultsContainer.innerHTML = '';
-        if (results.length === 0) {
-            searchResultsContainer.innerHTML = '<p class="text-center text-gray-300 p-4">No results found.</p>';
-            return;
-        }
-        results.forEach(result => {
-            const resultEl = document.createElement('div');
-            resultEl.className = 'p-4 border-b border-white/20 cursor-pointer hover:bg-white/10 rounded-lg';
-            resultEl.innerHTML = `
-                <p class="font-semibold">${result.name}</p>
-                <p class="text-sm text-gray-300">${result.admin1 ? `${result.admin1}, ` : ''}${result.country}</p>
-            `;
-            resultEl.addEventListener('click', () => {
-                const newLocation = {
-                    name: result.name,
-                    latitude: result.latitude,
-                    longitude: result.longitude
-                };
-                addLocation(newLocation);
-                toggleSearchOverlay();
-            });
-            searchResultsContainer.appendChild(resultEl);
-        });
-    }
-
-    // --- Charting ---
-    function createHourlyChart(canvas, hourlyData) {
-        const now = new Date();
-        const labels = [];
-        const tempData = [];
-        let count = 0;
-        for (let i = 0; i < hourlyData.time.length && count < 24; i++) {
-            const hourTime = new Date(hourlyData.time[i]);
-            if (hourTime >= now) {
-                labels.push(hourTime);
-                tempData.push(hourlyData.temperature_2m[i]);
-                count++;
-            }
-        }
-
-        const chart = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperature',
-                    data: tempData,
-                    borderColor: 'rgba(255, 255, 255, 0.8)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 5,
-                    pointBackgroundColor: 'white',
-                    tension: 0.4,
-                    fill: true,
-                }]
+    <script>
+        // --- Content Data (pageContent object) ---
+        const pageContent = {
+            "introduction": {
+                title: "Chapter 6: Control and Coordination",
+                subtitle: "Introduction",
+                content: [
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Life Processes and Movement:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Previous chapters covered life processes for maintenance in living organisms." },
+                                { text: "Movement is often associated with life." },
+                                { text: "<strong>Growth-related movements:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Example: A seed germinates and grows, the seedling pushes soil aside and comes out." },
+                                        { text: "These movements cease if growth stops." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Movements not connected with growth:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Examples: A cat running, children playing on swings, buffaloes chewing cud." },
+                                        { text: "These are not movements caused by growth." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Movement as a Response to Environment:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Movement is often a response to changes in an organism's environment." },
+                                { text: "<strong>Examples:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-cat mr-2 text-purple-400"></i>Cat running because it saw a mouse.' },
+                                        { text: '<i class="fas fa-sun mr-2 text-purple-400"></i>Plants growing towards sunshine.' },
+                                        { text: '<i class="fas fa-child mr-2 text-purple-400"></i>Children seeking pleasure from swinging.' },
+                                        { text: '<i class="fas fa-cow mr-2 text-purple-400"></i>Buffaloes chewing cud to help break up tough food so as to be able to digest it better.' },
+                                        { text: '<i class="fas fa-eye mr-2 text-purple-400"></i>When bright light is focussed on our eyes or when we touch a hot object, we detect the change and respond to it with movement in order to protect ourselves.' }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Controlled and Coordinated Movement:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "All movement in response to the environment is carefully controlled." },
+                                { text: "Each environmental change evokes an appropriate movement." },
+                                { text: "<strong>Example:</strong> Whispering to friends in class vs. shouting loudly." },
+                                { text: "Movement depends on the triggering event." },
+                                { text: "Living organisms must use systems for <strong>control and coordination</strong> to:", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-search mr-2 text-purple-400"></i>Recognize environmental events.' },
+                                        { text: '<i class="fas fa-running mr-2 text-purple-400"></i>Execute correct movements in response.' }
+                                    ]}
+                                ]},
+                                { text: "In multicellular organisms, <strong>specialized tissues</strong> provide these control and coordination activities." }
+                            ]}
+                        ]}
+                    ]}
+                ]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        titleFont: { size: 14 },
-                        bodyFont: { size: 12 },
-                        callbacks: {
-                            title: (context) => context[0].label.split(',')[1].trim(),
-                            label: (context) => `Temp: ${context.raw.toFixed(1)}°C`
+            "animals-nervous-system": {
+                title: "6.1 Animals - Nervous System",
+                subtitle: null,
+                content: [
+                    { type: "paragraph", text: "In animals, such control and coordination are provided by <strong>nervous</strong> and <strong>muscular tissues</strong>." },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Detecting Information from the Environment:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Receptors:</strong> Specialized tips of some nerve cells detect information from the environment." },
+                                { text: "<strong>Location:</strong> Usually in sense organs (e.g., inner ear, nose, tongue)." },
+                                { text: "<strong>Examples of Receptors:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-utensils mr-2 text-purple-400"></i><strong>Gustatory receptors:</strong> Detect taste.' },
+                                        { text: '<i class="fas fa-smell mr-2 text-purple-400"></i><strong>Olfactory receptors:</strong> Detect smell.' }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Structure and Function of a Neuron (Nerve Cell):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Neuron Structure (Refer to Fig. 6.1 (a)):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-code-branch mr-2 text-purple-400"></i><strong>Dendrite:</strong> Tree-like structures at the tip of a nerve cell, where information is acquired.' },
+                                        { text: '<i class="fas fa-circle mr-2 text-purple-400"></i><strong>Cell Body:</strong> Contains the nucleus and integrates the incoming signals.' },
+                                        { text: '<i class="fas fa-long-arrow-alt-right mr-2 text-purple-400"></i><strong>Axon:</strong> Long, slender projection that carries electrical impulses away from the cell body.' },
+                                        { text: '<i class="fas fa-terminal mr-2 text-purple-400"></i><strong>Nerve Ending (Axon Terminal):</strong> The end of the axon where the electrical impulse triggers the release of chemicals.' }
+                                    ]}
+                                ]},
+                                { text: "<strong>Transmission of Nervous Impulses:</strong>", subItems: [
+                                    { type: "list", style: "decimal", items: [
+                                        { text: "Information acquired at the dendritic tip sets off a <strong>chemical reaction</strong>." },
+                                        { text: "This reaction creates an <strong>electrical impulse</strong>." },
+                                        { text: "The impulse travels from the <strong>dendrite</strong> to the <strong>cell body</strong>." },
+                                        { text: "Then, it travels along the <strong>axon</strong> to its end." },
+                                        { text: "At the axon's end, the electrical impulse releases <strong>chemicals (neurotransmitters)</strong>." },
+                                        { text: "These chemicals cross a tiny gap called a <strong>synapse</strong>." },
+                                        { text: "They start a similar electrical impulse in a dendrite of the <strong>next neuron</strong>." },
+                                        { text: "A similar synapse finally allows delivery of such impulses from neurons to other cells (e.g., muscle cells or glands) (Refer to Fig. 6.1 (b) - Neuromuscular junction)." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]},
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.1a+Neuron+Structure", alt: "Diagram of a neuron showing dendrite, cell body, axon, and nerve ending.", caption: "Figure 6.1 (a) Structure of a neuron" },
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.1b+Neuromuscular+Junction", alt: "Diagram of a neuromuscular junction showing axon terminal, muscle fibre, and mitochondria.", caption: "Figure 6.1 (b) Neuromuscular junction" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Nervous Tissue:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Composed of an organized network of nerve cells or neurons." },
+                                { text: "Specialized for conducting information via electrical impulses from one part of the body to another." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>In-text Question (Page 2)', question: "Look at Fig. 6.1 (a) and identify the parts of a neuron (i) where information is acquired, (ii) through which information travels as an electrical impulse, and (iii) where this impulse must be converted into a chemical signal for onward transmission.", answer: { type: "list", style: "disc", items: [
+                        { text: "(i) Dendrite" },
+                        { text: "(ii) Cell body and Axon" },
+                        { text: "(iii) Nerve ending (Axon terminal)" }
+                    ]}},
+                    { type: "activity-box", title: '<i class="fas fa-flask mr-2 text-purple-400"></i>Activity 6.1: The Interplay of Taste and Smell', procedure: { type: "list", style: "decimal", items: [
+                        { text: "Put some sugar in your mouth. Note the taste." },
+                        { text: "Block your nose by pressing it. Eat sugar again. Note any difference in taste." },
+                        { text: "While eating lunch, block your nose and observe if you can fully appreciate the taste of the food." }
+                    ]}, observation: { type: "list", style: "disc", items: [
+                        { text: "Is there a difference in how sugar and food taste if your nose is blocked?" },
+                        { text: "Why might this be happening?" },
+                        { text: "Do you experience a similar situation when you have a cold?" }
+                    ]}, explanation: "This activity demonstrates that our sense of taste is heavily influenced by our sense of smell. When the nose is blocked (e.g., during a cold), the olfactory receptors cannot detect the aroma of food, which significantly diminishes the perception of taste." },
+                    { type: "heading", level: 3, text: "6.1.1 What happens in Reflex Actions?" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Definition of 'Reflex':</strong> A sudden, involuntary action in response to something in the environment, done without conscious thought or control.", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Examples: Jumping out of the way of a bus, pulling hand back from a flame, mouth watering at the sight of food." }
+                            ]}
+                        ]},
+                        { text: "<strong>The Problem with Conscious Thinking for Urgent Situations:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "If we had to consciously think about pain (e.g., from touching a flame) and then decide to move our hand, it would take too long, leading to injury." },
+                                { text: "Thinking is a complex activity involving many nerve impulses and intricate neuron networks." },
+                                { text: "The thinking tissue (brain) is in the skull, receives signals from all over the body, processes them, and then sends instructions back to muscles. This entire process is too slow for immediate danger." }
+                            ]}
+                        ]},
+                        { text: "<strong>Solution: Reflex Arc:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "The body solves this problem by connecting the nerves that detect a stimulus (input) directly to the nerves that move muscles (output) in a simpler, faster way." },
+                                { text: "This connection is called a <strong>reflex arc</strong> (Fig. 6.2)." },
+                                { text: "<strong>Location of Reflex Arcs:</strong> Formed in the <strong>spinal cord</strong> itself, where nerves from all over the body meet on their way to the brain." },
+                                { text: "<strong>Information Pathway in a Reflex Arc (Fig. 6.2):</strong>", subItems: [
+                                    { type: "list", style: "decimal", items: [
+                                        { text: '<i class="fas fa-hand-point-up mr-2 text-purple-400"></i><strong>Receptors (e.g., in skin) detect stimulus</strong> (e.g., heat/pain).' },
+                                        { text: '<i class="fas fa-arrow-right mr-2 text-purple-400"></i><strong>Sensory neuron</strong> carries the signal from the receptor to the spinal cord.' },
+                                        { text: '<i class="fas fa-exchange-alt mr-2 text-purple-400"></i>In the spinal cord, a <strong>relay neuron</strong> connects the sensory neuron to a motor neuron.' },
+                                        { text: '<i class="fas fa-arrow-left mr-2 text-purple-400"></i><strong>Motor neuron</strong> carries the signal from the spinal cord to the <strong>effector (muscle in arm)</strong>.' },
+                                        { text: '<i class="fas fa-fist-raised mr-2 text-purple-400"></i>The muscle contracts, causing movement (e.g., pulling hand away).' },
+                                        { text: '<i class="fas fa-bell mr-2 text-purple-400"></i>Simultaneously, the information input also travels to the brain, allowing us to eventually feel the pain.' }
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]},
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.2+Reflex+Arc", alt: "Diagram of a reflex arc showing sensory neuron, relay neuron, motor neuron, and effector.", caption: "Figure 6.2 Reflex arc" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Evolutionary Significance of Reflex Arcs:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Evolved because the brain's thinking process is not fast enough for immediate responses." },
+                                { text: "Many animals have very little or no complex neuron networks for thinking." },
+                                { text: "Reflex arcs are efficient ways of functioning in the absence of true thought processes." },
+                                { text: "Even with complex brains, reflex arcs remain more efficient for quick responses." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>In-text Question (Page 4)', question: "Can you now trace the sequence of events which occur when a bright light is focussed on your eyes?", answer: { type: "list", style: "decimal", items: [
+                        { text: "Light receptors (photoreceptors) in the eye detect the bright light." },
+                        { text: "Sensory neurons transmit this signal to the brainstem (part of the hindbrain)." },
+                        { text: "A reflex arc is activated, causing the muscles of the iris to contract, constricting the pupil." },
+                        { text: "This reduces the amount of light entering the eye, protecting the retina." },
+                        { text: "Simultaneously, the information reaches higher brain centers, allowing conscious perception of the bright light." }
+                    ]}},
+                    { type: "heading", level: 3, text: "6.1.2 Human Brain" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Functions of the Spinal Cord:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Not just for reflex actions." },
+                                { text: "Made up of nerves that supply information for thinking." }
+                            ]}
+                        ]},
+                        { text: "<strong>Central Nervous System (CNS):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Consists of the <strong>brain</strong> and <strong>spinal cord</strong>." },
+                                { text: "Main coordinating centre of the body." },
+                                { text: "Receives information from all parts of the body and integrates it." }
+                            ]}
+                        ]},
+                        { text: "<strong>Voluntary Actions:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Actions based on conscious decision-making." },
+                                { text: "Examples: Writing, talking, moving a chair, clapping." },
+                                { text: "The brain sends messages to muscles to perform these actions." }
+                            ]}
+                        ]},
+                        { text: "<strong>Peripheral Nervous System (PNS):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Facilitates communication between the CNS and other parts of the body." },
+                                { text: "Consists of:", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "<strong>Cranial nerves:</strong> Arise from the brain." },
+                                        { text: "<strong>Spinal nerves:</strong> Arise from the spinal cord." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Parts of the Human Brain (Fig. 6.3):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "The brain has a complex design with different parts responsible for integrating different inputs and outputs." },
+                                { text: "Three major parts: <strong>Fore-brain, Mid-brain, and Hind-brain</strong>." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "image", src: "https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.3+Human+Brain", alt: "Diagram of the human brain showing fore-brain, mid-brain, hind-brain, cerebrum, hypothalamus, pituitary gland, pons, medulla, and cerebellum.", caption: "Figure 6.3 Human brain" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>1. Fore-brain:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Main thinking part of the brain.</strong>" },
+                                { text: "<strong>Cerebrum:</strong> The largest part of the brain, responsible for voluntary actions, memory, intelligence, and sensory perception." },
+                                { text: "<strong>Sensory areas:</strong> Receive sensory impulses from various receptors (e.g., specialized areas for hearing, smell, sight)." },
+                                { text: "<strong>Association areas:</strong> Interpret sensory information by combining it with information from other receptors and stored memories." },
+                                { text: "<strong>Motor areas:</strong> Control the movement of voluntary muscles (e.g., leg muscles) based on decisions made in association areas." },
+                                { text: "<strong>Hunger center:</strong> A separate part of the fore-brain associated with the sensation of feeling full, distinct from sensory perception." },
+                                { text: "<strong>Hypothalamus:</strong> Located below the thalamus, it controls body temperature, hunger, thirst, and links the nervous system to the endocrine system via the pituitary gland." },
+                                { text: "<strong>Pituitary gland:</strong> Often called the 'master gland' because it produces hormones that control other endocrine glands." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>In-text Question (Page 4)', question: "Study the labelled diagram of the human brain. We have seen that the different parts have specific functions. Can we find out the function of each part?", answer: { type: "list", style: "disc", items: [
+                        { text: "<strong>Cerebrum:</strong> Thinking, voluntary actions, sensory interpretation." },
+                        { text: "<strong>Mid-brain & Hind-brain:</strong> Involuntary actions." },
+                        { text: "<strong>Pons, Medulla, Cerebellum (Hind-brain):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Medulla:</strong> Controls involuntary actions like blood pressure, salivation, vomiting." },
+                                { text: "<strong>Cerebellum:</strong> Responsible for precision of voluntary actions, maintaining posture, and balance." },
+                                { text: "<strong>Pons:</strong> Acts as a bridge between the cerebellum and cerebrum, involved in sleep and respiration." }
+                            ]}
+                        ]},
+                        { text: "<strong>Hypothalamus:</strong> Regulates hunger, thirst, body temperature, and links nervous and endocrine systems." },
+                        { text: "<strong>Pituitary Gland:</strong> Secretes hormones that control other glands." }
+                    ]}},
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Involuntary Actions:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Muscle movements over which we do not have any thinking control." },
+                                { text: "Examples: Mouth watering when seeing food, heart beating, breathing, digesting food, change in pupil size." },
+                                { text: "Many involuntary actions are controlled by the <strong>mid-brain</strong> and <strong>hind-brain</strong>." },
+                                { text: "<strong>Medulla (in hind-brain):</strong> Controls involuntary actions like blood pressure, salivation, and vomiting." }
+                            ]}
+                        ]},
+                        { text: "<strong>Hind-brain (Detailed):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Cerebellum:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Responsible for precision of voluntary actions (e.g., walking in a straight line, riding a bicycle, picking up a pencil)." },
+                                        { text: "Maintains the posture and balance of the body." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]},
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>Questions (Page 6 - In-text)', question: null, answer: { type: "list", style: "decimal", items: [
+                        { text: "What is the difference between a reflex action and walking?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Reflex Action:</strong> Involuntary, rapid, automatic response to a stimulus, bypasses conscious thought, involves a reflex arc in the spinal cord. Example: pulling hand from hot object." },
+                                { text: "<strong>Walking:</strong> Voluntary action, requires conscious thought and decision-making by the brain, involves complex coordination between brain and muscles." }
+                            ]}
+                        ]},
+                        { text: "What happens at the synapse between two neurons?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "At the synapse, the electrical impulse arriving at the end of the axon of one neuron triggers the release of chemical neurotransmitters into the synaptic cleft. These chemicals diffuse across the gap and bind to receptors on the dendrite of the next neuron, initiating a new electrical impulse in that neuron." }
+                        ]},
+                        { text: "Which part of the brain maintains posture and equilibrium of the body?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Cerebellum (part of the hind-brain)." }
+                        ]},
+                        { text: "How do we detect the smell of an agarbatti (incense stick)?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Olfactory receptors, located in the nose, detect the chemical molecules released by the burning agarbatti. These receptors generate electrical impulses that are transmitted via sensory neurons to the olfactory bulb in the fore-brain, where the smell is interpreted." }
+                        ]},
+                        { text: "What is the role of the brain in reflex action?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "While the primary reflex arc occurs in the spinal cord to ensure quick response, the information about the stimulus (e.g., pain) is also simultaneously sent to the brain. The brain's role is to register the sensation, allowing for conscious awareness of the event after the reflex action has occurred, and to learn from the experience." }
+                        ]}
+                    ]}
+                    ]},
+                    { type: "heading", level: 3, text: "6.1.3 How are these Tissues protected?" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Brain Protection:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "A delicate and vital organ." },
+                                { text: "Sits inside a <strong>bony box (cranium/skull)</strong>." },
+                                { text: "Contained in a <strong>fluid-filled balloon</strong> inside the skull, providing shock absorption." }
+                            ]}
+                        ]},
+                        { text: "<strong>Spinal Cord Protection:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Protected by the <strong>vertebral column</strong> or <strong>backbone</strong>, a hard, bumpy structure running down the middle of the back." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "heading", level: 3, text: "6.1.4 How does the Nervous Tissue cause Action?" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Role of Nervous Tissue:</strong> Collects information, sends it around the body, processes it, makes decisions, and conveys decisions." },
+                        { text: "<strong>Role of Muscle Tissue:</strong> Performs the final action or movement." },
+                        { text: "<strong>How Muscle Cells Move:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "When a nerve impulse reaches a muscle, the muscle fiber must move." },
+                                { text: "Muscle cells move by changing their shape, causing them to shorten." },
+                                { text: "This change in shape is due to <strong>special proteins</strong> within the muscle cells." },
+                                { text: "These proteins change their shape and arrangement in response to nervous electrical impulses." },
+                                { text: "The new arrangement of these proteins gives the muscle cells a shorter form, leading to muscle contraction." }
+                            ]}
+                        ]},
+                        { text: "<strong>Voluntary vs. Involuntary Muscles (Brief):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Voluntary Muscles:</strong> Muscles whose actions are under conscious control (e.g., skeletal muscles used for walking)." },
+                                { text: "<strong>Involuntary Muscles:</strong> Muscles whose actions are not under conscious control (e.g., muscles in the digestive tract, heart muscles). The nervous tissue controls both, but the level of conscious input differs." }
+                            ]}
+                        ]}
+                    ]}
+                ]
+            },
+            "coordination-plants": {
+                title: "6.2 Coordination in Plants",
+                subtitle: null,
+                content: [
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Absence of Nervous System and Muscles in Plants:</strong> Plants do not have a nervous system or muscles like animals." },
+                        { text: "<strong>Response to Stimuli:</strong> Plants still respond to stimuli.", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Example 1: Sensitive Plant (Mimosa pudica / 'touch-me-not'):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Leaves fold up and droop immediately when touched." },
+                                        { text: "This movement is <strong>independent of growth</strong>." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Example 2: Seed Germination:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Root grows downwards, stem grows upwards into the air." },
+                                        { text: "This movement is <strong>dependent on growth</strong>." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Two Types of Plant Movement:</strong>", subItems: [
+                            { type: "list", style: "decimal", items: [
+                                { text: "<strong>Movement dependent on growth:</strong> Slow, directional, irreversible." },
+                                { text: "<strong>Movement independent of growth:</strong> Quick, non-directional, reversible." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "heading", level: 3, text: "6.2.1 Immediate Response to Stimulus (Movement Independent of Growth)" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Example:</strong> Movement of the sensitive plant (Mimosa pudica)." },
+                        { text: "<strong>Mechanism:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Movement happens at a point different from the point of touch, so information must be communicated." },
+                                { text: "Plants use <strong>electrical-chemical means</strong> to convey information from cell to cell." },
+                                { text: "<strong>No specialized tissue</strong> for information conduction (unlike animals)." },
+                                { text: "Plant cells change shape by changing the <strong>amount of water in them</strong>." },
+                                { text: "This leads to <strong>swelling or shrinking</strong>, causing the cells to change shape and the leaves to move (Fig. 6.4)." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.4+Sensitive+Plant", alt: "Before and after images of a Mimosa pudica plant, showing leaves open and leaves folded after touch.", caption: "Figure 6.4 The sensitive plant" },
+                    { type: "heading", level: 3, text: "6.2.2 Movement Due to Growth (Tropic Movements)" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Tendrils (Example):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Pea plants climb using tendrils, which are sensitive to touch." },
+                                { text: "When a tendril touches a support, the part of the tendril in contact grows <strong>slower</strong> than the part away from the object." },
+                                { text: "This differential growth causes the tendril to <strong>circle around and cling</strong> to the object." }
+                            ]}
+                        ]},
+                        { text: "<strong>Tropic Movements:</strong> Plants respond to stimuli slowly by growing in a particular direction. This directional growth appears as if the plant is moving." }
+                    ]},
+                    { type: "activity-box", title: '<i class="fas fa-seedling mr-2 text-purple-400"></i>Activity 6.2: Phototropism and Geotropism', procedure: { type: "list", style: "decimal", items: [
+                        { text: "Fill a conical flask with water." },
+                        { text: "Cover the neck with a wire mesh." },
+                        { text: "Place 2-3 freshly germinated bean seeds on the mesh." },
+                        { text: "Place the flask in a cardboard box open on one side, facing a window (Fig. 6.5)." },
+                        { text: "After 2-3 days, observe shoots bending towards light and roots away from light." },
+                        { text: "Turn the flask so shoots are away from light and roots towards light. Leave undisturbed for a few days." }
+                    ]}, observation: { type: "list", style: "disc", items: [
+                        { text: "Have the old parts of the shoot and root changed direction? (No, established growth direction is maintained)." },
+                        { text: "Are there differences in the direction of new growth? (Yes, new growth will re-orient towards/away from the stimuli)." },
+                        { text: "What can we conclude? Environmental triggers like light or gravity change the direction of plant growth." }
+                    ]}, explanation: "This activity demonstrates <strong>phototropism</strong> (response to light) and <strong>geotropism</strong> (response to gravity)." },
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.5+Plant+Response+to+Light", alt: "Diagram showing a plant in a box, bending towards light from a window.", caption: "Figure 6.5 Response of the plant to the direction of light" },
+                    { type: "image", src: "https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.6+Plant+Geotropism", alt: "Diagram showing a potted plant on its side, with roots growing down (positively geotropic) and shoot growing up (negatively geotropic).", caption: "Figure 6.6 Plant showing geotropism" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Types of Tropic Movements:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Tropism:</strong> Directional growth movement of a plant part in response to an external stimulus." },
+                                { text: '<i class="fas fa-lightbulb mr-2 text-purple-400"></i><strong>Phototropism:</strong> Response to light.', subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "<strong>Shoots:</strong> Positively phototropic (bend towards light)." },
+                                        { text: "<strong>Roots:</strong> Negatively phototropic (bend away from light)." }
+                                    ]}
+                                ]},
+                                { text: '<i class="fas fa-globe mr-2 text-purple-400"></i><strong>Geotropism (Gravitropism):</strong> Response to the pull of earth or gravity (Fig. 6.6).', subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "<strong>Roots:</strong> Positively geotropic (grow downwards)." },
+                                        { text: "<strong>Shoots:</strong> Negatively geotropic (grow upwards and away from the earth)." }
+                                    ]}
+                                ]},
+                                { text: '<i class="fas fa-water mr-2 text-purple-400"></i><strong>Hydrotropism:</strong> Response to water (\'hydro\' means water).', subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Example: Roots grow towards water sources." }
+                                    ]}
+                                ]},
+                                { text: '<i class="fas fa-flask-vial mr-2 text-purple-400"></i><strong>Chemotropism:</strong> Response to chemicals (\'chemo\' refers to chemicals).', subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Example: Growth of pollen tubes towards ovules during fertilization." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Communication in Multicellular Organisms (Revisited):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Speed of Response:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Sensitive plant movement: Very quick." },
+                                        { text: "Sunflower movement (day/night): Quite slow." },
+                                        { text: "Growth-related movements: Even slower." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Fast Responses:</strong> Require rapid information transfer. Electrical impulses are excellent for this." },
+                                { text: "<strong>Limitations of Electrical Impulses:</strong>", subItems: [
+                                    { type: "list", style: "decimal", items: [
+                                        { text: "Reach only cells connected by nervous tissue, not every cell." },
+                                        { text: "Cells take time to reset after generating an impulse, so continuous transmission is not possible." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Chemical Communication (Hormones):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Most multicellular organisms use chemical communication for widespread and persistent effects." },
+                                        { text: "Stimulated cells release chemical compounds (hormones) that diffuse around." },
+                                        { text: "Other cells with specific receptors can detect these compounds." },
+                                        { text: "<strong>Advantages:</strong> Slower but can potentially reach all body cells, regardless of nervous connections, and can be done steadily and persistently." },
+                                        { text: "<strong>Diversity:</strong> Hormones show great diversity." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Plant Hormones (Phytohormones):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Help coordinate growth, development, and responses to the environment." },
+                                { text: "Synthesized at one place and diffuse to the area of action." },
+                                { text: "<strong>Examples:</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-chart-line mr-2 text-purple-400"></i><strong>Auxin:</strong>', subItems: [
+                                            { type: "list", style: "disc", items: [
+                                                { text: "Synthesized at the shoot tip." },
+                                                { text: "Helps cells grow longer." },
+                                                { text: "When light comes from one side, auxin diffuses to the shady side of the shoot." },
+                                                { text: "Higher auxin concentration on the shady side stimulates cells to grow longer there, causing the plant to bend towards light." }
+                                            ]}
+                                        ]},
+                                        { text: '<i class="fas fa-seedling mr-2 text-purple-400"></i><strong>Gibberellins:</strong>', subItems: [
+                                            { type: "list", style: "disc", items: [
+                                                { text: "Like auxins, help in the growth of the stem." }
+                                            ]}
+                                        ]},
+                                        { text: '<i class="fas fa-divide mr-2 text-purple-400"></i><strong>Cytokinins:</strong>', subItems: [
+                                            { type: "list", style: "disc", items: [
+                                                { text: "Promote cell division." },
+                                                { text: "Found in higher concentrations in areas of rapid cell division (e.g., fruits and seeds)." }
+                                            ]}
+                                        ]},
+                                        { text: '<i class="fas fa-ban mr-2 text-purple-400"></i><strong>Abscisic acid:</strong>', subItems: [
+                                            { type: "list", style: "disc", items: [
+                                                { text: "An example of a hormone that <strong>inhibits growth</strong>." },
+                                                { text: "Effects include wilting of leaves." }
+                                            ]}
+                                        ]}
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]},
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>Questions (Page 9 - In-text)', question: null, answer: { type: "list", style: "decimal", items: [
+                        { text: "What are plant hormones?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Plant hormones (phytohormones) are chemical compounds produced by plants in very small amounts that regulate various physiological processes like growth, development, and responses to environmental stimuli. They are synthesized in one part of the plant and transported to other parts where they exert their effects." }
+                        ]},
+                        { text: "How is the movement of leaves of the sensitive plant different from the movement of a shoot towards light?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Sensitive Plant:</strong> Rapid, non-directional, independent of growth, caused by changes in turgor pressure (water content) in specialized cells." },
+                                { text: "<strong>Shoot towards Light:</strong> Slow, directional (towards light), dependent on growth (differential cell elongation), caused by the action of auxin hormone." }
+                            ]}
+                        ]},
+                        { text: "Give an example of a plant hormone that promotes growth.", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Auxin (or Gibberellins, Cytokinins)." }
+                        ]},
+                        { text: "How do auxins promote the growth of a tendril around a support?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "When a tendril comes into contact with a support, auxin moves to the side of the tendril away from the support. The higher concentration of auxin on this side promotes faster cell elongation, causing that side to grow more rapidly. This differential growth makes the tendril coil around the support." }
+                        ]},
+                        { text: "Design an experiment to demonstrate hydrotropism.", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Materials:</strong> Two potted plants, two porous pots (or perforated plastic bottles), water, soil." },
+                                { text: "<strong>Procedure:</strong>", subItems: [
+                                    { type: "list", style: "decimal", items: [
+                                        { text: "Take two potted plants." },
+                                        { text: "In one pot (control), water the plant normally." },
+                                        { text: "In the second pot (experimental), bury a porous pot (or perforated bottle) filled with water near the plant's roots, but do not water the soil directly." },
+                                        { text: "Observe the direction of root growth in both pots over several days." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Observation:</strong> The roots of the plant in the experimental pot will grow towards the porous pot containing water, demonstrating hydrotropism. You can carefully remove the plant with its soil to observe the root direction." }
+                            ]}
+                        ]}
+                    ]}
+                ]
+            },
+            "hormones-animals": {
+                title: "6.3 Hormones in Animals (Endocrine System)",
+                subtitle: null,
+                content: [
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Chemical/Hormonal Communication in Animals:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Used for widespread and coordinated responses, especially in urgent situations." },
+                                { text: "<strong>Example: Squirrel in a scary situation (fight or flight response):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "Body needs to prepare for fighting or running away, requiring significant energy and integrated activity of many tissues." },
+                                        { text: "Electrical impulses alone would be limited in reach." },
+                                        { text: "A chemical signal (hormone) can reach all cells, providing wide-ranging changes." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Adrenaline Hormone:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Secreted from the <strong>adrenal glands</strong> (located on top of the kidneys, Fig. 6.7)." },
+                                { text: "Secreted directly into the <strong>blood</strong> and carried to different parts of the body." },
+                                { text: "<strong>Target Organs/Tissues:</strong> Include the heart, digestive system, skin, skeletal muscles, diaphragm, and rib muscles." },
+                                { text: "<strong>Effects of Adrenaline (Fight or Flight Response):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: '<i class="fas fa-heartbeat mr-2 text-purple-400"></i>Heart beats faster &rarr; increased oxygen supply to muscles.' },
+                                        { text: '<i class="fas fa-tint mr-2 text-purple-400"></i>Blood supply to digestive system and skin is reduced (arteries constrict) &rarr; diverts blood to skeletal muscles.' },
+                                        { text: '<i class="fas fa-lungs mr-2 text-purple-400"></i>Breathing rate increases (due to diaphragm and rib muscle contractions).' },
+                                        { text: "All these responses prepare the animal body to deal with the situation (e.g., increased energy, heightened alertness)." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>Endocrine System:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "The system of ductless glands that secrete hormones directly into the bloodstream." },
+                                { text: "Constitutes the <strong>second way of control and coordination</strong> in our body (alongside the nervous system)." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "image", src: "https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.7a+Male+Endocrine+Glands", alt: "Diagram of male human body showing endocrine glands like hypothalamus, pituitary, thyroid, adrenal, pancreas, and testes.", caption: "Figure 6.7 (a) Endocrine glands in human beings (male)" },
+                    { type: "image", src: "https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.7b+Female+Endocrine+Glands", alt: "Diagram of female human body showing endocrine glands like hypothalamus, pituitary, thyroid, adrenal, pancreas, and ovaries.", caption: "Figure 6.7 (b) Endocrine glands in human beings (female)" },
+                    { type: "activity-box", title: '<i class="fas fa-search-dollar mr-2 text-purple-400"></i>Activity 6.3: Identifying Endocrine Glands', procedure: { type: "list", style: "disc", items: [
+                        { text: "Look at Fig. 6.7." },
+                        { text: "Identify the endocrine glands mentioned in the figure." },
+                        { text: "Some of these glands have been listed in Table 6.1 and discussed in the text. Consult books in the library and discuss with your teachers to find out about other glands." }
+                    ]}, explanation: "Hypothalamus, Pineal gland, Pituitary gland, Thyroid gland, Parathyroid glands, Thymus, Pancreas, Adrenal glands, Testis (male), Ovary (female), Uterus (female)." },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Functions of Animal Hormones:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "Unlike plants, animal hormones are not primarily for directional growth in response to external stimuli like light or gravity." },
+                                { text: "Animal growth is carefully controlled and patterned (e.g., fingers don't grow on faces)." },
+                                { text: "Hormones help in <strong>coordinated growth and development</strong> and regulate various bodily functions." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "heading", level: 3, text: "Examples of Animal Hormones and their Functions:" },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>1. Thyroxin (Thyroid Gland):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Gland:</strong> Thyroid gland (located in the neck, Fig. 6.7)." },
+                                { text: "<strong>Requirement:</strong> Iodine is essential for the thyroid gland to make thyroxin." },
+                                { text: "<strong>Function:</strong> Regulates carbohydrate, protein, and fat metabolism in the body to provide the best balance for growth." },
+                                { text: "<strong>Deficiency:</strong> Iodine deficiency can lead to <strong>goitre</strong>, characterized by a swollen neck. This correlates with the thyroid gland's position." },
+                                { text: "<strong>Importance of Iodised Salt:</strong> Ensures sufficient iodine intake to prevent goitre." }
+                            ]}
+                        ]},
+                        { text: "<strong>2. Growth Hormone (Pituitary Gland):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Gland:</strong> Pituitary gland (located at the base of the brain, Fig. 6.7)." },
+                                { text: "<strong>Function:</strong> Regulates growth and development of the body." },
+                                { text: "<strong>Deficiency:</strong> In childhood, deficiency leads to <strong>dwarfism</strong> (very short stature)." },
+                                { text: "<strong>Excess:</strong> Excess secretion can lead to gigantism (extremely tall stature)." }
+                            ]}
+                        ]},
+                        { text: "<strong>3. Sex Hormones (Testes & Ovaries):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Testosterone (Males):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "<strong>Gland:</strong> Testes." },
+                                        { text: "<strong>Function:</strong> Responsible for changes associated with puberty in males (e.g., development of male secondary sexual characteristics)." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Oestrogen (Females):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "<strong>Gland:</strong> Ovaries." },
+                                        { text: "<strong>Function:</strong> Responsible for changes associated with puberty in females (e.g., development of female sex organs, regulation of menstrual cycle)." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "<strong>4. Insulin (Pancreas):</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "<strong>Gland:</strong> Pancreas (located behind the stomach, Fig. 6.7)." },
+                                { text: "<strong>Function:</strong> Helps in regulating blood sugar levels." },
+                                { text: "<strong>Deficiency:</strong> If not secreted in proper amounts, blood sugar levels rise, leading to <strong>diabetes</strong>." },
+                                { text: "<strong>Treatment for Diabetes:</strong> Often involves insulin injections." }
+                            ]}
+                        ]}
+                    ]},
+                    { type: "info-box", title: '<i class="fas fa-info-circle mr-2 text-purple-400"></i>Do You Know? (Hypothalamus)', content: "Hypothalamus plays an important role in the release of many hormones. For example, when the level of growth hormone is low, the hypothalamus releases <strong>growth hormone-releasing factor</strong>, which stimulates the pituitary gland to release growth hormone. This highlights the intricate connection between the nervous and endocrine systems." },
+                    { type: "list", style: "disc", items: [
+                        { text: "<strong>Feedback Mechanisms:</strong>", subItems: [
+                            { type: "list", style: "circle", items: [
+                                { text: "The timing and amount of hormone released are regulated by <strong>feedback mechanisms</strong>." },
+                                { text: "<strong>Example (Insulin):</strong>", subItems: [
+                                    { type: "list", style: "square", items: [
+                                        { text: "If blood sugar levels rise, pancreatic cells detect this and produce <strong>more insulin</strong>." },
+                                        { text: "As blood sugar levels fall, insulin secretion is <strong>reduced</strong>." },
+                                        { text: "This ensures precise quantities of hormones are secreted." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]},
+                    { type: "heading", level: 3, text: "Table 6.1: Some Important Hormones and their Functions (Completed)" },
+                    { type: "table", headers: ["S.No.", "Hormone", "Endocrine Gland", "Functions"], rows: [
+                        ["1.", "Growth hormone", "Pituitary gland", "Stimulates growth in all organs."],
+                        ["2.", "Thyroxin", "Thyroid gland", "Regulates carbohydrate, protein, and fat metabolism for body growth."],
+                        ["3.", "Insulin", "Pancreas", "Regulates blood sugar level."],
+                        ["4.", "Testosterone", "Testes", "Development of male sex organs, changes associated with puberty in males."],
+                        ["5.", "Oestrogen", "Ovaries", "Development of female sex organs, regulates menstrual cycle, etc."],
+                        ["6.", "Adrenaline", "Adrenal gland", "Prepares the body for fight or flight response (increases heart rate, breathing, diverts blood to muscles)."],
+                        ["7.", "Releasing hormones", "Hypothalamus", "Stimulates pituitary gland to release its hormones."]
+                    ]},
+                    { type: "activity-box", title: '<i class="fas fa-tasks mr-2 text-purple-400"></i>Activity 6.4: Completing the Hormone Table', explanation: "This activity is designed to make the student actively recall and complete the information about hormones, glands, and functions, reinforcing learning." },
+                    { type: "question-box", title: '<i class="fas fa-question-circle mr-2 text-purple-400"></i>Questions (Page 12 - In-text)', question: null, answer: { type: "list", style: "decimal", items: [
+                        { text: "How does chemical coordination take place in animals?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Chemical coordination in animals occurs through the endocrine system. Endocrine glands secrete chemical messengers called hormones directly into the bloodstream. These hormones travel through the blood to target cells or organs, where they bind to specific receptors and trigger specific physiological responses, regulating various body functions, growth, and development." }
+                        ]},
+                        { text: "Why is the use of iodised salt advisable?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Iodised salt is advisable because iodine is an essential mineral required by the thyroid gland to synthesize the hormone thyroxin. Thyroxin regulates carbohydrate, protein, and fat metabolism, crucial for balanced growth and development. A deficiency of iodine can lead to goitre, a condition characterized by a swollen neck due to an enlarged thyroid gland." }
+                        ]},
+                        { text: "How does our body respond when adrenaline is secreted into the blood?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "When adrenaline is secreted, the body prepares for a \"fight or flight\" response. The heart rate increases, leading to more oxygen supply to muscles. Blood flow to the digestive system and skin is reduced and diverted to skeletal muscles. The breathing rate also increases. These coordinated responses provide a surge of energy and heightened readiness to deal with stressful or dangerous situations." }
+                        ]},
+                        { text: "Why are some patients of diabetes treated by giving injections of insulin?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-1">Answer:</p>' },
+                            { type: "paragraph", text: "Patients with diabetes often have insufficient insulin production by their pancreas, or their body cells do not respond effectively to insulin. Insulin is a hormone crucial for regulating blood sugar levels by facilitating the uptake of glucose by cells. Without adequate insulin, blood sugar levels rise, leading to various harmful effects. Insulin injections provide the necessary hormone to help regulate their blood sugar." }
+                        ]}
+                    ]}
+                ]
+            },
+            "exercises": {
+                title: "Exercises (Page 13)",
+                subtitle: null,
+                content: [
+                    { type: "list", style: "decimal", items: [
+                        { text: "Which of the following is a plant hormone?", subItems: [
+                            { type: "list", style: "alpha", items: [
+                                { text: "(a) Insulin" },
+                                { text: "(b) Thyroxin" },
+                                { text: "(c) Oestrogen" },
+                                { text: "(d) <span class=\"font-bold text-purple-400\">Cytokinin.</span>" }
+                            ]}
+                        ]},
+                        { text: "The gap between two neurons is called a", subItems: [
+                            { type: "list", style: "alpha", items: [
+                                { text: "(a) dendrite." },
+                                { text: "(b) <span class=\"font-bold text-purple-400\">synapse.</span>" },
+                                { text: "(c) axon." },
+                                { text: "(d) impulse." }
+                            ]}
+                        ]},
+                        { text: "The brain is responsible for", subItems: [
+                            { type: "list", style: "alpha", items: [
+                                { text: "(a) thinking." },
+                                { text: "(b) regulating the heart beat." },
+                                { text: "(c) balancing the body." },
+                                { text: "(d) <span class=\"font-bold text-purple-400\">all of the above.</span>" }
+                            ]}
+                        ]},
+                        { text: "What is the function of receptors in our body? Think of situations where receptors do not work properly. What problems are likely to arise?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Function of Receptors:</strong> Receptors are specialized cells or structures that detect stimuli (changes) from the internal or external environment. They convert these stimuli into electrical impulses that can be transmitted to the nervous system for processing. Examples include photoreceptors (light), chemoreceptors (taste, smell), thermoreceptors (temperature), mechanoreceptors (touch, pressure, hearing), and nociceptors (pain)." },
+                                { text: "<strong>Problems if Receptors Don't Work Properly:</strong>", subItems: [
+                                    { type: "list", style: "circle", items: [
+                                        { text: "<strong>Loss of Senses:</strong> Inability to see, hear, taste, smell, or feel touch/pain." },
+                                        { text: "<strong>Danger:</strong> Not detecting hot objects (burns), sharp objects (cuts), or harmful chemicals (poisoning)." },
+                                        { text: "<strong>Safety Issues:</strong> Inability to hear warning sounds (e.g., car horns), or see obstacles." },
+                                        { text: "<strong>Impaired Coordination:</strong> Difficulty in responding appropriately to environmental changes." },
+                                        { text: "<strong>Medical Conditions:</strong> For example, peripheral neuropathy can cause numbness or abnormal sensations due to damaged receptors/nerves." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "Draw the structure of a neuron and explain its function.", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "paragraph", text: "(Drawing would be similar to Fig. 6.1 (a) in the 'Animals - Nervous System' section)" },
+                            { type: "paragraph", text: "<strong>Function:</strong> Neurons are the basic structural and functional units of the nervous system. They are specialized to transmit information in the form of electrical impulses (nerve impulses)." },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Dendrites:</strong> Receive signals from other neurons or receptors." },
+                                { text: "<strong>Cell body:</strong> Integrates signals and generates the impulse." },
+                                { text: "<strong>Axon:</strong> Conducts the impulse away from the cell body." },
+                                { text: "<strong>Nerve endings (axon terminals):</strong> Transmit the signal to the next neuron, muscle, or gland across a synapse using neurotransmitters. This allows for communication and coordination throughout the body." }
+                            ]}
+                        ]},
+                        { text: "How does phototropism occur in plants?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "paragraph", text: "Phototropism is the growth of a plant in response to light. When light falls on a plant from one side, the hormone auxin, synthesized at the shoot tip, diffuses to the shady side of the shoot. The higher concentration of auxin on the shady side stimulates the cells there to elongate more rapidly than the cells on the illuminated side. This differential growth causes the shoot to bend towards the light source." }
+                        ]},
+                        { text: "Which signals will get disrupted in case of a spinal cord injury?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "paragraph", text: "A spinal cord injury can disrupt both sensory and motor signals." },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Sensory Signals:</strong> Information from receptors (touch, pain, temperature, pressure) from below the injury site will not be able to reach the brain, leading to numbness or loss of sensation." },
+                                { text: "<strong>Motor Signals:</strong> Commands from the brain to muscles below the injury site will not be able to reach them, leading to paralysis or weakness." },
+                                { text: "<strong>Autonomic Signals:</strong> Signals controlling involuntary functions like breathing, heart rate, blood pressure, digestion, and bladder/bowel control can also be disrupted, as these pathways often involve the spinal cord." },
+                                { text: "<strong>Reflex Actions:</strong> While some local reflexes might still occur below the injury, the brain's ability to modulate or be aware of them can be affected." }
+                            ]}
+                        ]},
+                        { text: "How does chemical coordination occur in plants?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "paragraph", text: "Chemical coordination in plants occurs through plant hormones (phytohormones). These hormones are produced in small amounts in one part of the plant and then transported to other parts where they regulate various physiological processes. For example, auxin promotes cell elongation and phototropism, gibberellins promote stem growth, cytokinins promote cell division, and abscisic acid inhibits growth and causes wilting. These hormones work together to coordinate growth, development, and responses to environmental stimuli." }
+                        ]},
+                        { text: "What is the need for a system of control and coordination in an organism?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "paragraph", text: "A system of control and coordination is essential for an organism to:" },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Respond to Stimuli:</strong> Detect and react appropriately to changes in the internal and external environment (e.g., finding food, escaping danger, adapting to temperature changes)." },
+                                { text: "<strong>Maintain Homeostasis:</strong> Regulate internal conditions (e.g., body temperature, blood sugar, water balance) to ensure optimal functioning." },
+                                { text: "<strong>Coordinate Body Functions:</strong> Ensure that different organs and systems work together efficiently and in a synchronized manner (e.g., digestion, circulation, respiration)." },
+                                { text: "<strong>Growth and Development:</strong> Regulate complex processes like cell division, differentiation, and overall growth and development in a precise and organized way." },
+                                { text: "<strong>Survival:</strong> Ultimately, a well-coordinated system is crucial for the organism's survival, adaptation, and reproduction." }
+                            ]}
+                        ]},
+                        { text: "How are involuntary actions and reflex actions different from each other?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Reflex Actions:</strong>", subItems: [
+                                    { type: "list", style: "circle", items: [
+                                        { text: "Are a specific type of involuntary action." },
+                                        { text: "Are rapid, immediate, and automatic responses to a specific stimulus." },
+                                        { text: "Involve a reflex arc, often bypassing the brain for initial processing (though information reaches the brain later)." },
+                                        { text: "Are primarily protective or adaptive responses to sudden changes." },
+                                        { text: "Examples: withdrawal of hand from hot object, knee-jerk." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Involuntary Actions:</strong>", subItems: [
+                                    { type: "list", style: "circle", items: [
+                                        { text: "Are any actions that occur without conscious thought or control." },
+                                        { text: "Can be slower and more continuous than reflex actions." },
+                                        { text: "Are controlled by the autonomic nervous system (mid-brain and hind-brain)." },
+                                        { text: "Regulate essential bodily functions." },
+                                        { text: "Examples: heartbeat, breathing, digestion, salivation, blood pressure." },
+                                        { text: "All reflex actions are involuntary, but not all involuntary actions are reflex actions." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]},
+                        { text: "Compare and contrast nervous and hormonal mechanisms for control and coordination in animals.", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "table", headers: ["Feature", "Nervous Mechanism", "Hormonal Mechanism (Endocrine System)"], rows: [
+                                ["<strong>Nature of Signal</strong>", "Electrical impulses (nerve impulses) and neurotransmitters", "Chemical messengers (hormones)"],
+                                ["<strong>Medium of Transmission</strong>", "Neurons (nerve fibers)", "Bloodstream"],
+                                ["<strong>Speed of Transmission</strong>", "Very fast (milliseconds)", "Slower (seconds to minutes or hours)"],
+                                ["<strong>Specificity of Action</strong>", "Highly specific (targets specific muscles or glands connected by nerves)", "Widespread (can affect many target cells/organs throughout the body)"],
+                                ["<strong>Duration of Effect</strong>", "Short-lived, temporary", "Longer-lasting, prolonged"],
+                                ["<strong>Area of Influence</strong>", "Localized", "Widespread/Generalized"],
+                                ["<strong>Examples</strong>", "Reflex actions, voluntary muscle movements, quick sensory perception", "Growth, metabolism, reproduction, stress response, blood sugar regulation"]
+                            ]},
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Comparison (Similarities):</p>' },
+                            { type: "paragraph", text: "Both systems are crucial for control and coordination, allow communication between different parts of the body, and enable organisms to respond to their environment and maintain homeostasis. They often work together (e.g., hypothalamus linking nervous and endocrine systems)." }
+                        ]},
+                        { text: "What is the difference between the manner in which movement takes place in a sensitive plant and the movement in our legs?", subItems: [
+                            { type: "paragraph", text: '<p class="font-semibold mt-2">Answer:</p>' },
+                            { type: "list", style: "disc", items: [
+                                { text: "<strong>Sensitive Plant (Mimosa pudica) Movement:</strong>", subItems: [
+                                    { type: "list", style: "circle", items: [
+                                        { text: "<strong>Mechanism:</strong> Rapid change in turgor pressure (water content) within specialized cells (pulvini) at the base of the leaves and leaflets. Water moves out of these cells, causing them to lose rigidity and the leaves to droop." },
+                                        { text: "<strong>Speed:</strong> Very fast, almost instantaneous." },
+                                        { text: "<strong>Control:</strong> Electrical-chemical signals transmitted cell-to-cell, but no specialized nervous tissue." },
+                                        { text: "<strong>Nature:</strong> Independent of growth, reversible." }
+                                    ]}
+                                ]},
+                                { text: "<strong>Movement in Our Legs:</strong>", subItems: [
+                                    { type: "list", style: "circle", items: [
+                                        { text: "<strong>Mechanism:</strong> Involves the contraction and relaxation of specialized muscle cells, which shorten due to the rearrangement of special proteins (actin and myosin) in response to electrical impulses." },
+                                        { text: "<strong>Speed:</strong> Can vary from rapid (running) to slow (walking), but generally much faster than plant growth movements." },
+                                        { text: "<strong>Control:</strong> Coordinated by the nervous system (brain and spinal cord) via electrical impulses transmitted through neurons to muscle fibers." },
+                                        { text: "<strong>Nature:</strong> Voluntary (conscious control), involves specialized muscular tissue." }
+                                    ]}
+                                ]}
+                            ]}
+                        ]}
+                    ]}
+                ]
+            },
+            "summary": {
+                title: "What you have learnt (Summary)",
+                subtitle: null,
+                content: [
+                    { type: "list", style: "disc", items: [
+                        { text: '<i class="fas fa-cogs mr-2 text-purple-400"></i>Control and coordination are functions of the nervous system and hormones in our bodies.' },
+                        { text: '<i class="fas fa-bolt mr-2 text-purple-400"></i>Nervous system responses are classified as reflex action, voluntary action, or involuntary action.' },
+                        { text: '<i class="fas fa-wave-square mr-2 text-purple-400"></i>The nervous system uses electrical impulses to transmit messages.' },
+                        { text: '<i class="fas fa-hand-pointer mr-2 text-purple-400"></i>The nervous system receives information from sense organs and acts through muscles.' },
+                        { text: '<i class="fas fa-vial mr-2 text-purple-400"></i>Chemical coordination is observed in both plants and animals.' },
+                        { text: '<i class="fas fa-exchange-alt mr-2 text-purple-400"></i>Hormones produced in one part of an organism move to another part to achieve the desired effect.' },
+                        { text: '<i class="fas fa-sync-alt mr-2 text-purple-400"></i>A feedback mechanism regulates the action of hormones.' }
+                    ]}
+                ]
+            }
+        };
+
+        // --- Dynamic Content Rendering Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarNav = document.getElementById('sidebarNav');
+            const mainContent = document.getElementById('mainContent');
+            const imageModal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalCaption = document.getElementById('modalCaption');
+            const closeButton = document.querySelector('.close-button');
+            const prevImageBtn = document.getElementById('prevImageBtn');
+            const nextImageBtn = document.getElementById('nextImageBtn');
+
+            let currentImageIndex = 0;
+            const allImagesData = []; // Stores data for all images on the page
+
+            // Render Sidebar Navigation
+            for (const sectionId in pageContent) {
+                const sectionData = pageContent[sectionId];
+                const navLink = document.createElement('a');
+                navLink.href = `#${sectionId}`;
+                navLink.classList.add('nav-link', 'p-3', 'rounded-md', 'text-gray-300', 'hover:bg-gray-700');
+                navLink.setAttribute('data-section', sectionId);
+                
+                let iconHtml = '';
+                if (sectionId === 'introduction') iconHtml = '<i class="fas fa-book-open mr-2"></i> ';
+                else if (sectionId === 'animals-nervous-system') iconHtml = '<i class="fas fa-brain mr-2"></i> ';
+                else if (sectionId === 'coordination-plants') iconHtml = '<i class="fas fa-leaf mr-2"></i> ';
+                else if (sectionId === 'hormones-animals') iconHtml = '<i class="fas fa-syringe mr-2"></i> ';
+                else if (sectionId === 'exercises') iconHtml = '<i class="fas fa-dumbbell mr-2"></i> ';
+                else if (sectionId === 'summary') iconHtml = '<i class="fas fa-clipboard-list mr-2"></i> '; // For summary section
+
+                navLink.innerHTML = iconHtml + (sectionData.subtitle || sectionData.title.replace('Chapter 6: ', ''));
+                sidebarNav.appendChild(navLink);
+            }
+
+            // Function to create HTML elements from content data
+            function createElement(item) {
+                let element;
+                if (item.type === "paragraph") {
+                    element = document.createElement('p');
+                    element.classList.add('mb-4', 'text-lg', 'leading-relaxed');
+                    element.innerHTML = item.text;
+                } else if (item.type === "list") {
+                    element = document.createElement(item.style.includes('decimal') || item.style.includes('alpha') || item.style.includes('roman') ? 'ol' : 'ul');
+                    element.classList.add(item.style === 'disc' ? 'list-disc' : (item.style === 'circle' ? 'list-circle' : (item.style === 'square' ? 'list-square' : (item.style === 'decimal' ? 'list-decimal' : (item.style === 'alpha' ? 'list-alpha' : 'list-roman')))), 'pl-6', 'mb-6', 'text-lg', 'leading-relaxed');
+                    item.items.forEach(subItem => {
+                        const li = document.createElement('li');
+                        li.innerHTML = subItem.text;
+                        if (subItem.subItems) {
+                            li.appendChild(createElement({ type: "list", style: subItem.subItems[0].type === "list" ? subItem.subItems[0].style : 'disc', items: subItem.subItems }));
+                        } else if (subItem.type === "paragraph") { // Handle paragraph within list item for answers
+                            li.appendChild(createElement(subItem));
+                        }
+                        element.appendChild(li);
+                    });
+                } else if (item.type === "heading") {
+                    element = document.createElement(`h${item.level}`);
+                    element.classList.add('font-bold', 'gradient-text', 'mb-4', 'mt-8');
+                    if (item.level === 1) element.classList.add('text-4xl', 'font-extrabold', 'pb-2', 'border-b-2', 'border-gray-700');
+                    else if (item.level === 2) element.classList.add('text-3xl');
+                    else if (item.level === 3) element.classList.add('text-2xl');
+                    element.innerHTML = item.text;
+                } else if (item.type === "image") {
+                    element = document.createElement('div');
+                    element.classList.add('image-container');
+                    const img = document.createElement('img');
+                    img.src = item.src;
+                    img.alt = item.alt;
+                    img.setAttribute('data-caption', item.caption); // Store caption for modal
+                    element.appendChild(img);
+                    const figcaption = document.createElement('figcaption');
+                    figcaption.textContent = item.caption;
+                    element.appendChild(figcaption);
+                    
+                    // Store image data for modal gallery
+                    allImagesData.push({
+                        src: item.src,
+                        alt: item.alt,
+                        caption: item.caption,
+                        originalElement: img // Reference to the original image element
+                    });
+                    img.addEventListener('click', () => {
+                        currentImageIndex = allImagesData.findIndex(data => data.src === img.src);
+                        openModal(currentImageIndex);
+                    });
+
+                } else if (item.type === "question-box" || item.type === "activity-box" || item.type === "info-box") {
+                    element = document.createElement('div');
+                    element.classList.add(item.type === "question-box" ? 'question-box' : (item.type === "activity-box" ? 'activity-box' : 'activity-box', 'bg-purple-900', 'border-purple-500')); // info-box uses activity-box styling
+                    const h4 = document.createElement('h4');
+                    h4.classList.add('text-xl', 'font-semibold');
+                    h4.innerHTML = item.title;
+                    element.appendChild(h4);
+
+                    if (item.question) {
+                        const qP = document.createElement('p');
+                        qP.classList.add('mb-2');
+                        qP.innerHTML = item.question;
+                        element.appendChild(qP);
+                    }
+                    if (item.procedure) {
+                        const procP = document.createElement('p');
+                        procP.classList.add('font-semibold', 'mb-2');
+                        procP.textContent = "Procedure:";
+                        element.appendChild(procP);
+                        element.appendChild(createElement(item.procedure));
+                    }
+                    if (item.observation) {
+                        const obsP = document.createElement('p');
+                        obsP.classList.add('font-semibold', 'mb-2');
+                        obsP.textContent = "Observation/Discussion:";
+                        element.appendChild(obsP);
+                        element.appendChild(createElement(item.observation));
+                    }
+                    if (item.explanation) {
+                        const expP = document.createElement('p');
+                        expP.classList.add('font-semibold', 'mt-2');
+                        expP.textContent = "Explanation (Brief):";
+                        element.appendChild(expP);
+                        const expText = document.createElement('p');
+                        expText.innerHTML = item.explanation;
+                        element.appendChild(expText);
+                    }
+                    if (item.answer) {
+                        const ansP = document.createElement('p');
+                        ansP.classList.add('font-semibold', 'mt-2');
+                        ansP.textContent = "Answer:";
+                        element.appendChild(ansP);
+                        if (item.answer.type === "list") {
+                            element.appendChild(createElement(item.answer));
+                        } else {
+                            const ansText = document.createElement('p');
+                            ansText.innerHTML = item.answer;
+                            element.appendChild(ansText);
                         }
                     }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: { unit: 'hour', displayFormats: { hour: 'ha' }},
-                        grid: { display: false },
-                        ticks: { display: false }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { display: false },
-                        beginAtZero: false
+                    if (item.content) { // For info-box
+                        const contentP = document.createElement('p');
+                        contentP.classList.add('text-gray-200');
+                        contentP.innerHTML = item.content;
+                        element.appendChild(contentP);
                     }
+                } else if (item.type === "table") {
+                    element = document.createElement('div');
+                    element.classList.add('overflow-x-auto', 'rounded-lg', 'shadow-md', 'mb-6');
+                    const table = document.createElement('table');
+                    table.classList.add('min-w-full', 'bg-gray-700');
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    item.headers.forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.classList.add('py-3', 'px-4', 'border-b-2', 'border-gray-600', 'bg-gray-600', 'text-left', 'text-sm', 'font-semibold', 'text-gray-200', 'uppercase', 'tracking-wider');
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+
+                    const tbody = document.createElement('tbody');
+                    item.rows.forEach(rowData => {
+                        const row = document.createElement('tr');
+                        rowData.forEach(cellData => {
+                            const td = document.createElement('td');
+                            td.classList.add('py-3', 'px-4', 'border-b', 'border-gray-600');
+                            td.innerHTML = cellData;
+                            row.appendChild(td);
+                        });
+                        tbody.appendChild(row);
+                    });
+                    table.appendChild(tbody);
+                    element.appendChild(table);
                 }
+                return element;
             }
+
+            // Function to render a specific section's content
+            const renderSection = (sectionId) => {
+                mainContent.innerHTML = ''; // Clear current content
+                const sectionData = pageContent[sectionId];
+
+                const sectionElement = document.createElement('section');
+                sectionElement.id = sectionId;
+                sectionElement.classList.add('content-section');
+
+                const h1 = document.createElement('h1');
+                h1.classList.add('text-4xl', 'font-extrabold', 'gradient-text', 'mb-6', 'pb-2', 'border-b-2', 'border-gray-700');
+                h1.textContent = sectionData.title;
+                sectionElement.appendChild(h1);
+
+                if (sectionData.subtitle) {
+                    const h2 = document.createElement('h2');
+                    h2.classList.add('text-3xl', 'font-bold', 'gradient-text', 'mb-4');
+                    h2.textContent = sectionData.subtitle;
+                    sectionElement.appendChild(h2);
+                }
+
+                sectionData.content.forEach(item => {
+                    sectionElement.appendChild(createElement(item));
+                });
+                
+                mainContent.appendChild(sectionElement);
+                // Activate the section after rendering
+                setTimeout(() => {
+                    sectionElement.classList.add('active');
+                }, 10); // Small delay for transition to apply
+            };
+
+            // Function to show a specific section (handles navigation and rendering)
+            const showSection = (sectionId) => {
+                // Remove active class from all nav links
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active-nav');
+                    link.removeAttribute('aria-current');
+                });
+
+                // Add active class to the current nav link
+                const activeLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active-nav');
+                    activeLink.setAttribute('aria-current', 'page');
+                }
+
+                renderSection(sectionId);
+            };
+
+            // Handle navigation clicks
+            sidebarNav.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A' || e.target.closest('A')) {
+                    e.preventDefault();
+                    const link = e.target.tagName === 'A' ? e.target : e.target.closest('A');
+                    const sectionId = link.dataset.section;
+                    showSection(sectionId);
+                    history.pushState(null, '', `#${sectionId}`);
+                }
+            });
+
+            // Handle initial load and URL hash
+            const initialSection = window.location.hash ? window.location.hash.substring(1) : 'introduction';
+            showSection(initialSection);
+
+            // Handle back/forward browser buttons
+            window.addEventListener('popstate', () => {
+                const sectionId = window.location.hash ? window.location.hash.substring(1) : 'introduction';
+                showSection(sectionId);
+            });
+
+            // --- Modal Functions ---
+            const openModal = (index) => {
+                if (allImagesData.length === 0) return; // No images to show
+
+                modalImage.src = allImagesData[index].src;
+                modalImage.alt = allImagesData[index].alt;
+                modalCaption.textContent = allImagesData[index].caption;
+                imageModal.style.display = 'flex'; // Use flex to center content
+                updateModalButtons(index);
+            };
+
+            const closeModal = () => {
+                imageModal.style.display = 'none';
+            };
+
+            const updateModalButtons = (index) => {
+                prevImageBtn.disabled = (index === 0);
+                nextImageBtn.disabled = (index === allImagesData.length - 1);
+            };
+
+            prevImageBtn.addEventListener('click', () => {
+                if (currentImageIndex > 0) {
+                    currentImageIndex--;
+                    openModal(currentImageIndex);
+                }
+            });
+
+            nextImageBtn.addEventListener('click', () => {
+                if (currentImageIndex < allImagesData.length - 1) {
+                    currentImageIndex++;
+                    openModal(currentImageIndex);
+                }
+            });
+
+            closeButton.addEventListener('click', closeModal);
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) { // Close when clicking outside the content
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && imageModal.style.display === 'flex') {
+                    closeModal();
+                } else if (e.key === 'ArrowLeft' && imageModal.style.display === 'flex' && !prevImageBtn.disabled) {
+                    prevImageBtn.click();
+                } else if (e.key === 'ArrowRight' && imageModal.style.display === 'flex' && !nextImageBtn.disabled) {
+                    nextImageBtn.click();
+                }
+            });
         });
-        charts.push(chart);
-    }
-
-    // --- Start the app ---
-    init();
-});
-</script>
-
+    </script>
 </body>
 </html>
-
-
