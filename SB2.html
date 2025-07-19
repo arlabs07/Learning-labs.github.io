@@ -173,7 +173,7 @@
             }
         }
 
-        /* Image Overlay (Modal) Styles */
+        /* Image Overlay (Modal) Styles - SIMPLIFIED */
         .modal {
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
@@ -198,10 +198,7 @@
             align-items: center;
             max-width: 90%;
             max-height: 90%;
-            background-color: #2d3748; /* Dark background for modal content */
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            /* Removed background, padding, border-radius, box-shadow for a cleaner overlay */
             animation: slideIn 0.4s ease-out;
         }
         .modal-content img {
@@ -211,11 +208,10 @@
             margin-bottom: 1rem;
             border-radius: 0.75rem;
             object-fit: contain; /* Ensure image fits without cropping within modal */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6); /* Keep shadow on image itself */
         }
         .modal-caption {
-            color: #cbd5e0;
-            font-size: 1rem;
-            margin-bottom: 1rem;
+            display: none; /* Hide the caption as requested */
         }
         .modal-controls {
             display: flex;
@@ -396,11 +392,11 @@
                     </li>
                 </ul>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.1a+Neuron+Structure" alt="Diagram of a neuron showing dendrite, cell body, axon, and nerve ending." data-caption="Figure 6.1 (a) Structure of a neuron">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNISXkXhFKzsKxL-kQjU_wi7e7KcdWcSJ-uggG_lyWjP7GeynWRQl_uPY&s=10" alt="Diagram of a neuron showing dendrite, cell body, axon, and nerve ending." data-caption="Figure 6.1 (a) Structure of a neuron" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.1 (a) Structure of a neuron</figcaption>
                 </div>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.1b+Neuromuscular+Junction" alt="Diagram of a neuromuscular junction showing axon terminal, muscle fibre, and mitochondria." data-caption="Figure 6.1 (b) Neuromuscular junction">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU80CTXgkP1PTD-r8nt-Bzp8d3OsQ1A2eEpaZyxyWm3FqG9LC805OOpek&s=10" alt="Diagram of a neuromuscular junction showing axon terminal, muscle fibre, and mitochondria." data-caption="Figure 6.1 (b) Neuromuscular junction" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.1 (b) Neuromuscular junction</figcaption>
                 </div>
                 <ul class="list-disc pl-6 mb-6 text-lg leading-relaxed">
@@ -476,7 +472,7 @@
                     </li>
                 </ul>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.2+Reflex+Arc" alt="Diagram of a reflex arc showing sensory neuron, relay neuron, motor neuron, and effector." data-caption="Figure 6.2 Reflex arc">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQVpic9qp4EdaA4emTSQnIvRWqxDEm_eFBS5h4j-lLVR7AY5TgFQOSgb1Q&s=10" alt="Diagram of a reflex arc showing sensory neuron, relay neuron, motor neuron, and effector." data-caption="Figure 6.2 Reflex arc" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.2 Reflex arc</figcaption>
                 </div>
                 <ul class="list-disc pl-6 mb-6 text-lg leading-relaxed">
@@ -549,7 +545,7 @@
                     </li>
                 </ul>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.3+Human+Brain" alt="Diagram of the human brain showing fore-brain, mid-brain, hind-brain, cerebrum, hypothalamus, pituitary gland, pons, medulla, and cerebellum." data-caption="Figure 6.3 Human brain">
+                    <img src="https://www.zigya.com/application/zrc/images/qvar/SCEN10056006.png" alt="Diagram of the human brain showing fore-brain, mid-brain, hind-brain, cerebrum, hypothalamus, pituitary gland, pons, medulla, and cerebellum." data-caption="Figure 6.3 Human brain" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.3 Human brain</figcaption>
                 </div>
                 <ul class="list-disc pl-6 mb-6 text-lg leading-relaxed">
@@ -616,7 +612,7 @@
                             What is the difference between a reflex action and walking?
                             <p class="font-semibold mt-1">Answer:</p>
                             <ul class="list-disc pl-6 mt-2">
-                                <li><strong>Reflex Action:</strong> Involuntary, rapid, automatic response to a stimulus, bypasses conscious thought, involves a reflex arc in the spinal cord. Example: pulling hand from hot object.</li>
+                                <li><strong>Reflex Action:</strong> Involuntary, rapid, automatic response to a specific stimulus, bypasses conscious thought, involves a reflex arc in the spinal cord. Example: pulling hand from hot object.</li>
                                 <li><strong>Walking:</strong> Voluntary action, requires conscious thought and decision-making by the brain, involves complex coordination between brain and muscles.</li>
                             </ul>
                         </li>
@@ -730,7 +726,7 @@
                     </li>
                 </ul>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.4+Sensitive+Plant" alt="Before and after images of a Mimosa pudica plant, showing leaves open and leaves folded after touch." data-caption="Figure 6.4 The sensitive plant">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/26/Mimosa_pudica_in_September_month.jpg" alt="Before and after images of a Mimosa pudica plant, showing leaves open and leaves folded after touch." data-caption="Figure 6.4 The sensitive plant" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.4 The sensitive plant</figcaption>
                 </div>
                 <h3 class="text-2xl font-bold gradient-text mb-4 mt-8">6.2.2 Movement Due to Growth (Tropic Movements)</h3>
@@ -758,19 +754,19 @@
                     </ol>
                     <p class="font-semibold mb-2">Observation/Discussion:</p>
                     <ul class="list-disc pl-6 mt-2">
-                        <li>Have the old parts of the shoot and root changed direction? (No, established growth direction is maintained).</li>
-                        <li>Are there differences in the direction of new growth? (Yes, new growth will re-orient towards/away from the stimuli).</li>
-                        <li>What can we conclude? Environmental triggers like light or gravity change the direction of plant growth.</li>
+                        <li>Is there a difference in how sugar and food taste if your nose is blocked?</li>
+                        <li>Why might this be happening?</li>
+                        <li>Do you experience a similar situation when you have a cold?</li>
                     </ul>
                     <p class="font-semibold mt-2">Explanation (Brief):</p>
                     <p>This activity demonstrates <strong>phototropism</strong> (response to light) and <strong>geotropism</strong> (response to gravity).</p>
                 </div>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.5+Plant+Response+to+Light" alt="Diagram showing a plant in a box, bending towards light from a window." data-caption="Figure 6.5 Response of the plant to the direction of light">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRV7P7toot9TnOmqmU4OTJd-9NnC4X0p5XQ0l_GYgCWG6HYd9yClqJEVvo7&s=10" alt="Diagram showing a plant in a box, bending towards light from a window." data-caption="Figure 6.5 Response of the plant to the direction of light" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.5 Response of the plant to the direction of light</figcaption>
                 </div>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x300/333333/e0e0e0?text=Fig+6.6+Plant+Geotropism" alt="Diagram showing a potted plant on its side, with roots growing down (positively geotropic) and shoot growing up (negatively geotropic)." data-caption="Figure 6.6 Plant showing geotropism">
+                    <img src="https://www.vedantu.com/question-sets/fbe1bce4-dfdd-49f7-9e77-681bc38123b63809104575797298814.png" alt="Diagram showing a potted plant on its side, with roots growing down (positively geotropic) and shoot growing up (negatively geotropic)." data-caption="Figure 6.6 Plant showing geotropism" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.6 Plant showing geotropism</figcaption>
                 </div>
                 <ul class="list-disc pl-6 mb-6 text-lg leading-relaxed">
@@ -970,11 +966,11 @@
                     </li>
                 </ul>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.7a+Male+Endocrine+Glands" alt="Diagram of male human body showing endocrine glands like hypothalamus, pituitary, thyroid, adrenal, pancreas, and testes." data-caption="Figure 6.7 (a) Endocrine glands in human beings (male)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLjfAL6b8YQKZ_4bqnrzfHCag_SDN0x5aaY2nETLtqr1eOycTPCj2e8Bw&s=10" alt="Diagram of human endocrine glands (male and female)." data-caption="Figure 6.7 (a) Endocrine glands in human beings (male)" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.7 (a) Endocrine glands in human beings (male)</figcaption>
                 </div>
                 <div class="image-container">
-                    <img src="https://placehold.co/600x400/333333/e0e0e0?text=Fig+6.7b+Female+Endocrine+Glands" alt="Diagram of female human body showing endocrine glands like hypothalamus, pituitary, thyroid, adrenal, pancreas, and ovaries." data-caption="Figure 6.7 (b) Endocrine glands in human beings (female)">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTLjfAL6b8YQKZ_4bqnrzfHCag_SDN0x5aaY2nETLtqr1eOycTPCj2e8Bw&s=10" alt="Diagram of human endocrine glands (male and female)." data-caption="Figure 6.7 (b) Endocrine glands in human beings (female)" onerror="this.onerror=null;this.src='https://placehold.co/600x400/cccccc/000000?text=Image+Not+Found';">
                     <figcaption>Figure 6.7 (b) Endocrine glands in human beings (female)</figcaption>
                 </div>
                 <div class="activity-box bg-purple-900 border-purple-500">
@@ -1308,7 +1304,7 @@
                                     <tr>
                                         <td class="py-3 px-4 border-b border-gray-600"><strong>Specificity of Action</strong></td>
                                         <td class="py-3 px-4 border-b border-gray-600">Highly specific (targets specific muscles or glands connected by nerves)</td>
-                                        <td class="py-3 px-4 border-b border-gray-600">Widespread (can affect many target cells/organs throughout the body)</td>
+                                        <td class="py-3 px-4 border-b border-gray-600">Widespread (can affect many target cells/organism throughout the body)</td>
                                     </tr>
                                     <tr>
                                         <td class="py-3 px-4 border-b border-gray-600"><strong>Duration of Effect</strong></td>
@@ -1379,7 +1375,8 @@
         <span class="close-button" role="button" aria-label="Close image viewer">&times;</span>
         <div class="modal-content">
             <img id="modalImage" src="" alt="">
-            <p id="modalCaption" class="modal-caption"></p>
+            <!-- The modal-caption element is hidden by CSS as requested -->
+            <p id="modalCaption" class="modal-caption"></p> 
             <div class="modal-controls">
                 <button id="prevImageBtn" class="modal-btn" aria-label="Previous image"><i class="fas fa-arrow-left"></i></button>
                 <button id="nextImageBtn" class="modal-btn" aria-label="Next image"><i class="fas fa-arrow-right"></i></button>
@@ -1393,7 +1390,7 @@
             const mainContent = document.getElementById('mainContent');
             const imageModal = document.getElementById('imageModal');
             const modalImage = document.getElementById('modalImage');
-            const modalCaption = document.getElementById('modalCaption');
+            const modalCaption = document.getElementById('modalCaption'); // Still reference, but hidden by CSS
             const closeButton = document.querySelector('.close-button');
             const prevImageBtn = document.getElementById('prevImageBtn');
             const nextImageBtn = document.getElementById('nextImageBtn');
@@ -1468,7 +1465,7 @@
 
                 modalImage.src = allImagesData[index].src;
                 modalImage.alt = allImagesData[index].alt;
-                modalCaption.textContent = allImagesData[index].caption;
+                // modalCaption.textContent = allImagesData[index].caption; // No longer setting text, as it's hidden
                 currentImageIndex = index; // Update current index
                 imageModal.style.display = 'flex'; // Use flex to center content
                 updateModalButtons(index);
