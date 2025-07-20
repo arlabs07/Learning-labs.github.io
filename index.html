@@ -3,909 +3,1924 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Weather v2</title>
-    
-    <!-- Tailwind CSS -->
+    <title>Learning Labs</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'><path fill='currentColor' d='M320 0c-17.7 0-32 14.3-32 32V64c0 17.7 14.3 32 32 32H576c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32H576c70.7 0 128-57.3 128-128V160c0-70.7-57.3-128-128-128H320zM288 160c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160zM192 160c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160zM96 160c0-17.7-14.3-32-32-32S32 142.3 32 160V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160z'/></svg>">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Chart.js for interactive charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-
-
     <style>
-        /* Base Styling */
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Main container for the app with dynamic background */
-        #app-container {
-            transition: background 1.5s ease-in-out;
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-        }
-
-        /* Keyframes for animated gradient background */
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Glassmorphism effect for UI cards */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            -webkit-backdrop-filter: blur(25px);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        /* Hide scrollbar but allow scrolling */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Horizontal snap scrolling for locations */
-        .snap-container {
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-        }
-        .snap-child {
-            scroll-snap-align: start;
-            flex-shrink: 0;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
         
-        /* Search overlay styling */
-        #search-overlay {
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* --- Dynamic Weather Icon Styles --- */
-        .weather-icon-container {
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a2e 25%, #16213e 50%, #0f0f0f 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #a855f7, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+            to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+        }
+
+        .animate-pulse-glow-sm {
+            animation: pulse-glow-sm 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow-sm {
+            from { box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
+            to { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
+        }
+
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform, box-shadow;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .liquid-bg {
+            background: linear-gradient(45deg, 
+                rgba(168, 85, 247, 0.1) 0%, 
+                rgba(236, 72, 153, 0.1) 25%, 
+                rgba(139, 92, 246, 0.1) 50%, 
+                rgba(168, 85, 247, 0.1) 100%);
+            background-size: 400% 400%;
+            animation: liquid-move 8s ease infinite;
+        }
+
+        @keyframes liquid-move {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-item {
+            transition: all 0.3s ease;
             position: relative;
-            width: 200px;
-            height: 200px;
+            overflow: hidden;
+            border-radius: 0.5rem;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), transparent);
+            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item:hover::before {
+            left: 100%;
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+            transform: translateY(20px);
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-btn {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            transition: all 0.3s ease;
+            will-change: transform, background;
+        }
+
+        .resource-btn:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4));
+            transform: translateY(-2px);
+        }
+
+        .section-hidden {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .section-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .particle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: move-particle 15s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes move-particle {
+            0% { transform: translate(0, 0); opacity: 0; }
+            25% { opacity: 1; }
+            50% { transform: translate(var(--x), var(--y)); }
+            75% { opacity: 1; }
+            100% { transform: translate(calc(var(--x) * 2), calc(var(--y) * 2)); opacity: 0; }
+        }
+
+        .navbar-scrolled {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .input-glow:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.5);
+            border-color: #a855f7;
+            transition: all 0.3s ease;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #a855f7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
             margin: 20px auto;
         }
 
-        /* Sun */
-        .sun {
-            position: absolute;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message-box {
+            position: fixed;
             top: 50%;
             left: 50%;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, #FFD700, #FFA500);
-            border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 40px #FFD700, 0 0 80px #FFA500;
-            animation: pulse 4s infinite ease-in-out;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.1); }
-        }
-
-        /* Moon */
-        .moon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100px;
-            height: 100px;
-            background: #f4f4f4;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0, inset -15px -15px 0 0 #c0c0c0;
-        }
-
-        /* Clouds */
-        .cloud {
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50px;
-            opacity: 0.8;
-            animation: drift 20s infinite linear;
-        }
-        .cloud.front {
-            width: 120px; height: 40px;
-            top: 100px; left: 20px;
-            z-index: 2;
-        }
-        .cloud.back {
-            width: 150px; height: 50px;
-            top: 70px; left: 60px;
-            opacity: 0.6;
-            animation-duration: 30s;
-            z-index: 1;
-        }
-        .cloud:before, .cloud:after {
-            content: '';
-            position: absolute;
-            background: #ffffff;
-            border-radius: 50%;
-        }
-        .cloud.front:before { width: 60px; height: 60px; top: -30px; left: 20px; }
-        .cloud.front:after { width: 80px; height: 80px; top: -40px; right: 10px; }
-        .cloud.back:before { width: 80px; height: 80px; top: -40px; left: 30px; }
-        .cloud.back:after { width: 100px; height: 100px; top: -50px; right: 20px; }
-
-        @keyframes drift {
-            from { transform: translateX(-50px); }
-            to { transform: translateX(50px); }
-        }
-        
-        /* Rain */
-        .rain, .snow {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            overflow: hidden;
-            z-index: 3;
-        }
-        .drop {
-            position: absolute;
-            bottom: 100%;
-            width: 2px;
-            height: 20px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(173,216,230,0.7));
-            animation: fall 1s linear infinite;
-        }
-        @keyframes fall {
-            to { transform: translateY(300px); }
-        }
-
-        /* Snow */
-        .flake {
-            position: absolute;
-            top: -20px;
-            width: 5px;
-            height: 5px;
-            background: white;
-            border-radius: 50%;
-            animation: snowfall 10s linear infinite;
-        }
-        @keyframes snowfall {
-            to { transform: translateY(200px) translateX(var(--x-end)); }
-        }
-
-        /* Lightning */
-        .lightning {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #fff;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            max-width: 90%;
+            color: white;
             opacity: 0;
-            z-index: 4;
-            animation: flash 5s infinite;
+            transition: opacity 0.3s ease-in-out;
         }
-        @keyframes flash {
-            0%, 100% { opacity: 0; }
-            5%, 10%, 15% { opacity: 0.6; }
-            7%, 12% { opacity: 0; }
+
+        .message-box.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .notification-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            max-width: 300px;
+        }
+
+        .notification-box.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification-box.info { border-left: 5px solid #60a5fa; }
+        .notification-box.success { border-left: 5px solid #34d399; }
+        .notification-box.warning { border-left: 5px solid #fbbf24; }
+        .notification-box.error { border-left: 5px solid #ef4444; }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            min-width: 0;
+            padding: 0;
+            animation: bounce 0.6s infinite alternate;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+        }
+
+        #mobile-menu .nav-item .notification-badge {
+            right: 15px;
+            top: 10px;
+        }
+
+        @keyframes bounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .notification-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid transparent;
+            transition: background 0.3s ease, border-left-color 0.3s ease;
+        }
+
+        .notification-item.unread {
+            border-left-color: #a855f7;
+        }
+
+        .notification-item.info { border-left-color: #60a5fa; }
+        .notification-item.success { border-left-color: #34d399; }
+        .notification-item.warning { border-left-color: #fbbf24; }
+        .notification-item.error { border-left-color: #ef4444; }
+
+        #floating-notifications-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1002;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            align-items: flex-end;
+        }
+
+        .floating-notification-toast {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            color: white;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            cursor: pointer;
+            max-width: 280px;
+            position: relative; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .floating-notification-toast.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .floating-notification-toast.hide {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+
+        .floating-notification-toast .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        .floating-notification-toast .close-btn:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .text-6xl { font-size: 2.5rem; }
+            .text-8xl { font-size: 4rem; }
+            .text-5xl { font-size: 2rem; }
+            .text-4xl { font-size: 1.5rem; }
+            .text-2xl { font-size: 1.1rem; }
+            .px-8 { padding-left: 1rem; padding-right: 1rem; }
+            .py-4 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+            .chapter-grid {
+                grid-template-columns: 1fr;
+            }
+            .notification-box {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+                transform: translateX(0);
+            }
+            #floating-notifications-container {
+                right: 10px;
+                left: 10px;
+                bottom: 10px;
+                max-width: unset;
+                align-items: center;
+            }
+            .floating-notification-toast {
+                max-width: calc(100% - 20px);
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white overflow-hidden">
-
-    <div id="app-container" class="w-full h-screen overflow-hidden">
-        <!-- Main horizontal scroller for locations -->
-        <div id="location-scroller" class="snap-container w-full h-full flex overflow-x-auto no-scrollbar">
-            <!-- Location pages will be injected here by JavaScript -->
-        </div>
-
-        <!-- Top bar with search, location buttons, and dots -->
-        <div class="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-50">
-            <button id="search-button" class="w-10 h-10 flex items-center justify-center glass-card rounded-full text-lg">
-                <i class="fas fa-search"></i>
-            </button>
-            <div id="location-dots" class="flex justify-center items-center space-x-2 flex-grow">
-                <!-- Dots will be injected here -->
-            </div>
-            <button id="detect-location-button" class="w-10 h-10 flex items-center justify-center glass-card rounded-full text-lg">
-                <i class="fas fa-location-arrow"></i>
-            </button>
-        </div>
+<body>
+    <div id="message-box" class="message-box">
+        <p id="message-text" class="mb-4 text-lg"></p>
+        <button onclick="hideMessageBox()" class="glass-effect px-6 py-2 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
+            OK
+        </button>
     </div>
 
-    <!-- Search Overlay -->
-    <div id="search-overlay" class="fixed inset-0 bg-black bg-opacity-50 -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); z-50 flex items-start justify-center p-4 opacity-0 invisible">
-        <div class="w-full max-w-md mt-16">
-            <div class="relative">
-                <input type="text" id="search-input" placeholder="Search for a city..." class="w-full p-4 pr-12 bg-white bg-opacity-20 rounded-full border border-white border-opacity-30 focus:outline-none focus:ring-2 focus:ring-white text-white placeholder-gray-300">
-                <i class="fas fa-search absolute right-5 top-1/2 -translate-y-1/2 text-gray-300"></i>
-            </div>
-            <div id="search-results-container" class="mt-4 max-h-[70vh] overflow-y-auto no-scrollbar">
-                <!-- Saved locations or search results will be populated here -->
-            </div>
-        </div>
+    <div id="notification-box" class="notification-box">
+        <p id="notification-text"></p>
     </div>
 
-    <!-- Template for a location page -->
-    <template id="location-page-template">
-        <div class="snap-child w-full h-full p-4 pt-20 overflow-y-auto no-scrollbar">
-            <div class="w-full max-w-lg mx-auto flex flex-col items-center text-center">
-                
-                <!-- Location Name -->
-                <h1 class="location-name text-3xl font-bold tracking-wider"></h1>
-                <p class="weather-description text-lg font-light opacity-80"></p>
+    <div id="floating-notifications-container"></div>
 
-                <!-- Dynamic Weather Icon -->
-                <div class="weather-icon-container my-4"></div>
-
-                <!-- Main Temperature -->
-                <div class="current-temp text-8xl font-thin -mt-4">
-                    <span class="temperature"></span>&deg;
+    <nav class="fixed top-0 w-full z-50 glass-effect" id="navbar">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="text-2xl font-bold gradient-text">
+                    <i class="fas fa-book-open-reader mr-2"></i>
+                    Learning Labs
                 </div>
-                
-                <!-- Min/Max Temp -->
-                <div class="flex space-x-4 text-lg opacity-80">
-                    <p>H: <span class="temp-max"></span>&deg;</p>
-                    <p>L: <span class="temp-min"></span>&deg;</p>
-                </div>
-
-                <!-- Hourly Forecast with Chart -->
-                <div class="w-full glass-card rounded-2xl p-4 mt-8">
-                    <h3 class="text-sm font-semibold opacity-70 mb-3 text-left">HOURLY FORECAST</h3>
-                    <div class="h-32 mb-4">
-                        <canvas class="hourly-chart"></canvas>
-                    </div>
-                    <div class="hourly-forecast-container flex overflow-x-auto space-x-6 pb-2 no-scrollbar">
-                        <!-- Hourly items will be injected here -->
-                    </div>
-                </div>
-
-                <!-- 7-Day Forecast -->
-                <div class="w-full glass-card rounded-2xl p-4 mt-4">
-                    <h3 class="text-sm font-semibold opacity-70 mb-2 text-left">7-DAY FORECAST</h3>
-                    <div class="daily-forecast-container space-y-2">
-                        <!-- Daily items will be injected here -->
-                    </div>
-                </div>
-
-                <!-- Other Details -->
-                <div class="w-full grid grid-cols-2 gap-4 mt-4 mb-20">
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">SUNRISE</h4>
-                        <p class="text-2xl font-light sunrise-time"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">SUNSET</h4>
-                        <p class="text-2xl font-light sunset-time"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">HUMIDITY</h4>
-                        <p class="text-2xl font-light humidity"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">WIND</h4>
-                        <p class="text-2xl font-light wind-speed"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">FEELS LIKE</h4>
-                        <p class="text-2xl font-light feels-like"></p>
-                    </div>
-                    <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">PRESSURE</h4>
-                        <p class="text-2xl font-light pressure"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">VISIBILITY</h4>
-                        <p class="text-2xl font-light visibility"></p>
-                    </div>
-                     <div class="glass-card rounded-2xl p-4 flex flex-col justify-center items-center">
-                        <h4 class="text-sm font-semibold opacity-70 mb-1">UV INDEX</h4>
-                        <p class="text-2xl font-light uv-index"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </template>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const appContainer = document.getElementById('app-container');
-    const locationScroller = document.getElementById('location-scroller');
-    const locationDots = document.getElementById('location-dots');
-    const searchButton = document.getElementById('search-button');
-    const detectLocationButton = document.getElementById('detect-location-button');
-    const searchOverlay = document.getElementById('search-overlay');
-    const searchInput = document.getElementById('search-input');
-    const searchResultsContainer = document.getElementById('search-results-container');
-    const locationPageTemplate = document.getElementById('location-page-template');
-
-    // --- State ---
-    let locations = [];
-    let currentSlide = 0;
-    let searchTimeout;
-    let charts = [];
-
-    // --- Constants ---
-    const CURRENT_LOCATION_NAME = "Current Location";
-
-    // --- Weather Code Mapping ---
-    const weatherCodeMap = {
-        0: { description: 'Clear sky', icon: 'sunny', background: 'clear-day' },
-        1: { description: 'Mainly clear', icon: 'sunny', background: 'clear-day' },
-        2: { description: 'Partly cloudy', icon: 'partly-cloudy', background: 'cloudy-day' },
-        3: { description: 'Overcast', icon: 'cloudy', background: 'overcast-day' },
-        45: { description: 'Fog', icon: 'fog', background: 'foggy' },
-        48: { description: 'Depositing rime fog', icon: 'fog', background: 'foggy' },
-        51: { description: 'Light drizzle', icon: 'rain', background: 'rainy' },
-        53: { description: 'Moderate drizzle', icon: 'rain', background: 'rainy' },
-        55: { description: 'Dense drizzle', icon: 'rain', background: 'rainy' },
-        61: { description: 'Slight rain', icon: 'rain', background: 'rainy' },
-        63: { description: 'Moderate rain', icon: 'rain', background: 'rainy' },
-        65: { description: 'Heavy rain', icon: 'rain', background: 'rainy' },
-        71: { description: 'Slight snow', icon: 'snow', background: 'snowy' },
-        73: { description: 'Moderate snow', icon: 'snow', background: 'snowy' },
-        75: { description: 'Heavy snow', icon: 'snow', background: 'snowy' },
-        80: { description: 'Slight rain showers', icon: 'rain', background: 'rainy' },
-        81: { description: 'Moderate rain showers', icon: 'rain', background: 'rainy' },
-        82: { description: 'Violent rain showers', icon: 'rain', background: 'rainy' },
-        85: { description: 'Slight snow showers', icon: 'snow', background: 'snowy' },
-        86: { description: 'Heavy snow showers', icon: 'snow', background: 'snowy' },
-        95: { description: 'Thunderstorm', icon: 'thunderstorm', background: 'stormy' },
-        96: { description: 'Thunderstorm with slight hail', icon: 'thunderstorm', background: 'stormy' },
-        99: { description: 'Thunderstorm with heavy hail', icon: 'thunderstorm', background: 'stormy' },
-    };
-    
-    // --- Background Gradients ---
-    const backgroundGradients = {
-        'clear-day': 'linear-gradient(to top, #3b82f6, #60a5fa, #93c5fd)',
-        'clear-night': 'linear-gradient(to top, #1e3a8a, #1e40af, #1d4ed8)',
-        'cloudy-day': 'linear-gradient(to top, #6b7280, #9ca3af, #d1d5db)',
-        'cloudy-night': 'linear-gradient(to top, #374151, #4b5563, #6b7280)',
-        'overcast-day': 'linear-gradient(to top, #9ca3af, #d1d5db, #e5e7eb)',
-        'overcast-night': 'linear-gradient(to top, #4b5563, #6b7280, #9ca3af)',
-        'rainy': 'linear-gradient(to top, #4b5563, #6b7280, #9ca3af)',
-        'stormy': 'linear-gradient(to top, #1f2937, #374151, #4b5563)',
-        'snowy': 'linear-gradient(to top, #d1d5db, #e5e7eb, #f9fafb)',
-        'foggy': 'linear-gradient(to top, #d1d5db, #e5e7eb, #f3f4f6)',
-    };
-
-    // --- Event Listeners ---
-    searchButton.addEventListener('click', toggleSearchOverlay);
-    searchOverlay.addEventListener('click', (e) => {
-        if (e.target === searchOverlay) toggleSearchOverlay();
-    });
-    searchInput.addEventListener('input', handleSearchInput);
-    detectLocationButton.addEventListener('click', handleDetectLocationClick);
-    locationScroller.addEventListener('scroll', updateCurrentSlide);
-
-    // --- Initialization ---
-    function init() {
-        const savedLocations = JSON.parse(localStorage.getItem('weatherLocationsV2'));
-        if (savedLocations && savedLocations.length > 0) {
-            locations = savedLocations;
-            renderAllLocations();
-        } else {
-            handleDetectLocationClick();
-        }
-    }
-
-    // --- Location Handling ---
-    function handleDetectLocationClick() {
-        const existingCurrentLocationIndex = locations.findIndex(loc => loc.isCurrent);
-        if (existingCurrentLocationIndex !== -1) {
-            scrollToLocation(existingCurrentLocationIndex);
-            fetchWeather(locations[existingCurrentLocationIndex], existingCurrentLocationIndex);
-        } else {
-            getUserLocation();
-        }
-    }
-
-    function getUserLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    const newLocation = { name: CURRENT_LOCATION_NAME, latitude, longitude, isCurrent: true };
-                    addLocation(newLocation, true);
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                    if (locations.length === 0) {
-                        addLocation({ name: 'London', latitude: 51.5074, longitude: -0.1278 });
-                    }
-                }
-            );
-        } else {
-            console.error("Geolocation is not supported.");
-             if (locations.length === 0) {
-                addLocation({ name: 'New York', latitude: 40.7128, longitude: -74.0060 });
-            }
-        }
-    }
-
-    function addLocation(location, addToStart = false) {
-        const existingIndex = locations.findIndex(l => l.name.toLowerCase() === location.name.toLowerCase());
-        if (existingIndex !== -1) {
-            scrollToLocation(existingIndex);
-            return;
-        }
-        
-        if (addToStart) {
-            locations.unshift(location);
-        } else {
-            locations.push(location);
-        }
-        
-        saveLocations();
-        renderAllLocations();
-        setTimeout(() => {
-            const newIndex = addToStart ? 0 : locations.length - 1;
-            scrollToLocation(newIndex);
-        }, 100);
-    }
-
-    function deleteLocation(indexToDelete) {
-        locations.splice(indexToDelete, 1);
-        saveLocations();
-        renderAllLocations();
-        if (locations.length === 0) {
-            toggleSearchOverlay(); // Keep search open if no locations left
-        }
-    }
-    
-    function saveLocations() {
-        localStorage.setItem('weatherLocationsV2', JSON.stringify(locations));
-    }
-    
-    function scrollToLocation(index) {
-        locationScroller.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
-    }
-
-    // --- Rendering ---
-    function renderAllLocations() {
-        charts.forEach(chart => chart.destroy());
-        charts = [];
-        locationScroller.innerHTML = '';
-        locations.forEach((loc, index) => {
-            const page = createLocationPage(loc, index);
-            locationScroller.appendChild(page);
-            fetchWeather(loc, index);
-        });
-        updateDots();
-        if (locations.length > 0) {
-            updateBackground();
-        } else {
-            // Handle empty state
-            appContainer.style.background = backgroundGradients['clear-day'];
-        }
-    }
-
-    function createLocationPage(location, index) {
-        const pageClone = locationPageTemplate.content.cloneNode(true);
-        const pageElement = pageClone.querySelector('.snap-child');
-        pageElement.dataset.index = index;
-        pageElement.querySelector('.location-name').textContent = location.name;
-        return pageElement;
-    }
-    
-    function updateDots() {
-        locationDots.innerHTML = '';
-        locations.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-white scale-125' : 'bg-white/50'}`;
-            dot.addEventListener('click', () => scrollToLocation(index));
-            locationDots.appendChild(dot);
-        });
-    }
-
-    function updateCurrentSlide() {
-        const scrollLeft = locationScroller.scrollLeft;
-        const width = window.innerWidth;
-        const newSlide = Math.round(scrollLeft / width);
-        if (newSlide !== currentSlide && newSlide >= 0 && newSlide < locations.length) {
-            currentSlide = newSlide;
-            updateDots();
-            updateBackground();
-        }
-    }
-
-    // --- Weather Data Fetching & Population ---
-    async function fetchWeather(location, index) {
-        const { latitude, longitude } = location;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,surface_pressure,visibility&hourly=temperature_2m,weather_code,precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_probability_max&timezone=auto`;
-
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            populateWeatherData(data, index);
-        } catch (error) {
-            console.error('Error fetching weather data:', error);
-        }
-    }
-
-    function populateWeatherData(data, index) {
-        const page = locationScroller.querySelector(`.snap-child[data-index='${index}']`);
-        if (!page) return;
-
-        const { current, hourly, daily } = data;
-        const weatherInfo = weatherCodeMap[current.weather_code] || weatherCodeMap[0];
-        
-        page.dataset.weatherCode = current.weather_code;
-        page.dataset.isDay = current.is_day;
-
-        // Main info
-        page.querySelector('.weather-description').textContent = weatherInfo.description;
-        page.querySelector('.temperature').textContent = Math.round(current.temperature_2m);
-        page.querySelector('.temp-max').textContent = Math.round(daily.temperature_2m_max[0]);
-        page.querySelector('.temp-min').textContent = Math.round(daily.temperature_2m_min[0]);
-        
-        // Details grid
-        const sunrise = new Date(daily.sunrise[0]);
-        const sunset = new Date(daily.sunset[0]);
-        page.querySelector('.sunrise-time').textContent = sunrise.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        page.querySelector('.sunset-time').textContent = sunset.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        page.querySelector('.humidity').textContent = `${current.relative_humidity_2m}%`;
-        page.querySelector('.wind-speed').textContent = `${Math.round(current.wind_speed_10m)} km/h`;
-        page.querySelector('.feels-like').textContent = `${Math.round(current.apparent_temperature)}°`;
-        page.querySelector('.pressure').textContent = `${Math.round(current.surface_pressure)} hPa`;
-        page.querySelector('.visibility').textContent = `${(current.visibility / 1000).toFixed(1)} km`;
-        page.querySelector('.uv-index').textContent = Math.round(daily.uv_index_max[0]);
-        
-        // Dynamic icon
-        createDynamicWeatherIcon(page.querySelector('.weather-icon-container'), weatherInfo.icon, current.is_day);
-
-        // Hourly forecast
-        populateHourlyForecast(page.querySelector('.hourly-forecast-container'), hourly);
-        
-        // Daily forecast
-        populateDailyForecast(page.querySelector('.daily-forecast-container'), daily);
-
-        // Chart
-        const canvas = page.querySelector('.hourly-chart');
-        createHourlyChart(canvas, hourly);
-
-        if (index === currentSlide) {
-            updateBackground();
-        }
-    }
-
-    function populateHourlyForecast(container, hourly) {
-        container.innerHTML = '';
-        const now = new Date();
-        const currentHour = now.getHours();
-        let hourlyCount = 0;
-        for (let i = 0; i < hourly.time.length && hourlyCount < 24; i++) {
-            const hourTime = new Date(hourly.time[i]);
-            if (hourTime >= now) {
-                const hourEl = document.createElement('div');
-                hourEl.className = 'flex flex-col items-center space-y-1 text-center flex-shrink-0 w-16';
-                const displayHour = hourTime.getHours();
-                hourEl.innerHTML = `
-                    <p class="text-sm opacity-80">${displayHour === currentHour ? 'Now' : (displayHour % 12 || 12) + (displayHour < 12 ? 'am' : 'pm')}</p>
-                    <i class="fas ${getIconForWeatherCode(hourly.weather_code[i])} text-xl my-1"></i>
-                    <p class="font-semibold">${Math.round(hourly.temperature_2m[i])}°</p>
-                    ${hourly.precipitation_probability[i] > 10 ? `<p class="text-xs text-blue-300">${hourly.precipitation_probability[i]}%</p>` : ''}
-                `;
-                container.appendChild(hourEl);
-                hourlyCount++;
-            }
-        }
-    }
-
-    function populateDailyForecast(container, daily) {
-        container.innerHTML = '';
-        daily.time.forEach((day, i) => {
-            if (i > 6) return;
-            const dayDate = new Date(day);
-            const dayName = i === 0 ? 'Today' : dayDate.toLocaleDateString('en-US', { weekday: 'long' });
-            const dayEl = document.createElement('div');
-            dayEl.className = 'flex items-center justify-between text-lg';
-            dayEl.innerHTML = `
-                <p class="w-1/3 text-left font-medium">${dayName}</p>
-                <div class="flex items-center gap-2">
-                    <i class="fas ${getIconForWeatherCode(daily.weather_code[i])} text-xl"></i>
-                    ${daily.precipitation_probability_max[i] > 15 ? `<span class="text-xs text-blue-300">${daily.precipitation_probability_max[i]}%</span>` : ''}
-                </div>
-                <div class="w-1/3 text-right">
-                    <span class="font-medium">${Math.round(daily.temperature_2m_max[i])}°</span>
-                    <span class="opacity-60 ml-2">${Math.round(daily.temperature_2m_min[i])}°</span>
-                </div>
-            `;
-            container.appendChild(dayEl);
-        });
-    }
-
-    // --- Dynamic UI Updates ---
-    function updateBackground() {
-        const currentPage = locationScroller.querySelector(`.snap-child[data-index='${currentSlide}']`);
-        if (!currentPage) return;
-
-        const weatherCode = currentPage.dataset.weatherCode;
-        const isDay = currentPage.dataset.isDay === '1';
-        const weatherInfo = weatherCodeMap[weatherCode] || weatherCodeMap[0];
-        
-        let backgroundType = weatherInfo.background;
-        if (backgroundType.includes('-day')) {
-            backgroundType = isDay ? backgroundType : backgroundType.replace('-day', '-night');
-        }
-
-        appContainer.style.background = backgroundGradients[backgroundType] || backgroundGradients['clear-day'];
-    }
-
-    function createDynamicWeatherIcon(container, type, isDay) {
-        container.innerHTML = '';
-        switch(type) {
-            case 'sunny':
-                container.innerHTML = isDay ? '<div class="sun"></div>' : '<div class="moon"></div>';
-                break;
-            case 'partly-cloudy':
-                container.innerHTML = `
-                    ${isDay ? '<div class="sun" style="width:80px; height:80px; top:40%; left:40%;"></div>' : '<div class="moon" style="width:80px; height:80px; top:40%; left:40%;"></div>'}
-                    <div class="cloud front"></div>
-                `;
-                break;
-            case 'cloudy':
-                container.innerHTML = `
-                    <div class="cloud front"></div>
-                    <div class="cloud back"></div>
-                `;
-                break;
-            case 'rain':
-                container.innerHTML = `
-                    <div class="cloud front" style="top:60px;"></div>
-                    <div class="cloud back" style="top:40px;"></div>
-                    <div class="rain"></div>
-                `;
-                for (let i = 0; i < 30; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'drop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDelay = `${Math.random() * 2}s`;
-                    drop.style.animationDuration = `${0.5 + Math.random() * 0.5}s`;
-                    container.querySelector('.rain').appendChild(drop);
-                }
-                break;
-            case 'snow':
-                container.innerHTML = `
-                    <div class="cloud front" style="top:60px;"></div>
-                    <div class="cloud back" style="top:40px;"></div>
-                    <div class="snow"></div>
-                `;
-                for (let i = 0; i < 50; i++) {
-                    const flake = document.createElement('div');
-                    flake.className = 'flake';
-                    flake.style.left = `${Math.random() * 100}%`;
-                    flake.style.setProperty('--x-end', `${(Math.random() * 200) - 100}px`);
-                    flake.style.animationDelay = `${Math.random() * 10}s`;
-                    flake.style.animationDuration = `${5 + Math.random() * 5}s`;
-                    container.querySelector('.snow').appendChild(flake);
-                }
-                break;
-            case 'thunderstorm':
-                container.innerHTML = `
-                    <div class="cloud front" style="background:#555; top:60px;"></div>
-                    <div class="cloud back" style="background:#333; top:40px;"></div>
-                    <div class="rain"></div>
-                    <div class="lightning"></div>
-                `;
-                 for (let i = 0; i < 40; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'drop';
-                    drop.style.left = `${Math.random() * 100}%`;
-                    drop.style.animationDelay = `${Math.random() * 2}s`;
-                    container.querySelector('.rain').appendChild(drop);
-                }
-                break;
-            case 'fog':
-                 container.innerHTML = `
-                    <div class="cloud front" style="opacity:0.4; width:180px; animation-duration: 40s;"></div>
-                    <div class="cloud back" style="opacity:0.3; width:200px; animation-duration: 50s;"></div>
-                `;
-                break;
-        }
-    }
-
-    function getIconForWeatherCode(code) {
-        const mapping = {
-            0: 'fa-sun', 1: 'fa-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud',
-            45: 'fa-smog', 48: 'fa-smog',
-            51: 'fa-cloud-rain', 53: 'fa-cloud-rain', 55: 'fa-cloud-showers-heavy',
-            61: 'fa-cloud-rain', 63: 'fa-cloud-rain', 65: 'fa-cloud-showers-heavy',
-            71: 'fa-snowflake', 73: 'fa-snowflake', 75: 'fa-snowflake',
-            80: 'fa-cloud-sun-rain', 81: 'fa-cloud-sun-rain', 82: 'fa-cloud-showers-heavy',
-            85: 'fa-snowflake', 86: 'fa-snowflake',
-            95: 'fa-bolt', 96: 'fa-bolt', 99: 'fa-bolt'
-        };
-        return mapping[code] || 'fa-question-circle';
-    }
-
-    // --- Search Functionality ---
-    function toggleSearchOverlay() {
-        if (searchOverlay.classList.contains('invisible')) {
-            searchOverlay.classList.remove('invisible', 'opacity-0');
-            searchInput.focus();
-            handleSearchInput(); // To show saved locations immediately
-        } else {
-            searchOverlay.classList.add('invisible', 'opacity-0');
-            searchInput.value = '';
-            searchResultsContainer.innerHTML = '';
-        }
-    }
-
-    function handleSearchInput() {
-        clearTimeout(searchTimeout);
-        const query = searchInput.value.trim();
-        if (query.length === 0) {
-            displaySavedLocations();
-            return;
-        }
-        if (query.length < 3) {
-            searchResultsContainer.innerHTML = '';
-            return;
-        }
-        searchTimeout = setTimeout(() => {
-            performSearch(query);
-        }, 300);
-    }
-
-    function displaySavedLocations() {
-        searchResultsContainer.innerHTML = '';
-        if (locations.length > 0) {
-            const list = document.createElement('div');
-            list.className = 'space-y-3';
-            locations.forEach((loc, index) => {
-                const locEl = document.createElement('div');
-                locEl.className = 'glass-card rounded-2xl p-4 flex items-center justify-between cursor-pointer';
-                locEl.innerHTML = `
-                    <div>
-                        <p class="font-semibold text-lg">${loc.name}</p>
-                        <p class="text-sm opacity-70">${loc.isCurrent ? 'Your current location' : 'Saved location'}</p>
-                    </div>
-                    <button data-index="${index}" class="delete-btn w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full hover:bg-red-500/50 transition-colors">
-                        <i class="fas fa-trash-alt pointer-events-none"></i>
+                <div class="hidden md:flex space-x-6">
+                    <button onclick="showPage('home')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Home page">
+                        <i class="fas fa-home mr-2"></i>Home
                     </button>
-                `;
-                locEl.addEventListener('click', (e) => {
-                    if (!e.target.closest('.delete-btn')) {
-                        scrollToLocation(index);
-                        toggleSearchOverlay();
-                    }
-                });
-                list.appendChild(locEl);
-            });
-            searchResultsContainer.appendChild(list);
+                    <button onclick="showPage('library')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Library page">
+                        <i class="fas fa-book mr-2"></i>Library
+                    </button>
+                    <button onclick="showPage('profile')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Profile page">
+                        <i class="fas fa-user mr-2"></i>Profile
+                    </button>
+                    <button onclick="showNotificationsPage()" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="View notifications">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="unread-notifications-badge" class="notification-badge hidden"></span>
+                    </button>
+                </div>
+                <button id="mobile-menu-toggle" class="md:hidden text-white text-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="Open mobile menu">
+                    <i class="fas fa-bars"></i>
+                    <span id="unread-notifications-badge-mobile" class="notification-badge hidden"></span>
+                </button>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <button onclick="showPage('home'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Home page">
+                    <i class="fas fa-home mr-2"></i>Home
+                </button>
+                <button onclick="showPage('library'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Library page">
+                    <i class="fas fa-book mr-2"></i>Library
+                </button>
+                <button onclick="showPage('profile'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Profile page">
+                    <i class="fas fa-user mr-2"></i>Profile
+                </button>
+                <button onclick="showNotificationsPage(); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="View notifications">
+                    <i class="fas fa-bell mr-2"></i>Notifications
+                    <span id="unread-notifications-badge-mobile-menu" class="notification-badge hidden"></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="home" class="page active min-h-screen">
+        <section class="h-screen flex items-center justify-center relative section-hidden" id="hero-section">
+            <div class="absolute inset-0 liquid-bg opacity-30"></div>
+            <div class="particle-bg"></div>
+            <div class="text-center z-10 px-6 max-w-4xl mx-auto">
+                <div class="floating-animation">
+                    <h1 class="text-6xl md:text-8xl font-bold gradient-text mb-6 leading-tight">
+                        Learn Beyond Limits
+                    </h1>
+                </div>
+                <p class="text-xl md:text-2xl mb-8 text-gray-300">
+                    Discover the future of education with our interactive learning platform designed for excellence
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button onclick="showPage('library')" class="glass-effect px-8 py-4 rounded-full pulse-glow hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Start Learning now">
+                        <i class="fas fa-rocket mr-2"></i>Start Learning
+                    </button>
+                    <button onclick="showPage('watch-demo')" class="glass-effect px-8 py-4 rounded-full hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Watch a demo video">
+                        <i class="fas fa-play mr-2"></i>Watch Demo
+                    </button>
+                </div>
+            </div>
             
-            // Add event listeners to delete buttons
-            searchResultsContainer.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const indexToDelete = parseInt(e.currentTarget.dataset.index, 10);
-                    deleteLocation(indexToDelete);
-                    // Re-render the saved locations list
-                    displaySavedLocations();
-                });
-            });
-        } else {
-            searchResultsContainer.innerHTML = '<p class="text-center text-gray-300 p-4">Add a location to see it here.</p>';
-        }
-    }
+            <div class="absolute top-20 left-10 floating-animation hidden md:block" style="animation-delay: -2s;">
+                <i class="fas fa-atom text-4xl text-purple-400 opacity-60"></i>
+            </div>
+            <div class="absolute top-40 right-20 floating-animation hidden md:block" style="animation-delay: -4s;">
+                <i class="fas fa-dna text-3xl text-pink-400 opacity-60"></i>
+            </div>
+            <div class="absolute bottom-40 left-20 floating-animation hidden md:block" style="animation-delay: -1s;">
+                <i class="fas fa-calculator text-3xl text-blue-400 opacity-60"></i>
+            </div>
+        </section>
 
-    async function performSearch(query) {
-        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            displaySearchResults(data.results || []);
-        } catch (error) {
-            console.error('Error searching for city:', error);
+        <section class="min-h-screen flex items-center px-6 py-16 section-hidden" id="features-section">
+            <div class="container mx-auto">
+                <h2 class="text-5xl font-bold text-center gradient-text mb-16">
+                    Why Choose Our Platform?
+                </h2>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="glass-effect p-8 card-hover text-center">
+                        <div class="text-5xl mb-4 gradient-text">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">AI-Powered Learning</h3>
+                        <p class="text-gray-300">Personalized learning paths adapted to your pace and style</p>
+                    </div>
+                    <div class="glass-effect p-8 card-hover text-center">
+                        <div class="text-5xl mb-4 gradient-text">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Interactive Community</h3>
+                        <p class="text-gray-300">Connect with peers and learn together in collaborative environment</p>
+                    </div>
+                    <div class="glass-effect p-8 card-hover text-center">
+                        <div class="text-5xl mb-4 gradient-text">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Achievement System</h3>
+                        <p class="text-gray-300">Track progress with gamified learning and earn certificates</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="min-h-screen flex items-center px-6 py-16 liquid-bg section-hidden" id="stats-section">
+            <div class="container mx-auto text-center">
+                <h2 class="text-5xl font-bold gradient-text mb-16">Our Impact</h2>
+                <div class="grid md:grid-cols-4 gap-8">
+                    <div class="glass-effect p-8 card-hover">
+                        <div class="text-4xl font-bold gradient-text mb-2">
+                            <span id="total-videos">0</span>+
+                        </div>
+                        <p class="text-gray-300">Video Lessons</p>
+                    </div>
+                    <div class="glass-effect p-8 card-hover">
+                        <div class="text-4xl font-bold gradient-text mb-2">
+                            <span id="total-notes">0</span>+
+                        </div>
+                        <p class="text-gray-300">Notes</p>
+                    </div>
+                    <div class="glass-effect p-8 card-hover">
+                        <div class="text-4xl font-bold gradient-text mb-2">
+                            <span id="total-practice-sets">0</span>+
+                        </div>
+                        <p class="text-gray-300">Practice Sets</p>
+                    </div>
+                    <div class="glass-effect p-8 card-hover">
+                        <div class="text-4xl font-bold gradient-text mb-2">
+                            <span id="total-q-and-a">0</span>+
+                        </div>
+                        <p class="text-gray-300">Q&A</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="min-h-screen flex items-center px-6 py-16 section-hidden" id="cta-section">
+            <div class="container mx-auto text-center">
+                <h2 class="text-5xl font-bold gradient-text mb-8">Ready to Transform Your Learning?</h2>
+                <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
+                    Join thousands of students already advancing their knowledge with our cutting-edge platform
+                </p>
+                <button onclick="showPage('library')" class="glass-effect px-12 py-6 rounded-full text-xl pulse-glow hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Enter the Library to start learning">
+                    <i class="fas fa-arrow-right mr-2"></i>Enter Library
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <div id="library" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-book-open-reader mr-4"></i>Subject Library
+                </h1>
+                <p class="text-xl text-gray-300">Choose your subject to begin your learning journey</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div onclick="showSubject('science')" tabindex="0" role="button" aria-label="Explore Science subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Science</h3>
+                        <p class="text-gray-300 mb-4">Explore physics, chemistry, and biology</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+
+                <div onclick="showSubject('mathematics')" tabindex="0" role="button" aria-label="Explore Mathematics subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Mathematics</h3>
+                        <p class="text-gray-300 mb-4">Algebra, geometry, and calculus</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+
+                <div onclick="showSubject('social-science')" tabindex="0" role="button" aria-label="Explore Social Science subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Social Science</h3>
+                        <p class="text-gray-300 mb-4">History, geography, and civics</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+
+                <div onclick="showSubject('english')" tabindex="0" role="button" aria-label="Explore English subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-language"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">English</h3>
+                        <p class="text-gray-300 mb-4">Master grammar, literature, and writing</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+
+                <div onclick="showSubject('hindi')" tabindex="0" role="button" aria-label="Explore Hindi subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-pen-fancy"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">हिन्दी</h3>
+                        <p class="text-gray-300 mb-4">व्याकरण, साहित्य और लेखन सीखें</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+
+                <div onclick="showSubject('financial-market')" tabindex="0" role="button" aria-label="Explore Financial Market subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4 gradient-text">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4">Financial Market</h3>
+                        <p class="text-gray-300 mb-4">Introduction to Financial Markets (CBSE Class 10th)</p>
+                        <div class="text-sm text-purple-300">Chapters Available</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="subject-index" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex items-center mb-8">
+                <button onclick="showPage('library')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Subject Library">
+                    ◀
+                </button>
+                <h1 id="subject-title" class="text-4xl font-bold gradient-text">Subject Chapters</h1>
+            </div>
+            
+            <div id="chapters-container" class="chapter-grid"></div>
+        </div>
+    </div>
+
+    <div id="chapter-detail" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex items-center mb-8">
+                <button id="back-to-subject" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Chapter list">
+                    ◀
+                </button>
+                <h1 id="chapter-title" class="text-4xl font-bold gradient-text">Chapter Resources</h1>
+            </div>
+            
+            <div id="chapter-resources-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+        </div>
+    </div>
+
+    <div id="profile" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="text-center mb-16">
+                <h1 class="text-5xl font-bold gradient-text mb-4">
+                    <i class="fas fa-user-circle mr-4"></i>Your Profile
+                </h1>
+                <p class="text-xl text-gray-300">Manage your account and track your progress</p>
+                <p class="text-sm text-gray-400 mt-2">Your User ID: <span id="display-user-id" class="font-mono text-purple-300 break-all">Loading...</span></p>
+            </div>
+
+            <div class="glass-effect p-8 max-w-3xl mx-auto mb-12">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
+                    <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500 flex-shrink-0 animate-pulse-glow-sm">
+                        <img id="profile-pic" src="https://placehold.co/128x128/8b5cf6/ffffff?text=User" alt="User Profile Picture" class="w-full h-full object-cover">
+                        <input type="file" id="profile-pic-upload" accept="image/png, image/jpeg, image/gif" class="hidden">
+                        <button onclick="document.getElementById('profile-pic-upload').click()" class="absolute bottom-0 right-0 bg-purple-600 rounded-full p-2 text-white hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Change profile picture">
+                            <i class="fas fa-camera text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="text-center md:text-left flex-grow">
+                        <h2 class="text-3xl font-bold gradient-text mb-2" id="profile-username">Loading...</h2>
+                        <p class="text-gray-300 mb-4" id="profile-email">Loading...</p>
+                        <p class="text-gray-300 text-sm mb-2">My Profile Picture Uploads: <span id="profile-uploads-count" class="font-bold text-purple-300">0</span></p>
+                        <button onclick="saveProfile()" class="glass-effect px-6 py-3 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Save profile information">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loading-spinner" id="profile-loading-spinner"></div>
+
+            <div id="profile-content" class="hidden">
+                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <div class="glass-effect p-8 md:col-span-2">
+                        <h3 class="text-2xl font-bold gradient-text mb-6 flex items-center">
+                            <i class="fas fa-history mr-3"></i>Recent Activity
+                        </h3>
+                        <ul class="space-y-4 text-gray-300" id="recent-activity-list">
+                        </ul>
+                    </div>
+
+                    <div class="glass-effect p-8 md:col-span-2">
+                        <h3 class="text-2xl font-bold gradient-text mb-6 flex items-center">
+                            <i class="fas fa-cog mr-3"></i>Account Settings
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="name-input" class="block text-gray-300 text-sm font-bold mb-2">Name</label>
+                                <input type="text" id="name-input" value="" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white input-glow" aria-label="Edit your name">
+                            </div>
+                            <div>
+                                <label for="email-input" class="block text-gray-300 text-sm font-bold mb-2">Email</label>
+                                <input type="email" id="email-input" value="" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white input-glow" aria-label="Edit your email address">
+                            </div>
+                            <div class="md:col-span-2 flex justify-end">
+                                <button onclick="saveProfile()" class="glass-effect px-6 py-3 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Save profile settings">
+                                    <i class="fas fa-save mr-2"></i>Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notifications-page" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex items-center justify-between mb-8">
+                <div class="flex items-center">
+                    <button onclick="showPage('home')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Home page">
+                        ◀
+                    </button>
+                    <h1 class="text-4xl font-bold gradient-text">
+                        <i class="fas fa-bell mr-4"></i>Notifications
+                    </h1>
+                </div>
+            </div>
+            
+            <div id="notifications-list" class="space-y-4">
+            </div>
+        </div>
+    </div>
+
+    <div id="watch-demo" class="page min-h-screen pt-20">
+        <div class="container mx-auto px-6 py-12">
+            <div class="flex items-center mb-8">
+                <button onclick="showPage('home')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Home page">
+                    ◀
+                </button>
+                <h1 class="text-4xl font-bold gradient-text">
+                    <i class="fas fa-play-circle mr-4"></i>Watch Demo
+                </h1>
+            </div>
+            
+            <div class="glass-effect p-8 rounded-xl max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold gradient-text mb-6">Welcome to the Learning Labs Demo!</h2>
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    This demo provides a quick overview of how Learning Labs can transform your educational journey. 
+                    We focus on personalized, interactive, and engaging learning experiences.
+                </p>
+
+                <h3 class="text-2xl font-bold gradient-text mb-4">Key Features You'll Experience:</h3>
+                <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6">
+                    <li><strong class="text-purple-300">Comprehensive Subject Library:</strong> Browse through a wide range of subjects, each broken down into easy-to-understand chapters.</li>
+                    <li><strong class="text-purple-300">Diverse Learning Resources:</strong> Each chapter offers multiple resource types, including detailed notes, interactive Q&A sections, engaging video lectures, and challenging practice tests.</li>
+                    <li><strong class="text-purple-300">Personalized Progress Tracking:</strong> Your profile page keeps a record of your recent activities and allows you to manage your personal information.</li>
+                    <li><strong class="text-purple-300">Real-time Notifications:</strong> Stay updated with new content, important announcements, and personalized tips through our integrated notification system.</li>
+                    <li><strong class="text-purple-300">Dynamic Impact Statistics:</strong> See the collective growth of our community with real-time updates on total video lessons, notes, practice sets, and Q&A available.</li>
+                </ul>
+
+                <h3 class="text-2xl font-bold gradient-text mb-4">How to Get Started:</h3>
+                <ol class="list-decimal list-inside text-gray-300 space-y-2 mb-6">
+                    <li>Navigate to the <strong class="text-purple-300">"Library"</strong> page to explore available subjects.</li>
+                    <li>Select a subject to view its chapters.</li>
+                    <li>Click on any chapter to access its learning resources.</li>
+                    <li>Visit your <strong class="text-purple-300">"Profile"</strong> to update your details and track your activity.</li>
+                    <li>Check the <strong class="text-purple-300">"Notifications"</strong> icon for important updates.</li>
+                </ol>
+
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    Our platform is designed to be intuitive and user-friendly, ensuring a seamless learning experience across all devices. 
+                    We continuously add new content and features to help you achieve your academic goals.
+                </p>
+
+                <p class="text-gray-300 text-center font-semibold">
+                    Ready to dive in? Head over to the Library and start your learning journey!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="glass-effect py-8 mt-16">
+        <div class="container mx-auto text-center text-gray-400">
+            <p>&copy; 2025 Learning Labs. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentUserId = null;
+        let currentUserData = null;
+        let globalStats = {
+            totalVideos: 0,
+            totalNotes: 0,
+            totalPracticeSets: 0,
+            totalQandA: 0
+        };
+        let floatingNotificationsShown = new Set();
+
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+
+        function showMessageBox(message) {
+            messageText.textContent = message;
+            messageBox.classList.add('show');
         }
-    }
-    
-    function displaySearchResults(results) {
-        searchResultsContainer.innerHTML = '';
-        if (results.length === 0) {
-            searchResultsContainer.innerHTML = '<p class="text-center text-gray-300 p-4">No results found.</p>';
-            return;
+
+        function hideMessageBox() {
+            messageBox.classList.remove('show');
         }
-        results.forEach(result => {
-            const resultEl = document.createElement('div');
-            resultEl.className = 'p-4 border-b border-white/20 cursor-pointer hover:bg-white/10 rounded-lg';
-            resultEl.innerHTML = `
-                <p class="font-semibold">${result.name}</p>
-                <p class="text-sm text-gray-300">${result.admin1 ? `${result.admin1}, ` : ''}${result.country}</p>
-            `;
-            resultEl.addEventListener('click', () => {
-                const newLocation = {
-                    name: result.name,
-                    latitude: result.latitude,
-                    longitude: result.longitude
+
+        const notificationBox = document.getElementById('notification-box');
+        const notificationText = document.getElementById('notification-text');
+        let notificationTimeout;
+
+        function showNotification(message, type = 'info', duration = 3000) {
+            clearTimeout(notificationTimeout);
+
+            notificationBox.className = 'notification-box'; 
+            notificationBox.classList.add(type);
+            notificationText.textContent = message;
+            notificationBox.classList.add('show');
+
+            notificationTimeout = setTimeout(() => {
+                notificationBox.classList.remove('show');
+            }, duration);
+        }
+        window.showNotification = showNotification;
+
+        function generateNotification(message, type = 'info') {
+            if (!currentUserData) {
+                console.warn("User data not loaded, cannot generate notification.");
+                return;
+            }
+            const newNotification = {
+                id: crypto.randomUUID(),
+                message: message,
+                type: type,
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            currentUserData.notifications.unshift(newNotification); 
+            saveUserDataToLocalStorage();
+            updateNotificationCount();
+            showNotification(message, type);
+        }
+        window.generateNotification = generateNotification;
+
+        function loadUserDataFromLocalStorage() {
+            const storedUserData = localStorage.getItem('learningLabsUser');
+            
+            if (storedUserData) {
+                currentUserData = JSON.parse(storedUserData);
+                currentUserId = currentUserData.userId;
+                if (!currentUserData.notifications) currentUserData.notifications = [];
+                if (currentUserData.profilePic === undefined) currentUserData.profilePic = null;
+                if (currentUserData.profileUploadCount === undefined) currentUserData.profileUploadCount = 0;
+
+            } else {
+                currentUserId = crypto.randomUUID();
+                currentUserData = {
+                    userId: currentUserId,
+                    username: `User-${currentUserId.substring(0, 8)}`,
+                    email: `${currentUserId.substring(0, 8)}@example.com`,
+                    profilePic: null, 
+                    profileUploadCount: 0,
+                    recentActivity: [
+                        { icon: 'fas fa-check-circle', color: 'green-400', text: 'Started your learning journey!' },
+                        { icon: 'fas fa-book-open-reader', color: 'blue-400', text: 'Explored the Library.' }
+                    ],
+                    notifications: [
+                        { id: crypto.randomUUID(), message: 'Welcome to Learning Labs! Explore our new features!', type: 'info', timestamp: new Date().toISOString(), read: false },
+                        { id: crypto.randomUUID(), message: 'New CBSE Class 10th subjects are now available!', type: 'success', timestamp: new Date(Date.now() - 86400000).toISOString(), read: false },
+                        { id: crypto.randomUUID(), message: 'Don\'t miss the Introduction to Financial Market course!', type: 'warning', timestamp: new Date(Date.now() - 172800000).toISOString(), read: false }
+                    ]
                 };
-                addLocation(newLocation);
-                toggleSearchOverlay();
-            });
-            searchResultsContainer.appendChild(resultEl);
-        });
-    }
+                saveUserDataToLocalStorage();
+                showNotification("Welcome! Your profile has been created.", "success");
+            }
+            updateProfileUI(currentUserData);
+            updateNotificationCount();
+            calculateGlobalStats(); 
+            updateGlobalStatsUI();
+            document.getElementById('profile-loading-spinner').classList.add('hidden');
+            document.getElementById('profile-content').classList.remove('hidden');
+        }
 
-    // --- Charting ---
-    function createHourlyChart(canvas, hourlyData) {
-        const now = new Date();
-        const labels = [];
-        const tempData = [];
-        let count = 0;
-        for (let i = 0; i < hourlyData.time.length && count < 24; i++) {
-            const hourTime = new Date(hourlyData.time[i]);
-            if (hourTime >= now) {
-                labels.push(hourTime);
-                tempData.push(hourlyData.temperature_2m[i]);
-                count++;
+        function saveUserDataToLocalStorage() {
+            localStorage.setItem('learningLabsUser', JSON.stringify(currentUserData));
+        }
+
+        function updateProfileUI(data) {
+            document.getElementById('display-user-id').textContent = data.userId || 'N/A';
+            document.getElementById('profile-username').textContent = data.username || 'N/A';
+            document.getElementById('profile-email').textContent = data.email || 'N/A';
+            document.getElementById('name-input').value = data.username || '';
+            document.getElementById('email-input').value = data.email || '';
+            document.getElementById('profile-uploads-count').textContent = data.profileUploadCount || 0;
+
+            const profilePicElement = document.getElementById('profile-pic');
+            if (data.profilePic) {
+                profilePicElement.src = data.profilePic;
+            } else {
+                profilePicElement.src = "https://placehold.co/128x128/8b5cf6/ffffff?text=User";
+            }
+            profilePicElement.onerror = () => {
+                profilePicElement.src = "https://placehold.co/128x128/8b5cf6/ffffff?text=User";
+            };
+
+            const activityList = document.getElementById('recent-activity-list');
+            activityList.innerHTML = '';
+            if (data.recentActivity && data.recentActivity.length > 0) {
+                data.recentActivity.forEach(activity => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center';
+                    li.innerHTML = `<i class="${activity.icon || 'fas fa-info-circle'} text-${activity.color || 'gray-400'} mr-3"></i>${activity.text}`;
+                    activityList.appendChild(li);
+                });
+            } else {
+                activityList.innerHTML = '<li class="text-gray-400">No recent activity. Start learning!</li>';
             }
         }
 
-        const chart = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Temperature',
-                    data: tempData,
-                    borderColor: 'rgba(255, 255, 255, 0.8)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 5,
-                    pointBackgroundColor: 'white',
-                    tension: 0.4,
-                    fill: true,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        enabled: true,
-                        mode: 'index',
-                        intersect: false,
-                        backgroundColor: 'rgba(0,0,0,0.7)',
-                        titleFont: { size: 14 },
-                        bodyFont: { size: 12 },
-                        callbacks: {
-                            title: (context) => context[0].label.split(',')[1].trim(),
-                            label: (context) => `Temp: ${context.raw.toFixed(1)}°C`
+        function calculateGlobalStats() {
+            let totalVideos = 0;
+            let totalNotes = 0;
+            let totalPracticeTests = 0;
+            let totalQandA = 0;
+
+            for (const subjectKey in subjects) {
+                const subject = subjects[subjectKey];
+                subject.chapters.forEach(chapter => {
+                    chapter.resources.forEach(resource => {
+                        if (resource.type === 'Video Lecture') {
+                            totalVideos++;
+                        } else if (resource.type === 'Notes') {
+                            totalNotes++;
+                        } else if (resource.type === 'Practice Test') {
+                            totalPracticeTests++;
+                        } else if (resource.type === 'Q&A') {
+                            totalQandA++;
                         }
-                    }
-                },
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: { unit: 'hour', displayFormats: { hour: 'ha' }},
-                        grid: { display: false },
-                        ticks: { display: false }
-                    },
-                    y: {
-                        grid: { display: false },
-                        ticks: { display: false },
-                        beginAtZero: false
-                    }
+                    });
+                });
+            }
+
+            globalStats.totalVideos = totalVideos;
+            globalStats.totalNotes = totalNotes;
+            globalStats.totalPracticeSets = totalPracticeTests;
+            globalStats.totalQandA = totalQandA;
+
+            localStorage.setItem('learningLabsStats', JSON.stringify(globalStats));
+        }
+
+        function updateGlobalStatsUI() {
+            document.getElementById('total-videos').textContent = globalStats.totalVideos.toLocaleString();
+            document.getElementById('total-notes').textContent = globalStats.totalNotes.toLocaleString();
+            document.getElementById('total-practice-sets').textContent = globalStats.totalPracticeSets.toLocaleString();
+            document.getElementById('total-q-and-a').textContent = globalStats.totalQandA.toLocaleString();
+        }
+
+        function saveProfile() {
+            if (!currentUserData) {
+                showMessageBox("User data not loaded. Cannot save profile.");
+                return;
+            }
+
+            const newUsername = document.getElementById('name-input').value;
+            const newEmail = document.getElementById('email-input').value;
+
+            currentUserData.username = newUsername;
+            currentUserData.email = newEmail;
+            
+            currentUserData.recentActivity.unshift({
+                icon: 'fas fa-save',
+                color: 'purple-400',
+                text: `Profile updated on ${new Date().toLocaleDateString()}.`
+            });
+            if (currentUserData.recentActivity.length > 5) {
+                currentUserData.recentActivity.pop();
+            }
+
+            saveUserDataToLocalStorage();
+            updateProfileUI(currentUserData);
+            showMessageBox("Profile updated successfully!");
+            generateNotification("Your profile changes have been saved!", "success");
+        }
+        window.saveProfile = saveProfile;
+
+        document.getElementById('profile-pic-upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    showMessageBox("Please upload an image file (jpg, jpeg, png, gif).", "error");
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    showMessageBox("Image size exceeds 2MB. Please upload a smaller image.", "warning");
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUserData.profilePic = e.target.result;
+                    currentUserData.profileUploadCount = (currentUserData.profileUploadCount || 0) + 1;
+                    saveUserDataToLocalStorage();
+                    updateProfileUI(currentUserData);
+                    showMessageBox("Profile picture updated!", "success");
+                    generateNotification("Your profile picture has been updated!", "info");
+                };
+                reader.onerror = function() {
+                    showMessageBox("Failed to read image file.", "error");
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function updateNotificationCount() {
+            if (!currentUserData || !currentUserData.notifications) {
+                document.getElementById('unread-notifications-badge').classList.add('hidden');
+                document.getElementById('unread-notifications-badge-mobile').classList.add('hidden');
+                document.getElementById('unread-notifications-badge-mobile-menu').classList.add('hidden');
+                return;
+            }
+            const unreadCount = currentUserData.notifications.filter(n => !n.read).length;
+            const badgeDesktop = document.getElementById('unread-notifications-badge');
+            const badgeMobile = document.getElementById('unread-notifications-badge-mobile');
+            const badgeMobileMenu = document.getElementById('unread-notifications-badge-mobile-menu');
+
+            if (unreadCount > 0) {
+                badgeDesktop.classList.remove('hidden');
+                badgeMobile.classList.remove('hidden');
+                badgeMobileMenu.classList.remove('hidden');
+            } else {
+                badgeDesktop.classList.add('hidden');
+                badgeMobile.classList.add('hidden');
+                badgeMobileMenu.classList.add('hidden');
+            }
+        }
+
+        function showNotificationsPage() {
+            showPage('notifications-page');
+            renderNotifications();
+            setTimeout(() => {
+                markAllNotificationsAsRead(false);
+                saveUserDataToLocalStorage();
+                updateNotificationCount();
+            }, 500);
+        }
+        window.showNotificationsPage = showNotificationsPage;
+
+        function renderNotifications() {
+            const notificationsList = document.getElementById('notifications-list');
+            notificationsList.innerHTML = '';
+
+            if (!currentUserData || !currentUserData.notifications || currentUserData.notifications.length === 0) {
+                const noNotificationsMessage = document.createElement('div');
+                noNotificationsMessage.className = 'glass-effect p-6 rounded-xl text-gray-400 text-center';
+                noNotificationsMessage.textContent = 'No new notifications.';
+                notificationsList.appendChild(noNotificationsMessage);
+                return;
+            }
+
+            currentUserData.notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = `glass-effect p-4 rounded-xl flex items-start space-x-4 notification-item ${notification.type} ${notification.read ? '' : 'unread'}`;
+                
+                const iconMap = {
+                    'info': 'fas fa-info-circle text-blue-400',
+                    'success': 'fas fa-check-circle text-green-400',
+                    'warning': 'fas fa-exclamation-triangle text-yellow-400',
+                    'error': 'fas fa-times-circle text-red-400'
+                };
+                const iconClass = iconMap[notification.type] || 'fas fa-bell text-gray-400';
+
+                const notificationDate = new Date(notification.timestamp);
+                const timeAgo = formatTimeAgo(notificationDate);
+
+                notificationItem.innerHTML = `
+                    <i class="${iconClass} text-2xl flex-shrink-0 mt-1"></i>
+                    <div class="flex-grow">
+                        <p class="text-gray-200 text-base">${notification.message}</p>
+                        <p class="text-gray-400 text-xs mt-1">${timeAgo}</p>
+                    </div>
+                `;
+                notificationsList.appendChild(notificationItem);
+            });
+        }
+
+        function formatTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " years ago";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " months ago";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " days ago";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " hours ago";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " minutes ago";
+            return Math.floor(seconds) + " seconds ago";
+        }
+
+        function markAllNotificationsAsRead(saveImmediately = true) {
+            if (!currentUserData || !currentUserData.notifications) return;
+
+            let changed = false;
+            currentUserData.notifications.forEach(notification => {
+                if (!notification.read) {
+                    notification.read = true;
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                if (saveImmediately) {
+                    saveUserDataToLocalStorage();
+                    showNotification("All notifications marked as read.", "info");
+                }
+                updateNotificationCount();
+                renderNotifications();
+            }
+        }
+        window.markAllNotificationsAsRead = markAllNotificationsAsRead;
+
+        function displayFloatingNotification(notification) {
+            if (floatingNotificationsShown.has(notification.id)) {
+                return;
+            }
+
+            const container = document.getElementById('floating-notifications-container');
+            container.style.display = 'flex'; 
+
+            const toast = document.createElement('div');
+            toast.className = `floating-notification-toast ${notification.type}`;
+            toast.setAttribute('data-id', notification.id);
+
+            const iconMap = {
+                'info': 'fas fa-info-circle text-blue-400',
+                'success': 'fas fa-check-circle text-green-400',
+                'warning': 'fas fa-exclamation-triangle text-yellow-400',
+                'error': 'fas fa-times-circle text-red-400'
+            };
+            const iconClass = iconMap[notification.type] || 'fas fa-bell text-gray-400';
+
+            toast.innerHTML = `
+                <i class="${iconClass} text-xl flex-shrink-0"></i>
+                <p class="flex-grow text-sm">${notification.message}</p>
+                <button class="close-btn" aria-label="Dismiss notification">✖</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+
+            const dismissTimeout = setTimeout(() => {
+                dismissToast(toast, notification.id);
+            }, 5000);
+
+            toast.addEventListener('click', (event) => {
+                if (event.target.classList.contains('close-btn')) {
+                    clearTimeout(dismissTimeout);
+                    dismissToast(toast, notification.id);
+                } else {
+                    clearTimeout(dismissTimeout);
+                    dismissToast(toast, notification.id);
+                }
+            });
+
+            floatingNotificationsShown.add(notification.id);
+        }
+
+        function dismissToast(toastElement, notificationId) {
+            toastElement.classList.add('hide');
+            toastElement.addEventListener('transitionend', () => {
+                toastElement.remove();
+                const container = document.getElementById('floating-notifications-container');
+                if (container.children.length === 0) {
+                    container.style.display = 'none';
+                }
+            });
+
+            if (currentUserData && currentUserData.notifications) {
+                const notif = currentUserData.notifications.find(n => n.id === notificationId);
+                if (notif && !notif.read) {
+                    notif.read = true;
+                    saveUserDataToLocalStorage();
+                    updateNotificationCount();
                 }
             }
+        }
+
+        const subjects = {
+            science: {
+                title: 'Science',
+                chapters: [
+                    { name: 'Chemical Reactions and Equations', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Acids, Bases and Salts', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Metals and Non-metals', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Carbon and its Compounds', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Life Processes', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Control and Coordination', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: 'sb2-s.html' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: 'SB2.html' }
+                    ]},
+                    { name: 'How do Organisms Reproduce?', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Heredity and Evolution', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Light - Reflection and Refraction', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'The Human Eye and Colourful World', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Electricity', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Magnetic Effects of Electric Current', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Our Environment', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Management of Natural Resources', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]}
+                ]
+            },
+            mathematics: {
+                title: 'Mathematics',
+                chapters: [
+                    { name: 'Real Numbers', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Polynomials', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Pair of Linear Equations in Two Variables', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Quadratic Equations', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Arithmetic Progressions', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Triangles', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Coordinate Geometry', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Introduction to Trigonometry', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Some Applications of Trigonometry', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Circles', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Areas Related to Circles', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Surface Areas and Volumes', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Statistics', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Probability', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]}
+                ]
+            },
+            'social-science': {
+                title: 'Social Science',
+                chapters: [
+                    { name: 'The Rise of Nationalism in Europe', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Nationalism in India', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'The Making of a Global World', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'The Age of Industrialisation', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Print Culture and the Modern World', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Resources and Development', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Forest and Wildlife Resources', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Water Resources', resources: [
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Agriculture', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Minerals and Energy Resources', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Manufacturing Industries', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Lifelines of National Economy', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Power Sharing', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Federalism', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Democracy and Diversity', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Gender, Religion and Caste', resources: [
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Political Parties', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Outcomes of Democracy', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Development', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Sectors of the Indian Economy', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Money and Credit', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Globalization and the Indian Economy', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Consumer Rights', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]}
+                ]
+            },
+            english: {
+                title: 'English',
+                chapters: [
+                    { name: 'A Letter to God', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Dust of Snow', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Fire and Ice', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'A Tiger in the Zoo', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'How to Tell Wild Animals', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'The Ball Poem', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'From the Diary of Anne Frank', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Animals', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'The Trees', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Fog', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'The Tale of Custard the Dragon', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'For Anne Gregory', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Nelson Mandela: Long Walk to Freedom', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'Two Stories about Flying', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'The Black Aeroplane', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Glimpses of India', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Mijbil the Otter', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'Madam Rides the Bus', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'The Sermon at Benares', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'The Proposal', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]}
+                ]
+            },
+            hindi: {
+                title: 'हिन्दी',
+                chapters: [
+                    { name: 'सूरदास के पद', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'राम-लक्ष्मण-परशुराम संवाद', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'सवैये', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'आत्मकथ्य', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'उत्साह', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
+                    ]},
+                    { name: 'अट नहीं रही है', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'यह दंतुरित मुस्कान', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'फसल', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'छाया मत छूना', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]},
+                    { name: 'कन्यादान', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]}
+                ]
+            },
+            'financial-market': {
+                title: 'Introduction to Financial Market (FM)',
+                chapters: [
+                    { name: 'Introduction to Financial Markets', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Primary Market', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Secondary Market', resources: [
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
+                    ]},
+                    { name: 'Financial Institutions', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Mutual Funds', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
+                    ]},
+                    { name: 'Stock Exchanges', resources: [
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
+                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
+                    ]},
+                    { name: 'Role of SEBI', resources: [
+                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
+                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
+                    ]},
+                    { name: 'Investor Protection', resources: [
+                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
+                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
+                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
+                    ]}
+                ]
+            }
+        };
+
+        let currentSubjectKey = '';
+        let currentChapterName = '';
+
+        function showPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                if (page.id === pageId) {
+                    page.classList.add('active');
+                    void page.offsetWidth; 
+                    page.style.opacity = '1';
+                    page.style.transform = 'translateY(0)';
+                } else {
+                    page.style.opacity = '0';
+                    page.style.transform = 'translateY(20px)';
+                    setTimeout(() => page.classList.remove('active'), 600); 
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            if (pageId === 'profile' && currentUserData) {
+                document.getElementById('profile-loading-spinner').classList.add('hidden');
+                document.getElementById('profile-content').classList.remove('hidden');
+            } else if (pageId === 'profile' && !currentUserData) {
+                document.getElementById('profile-loading-spinner').classList.remove('hidden');
+                document.getElementById('profile-content').classList.add('hidden');
+            }
+            updateNotificationCount();
+        }
+
+        function showSubject(subjectKey) {
+            currentSubjectKey = subjectKey;
+            const subject = subjects[subjectKey];
+            
+            document.getElementById('subject-title').textContent = subject.title + ' - Chapters';
+            
+            const chaptersContainer = document.getElementById('chapters-container');
+            chaptersContainer.innerHTML = '';
+            
+            subject.chapters.forEach((chapter, index) => {
+                const chapterDiv = document.createElement('div');
+                chapterDiv.className = 'glass-effect p-6 card-hover cursor-pointer';
+                chapterDiv.setAttribute('tabindex', '0');
+                chapterDiv.setAttribute('role', 'button');
+                chapterDiv.setAttribute('aria-label', `Access resources for chapter ${chapter.name}`);
+                chapterDiv.onclick = () => showChapter(chapter.name);
+                chapterDiv.onkeydown = (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        showChapter(chapter.name);
+                    }
+                };
+                
+                chapterDiv.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4 text-white font-bold text-lg">
+                            ${index + 1}
+                        </div>
+                        <h3 class="text-xl font-bold gradient-text">${chapter.name}</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm">Complete study materials and resources</p>
+                    <div class="flex items-center mt-4 text-purple-300">
+                        <i class="fas fa-play mr-2"></i>
+                        <span class="text-sm">Click to access resources</span>
+                    </div>
+                `;
+                
+                chaptersContainer.appendChild(chapterDiv);
+            });
+            
+            showPage('subject-index');
+        }
+
+        function showChapter(chapterName) {
+            currentChapterName = chapterName;
+            document.getElementById('chapter-title').textContent = chapterName;
+            document.getElementById('back-to-subject').onclick = () => showSubject(currentSubjectKey);
+            document.getElementById('back-to-subject').onkeydown = (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    showSubject(currentSubjectKey);
+                }
+            };
+
+            const chapterResourcesContainer = document.getElementById('chapter-resources-container');
+            chapterResourcesContainer.innerHTML = '';
+
+            const currentSubject = subjects[currentSubjectKey];
+            const chapterData = currentSubject.chapters.find(ch => ch.name === chapterName);
+
+            if (chapterData && chapterData.resources && chapterData.resources.length > 0) {
+                chapterData.resources.forEach(resource => {
+                    const resourceButton = document.createElement('a');
+                    resourceButton.href = resource.url;
+                    resourceButton.target = "_blank";
+                    resourceButton.rel = "noopener noreferrer";
+                    resourceButton.className = `resource-btn p-6 rounded-xl text-left hover:scale-105 transition-all duration-300 block cursor-pointer focus:outline-none focus:ring-2 focus:ring-${resource.color.split('-')[0]}-500`;
+                    resourceButton.setAttribute('aria-label', `Access ${resource.type} for ${chapterName}`);
+
+                    resourceButton.innerHTML = `
+                        <div class="flex items-center mb-3">
+                            <i class="${resource.icon} text-2xl text-${resource.color} mr-3"></i>
+                            <h3 class="text-xl font-bold">${resource.type}</h3>
+                        </div>
+                        <p class="text-gray-300 text-sm">${resource.description || 'No description available.'}</p>
+                    `;
+                    chapterResourcesContainer.appendChild(resourceButton);
+                });
+            } else {
+                chapterResourcesContainer.innerHTML = `
+                    <div class="col-span-full text-center py-10 glass-effect p-8 rounded-xl">
+                        <p class="text-xl text-gray-400">No resources available for this chapter yet. Please check back later!</p>
+                    </div>
+                `;
+            }
+
+            showPage('chapter-detail');
+        }
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('section-hidden');
+                    entry.target.classList.add('section-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        function createParticles() {
+            const particleBg = document.querySelector('.particle-bg');
+            if (!particleBg) return;
+
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 5 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
+                particle.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
+                particleBg.appendChild(particle);
+            }
+        }
+
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('hidden');
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-scrolled');
+            } else {
+                navbar.classList.remove('navbar-scrolled');
+            }
         });
-        charts.push(chart);
-    }
 
-    // --- Start the app ---
-    init();
-});
-</script>
+        window.addEventListener('load', () => {
+            loadUserDataFromLocalStorage();
 
+            if (currentUserData && currentUserData.notifications) {
+                const unreadNotifications = currentUserData.notifications.filter(n => !n.read);
+                let delay = 0;
+                unreadNotifications.forEach(notif => {
+                    setTimeout(() => {
+                        displayFloatingNotification(notif);
+                    }, delay);
+                    delay += 700;
+                });
+            }
+
+            document.querySelectorAll('.section-hidden').forEach(section => {
+                observer.observe(section);
+            });
+
+            createParticles();
+
+            document.querySelectorAll('#home .card-hover').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100 + 500);
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.liquid-bg');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.3}px)`; 
+            }
+        });
+
+        // Area for adding new notifications
+        // You can call generateNotification('Your new message here', 'info');
+        // Example: generateNotification('A new lesson on Quantum Physics is available!', 'info');
+        // Example: generateNotification('Your practice test results are ready!', 'success');
+        // Example: generateNotification('Reminder: Complete your pending assignments.', 'warning');
+        // Example: generateNotification('Error: Failed to sync profile data.', 'error');
+    </script>
 </body>
 </html>
-
-
