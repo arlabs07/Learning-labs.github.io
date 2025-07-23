@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Generator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Highlight.js CSS (Default theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-wcIxkf4k55uNT5sSzdaE9GAeeqiPx4mtVeyjO+R/7pvN2PNisR8yBLTkiwDKBLg" crossorigin="anonymous">
+
+    <style>
+        /* Custom styles for the website generator */
+        body {
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll from sidebar */
+            background-color: #1a202c; /* 60% Black - Base Background */
+            color: #e2e8f0; /* White - Default text color */
+            padding-top: 80px; /* Space for fixed header */
+        }
+        .main-layout-container {
+            display: flex;
+            flex-direction: column; /* Stack sidebar and main content on mobile */
+            flex-grow: 1;
+            /* padding-top removed here, handled by body */
+        }
+
+        .sidebar {
+            width: 280px; /* Fixed width for desktop sidebar */
+            transform: translateX(-100%); /* Hidden by default on mobile */
+            transition: transform 0.3s ease-in-out;
+            z-index: 20; /* Above main content */
+            background-color: #2d3748; /* Darker Black/Gray for Sidebar */
+            overflow-y: auto; /* Enable vertical scrolling for sidebar */
+            display: flex; /* Always display sidebar in both modes, visibility controlled by transform on mobile */
+            flex-direction: column; /* Ensure content stacks vertically */
+            position: fixed; /* Fixed position on mobile */
+            height: 100%; /* Full height on mobile */
+            top: 0; /* Align to top on mobile */
+            left: 0; /* Align to left on mobile */
+            padding-top: 80px; /* Space for fixed header on mobile */
+        }
+        .sidebar.open {
+            transform: translateX(0); /* Visible on mobile */
+        }
+
+        /* Elements specific to Generator Mode */
+        body:not(.hosted-mode) #addNewPageButton,
+        body:not(.hosted-mode) .delete-page-button,
+        body:not(.hosted-mode) #hostSiteButton {
+            display: flex; /* Use flex for buttons to center content */
+        }
+        body:not(.hosted-mode) #toggleEditModeButton { /* Hide generator's edit button in generator mode */
+            display: none;
+        }
+
+        /* Elements specific to Hosted Mode */
+        body.hosted-mode #hostSiteButton {
+            display: none; /* Hide host button in hosted mode */
+        }
+        body.hosted-mode #toggleEditModeButton { /* Show hosted site's edit button in hosted mode */
+            display: flex;
+        }
+        /* Hide add new page and delete buttons in hosted mode by default */
+        body.hosted-mode #addNewPageButton,
+        body.hosted-mode .delete-page-button {
+            display: none;
+        }
+        /* Show add new page and delete buttons only when edit-active in hosted mode */
+        body.hosted-mode.edit-active #addNewPageButton,
+        body.hosted-mode.edit-active .delete-page-button {
+            display: flex;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            transition: margin-left 0.3s ease-in-out;
+            z-index: 10;
+            background-color: #1a202c; /* Main content background */
+            /* No margin-left here for mobile, handled by desktop media query */
+        }
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            .main-layout-container {
+                flex-direction: row; /* Sidebar and main content side-by-side on desktop */
+                /* padding-top removed here, handled by body */
+            }
+            .sidebar {
+                position: relative; /* Sidebar takes up space in flow on desktop */
+                transform: translateX(0); /* Always visible on desktop */
+                /* padding-top removed here, handled by body */
+            }
+            .main-content {
+                margin-left: 0; /* Reset margin-left, as flex handles positioning */
+                /* padding-top removed here, handled by body */
+            }
+            .menu-button {
+                display: none; /* Hide menu button on desktop */
+            }
+            #sidebarLogo {
+                margin-right: 0; /* Ensure no extra margin if name is gone */
+            }
+        }
+
+        /* Header specific styles */
+        header {
+            background-color: #2d3748; /* Darker Black/Gray for Header */
+            position: fixed; /* Keep header fixed at top */
+            width: 100%; /* Full width */
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /* Main content card */
+        .main-content-card {
+            background-color: #2d3748; /* Darker Black/Gray for main content card */
+            color: #e2e8f0; /* White text on dark card */
+            border-radius: 0.75rem; /* More rounded corners */
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2); /* Stronger shadow */
+            transition: all 0.3s ease-in-out;
+            padding: 2rem; /* Default padding for generator mode */
+        }
+
+        /* Hosted Mode Specific Styling for Content Card */
+        body.hosted-mode .main-content-card {
+            background-color: transparent; /* Make card background same as body */
+            box-shadow: none; /* Remove shadow */
+            border: none; /* Remove border */
+            padding: 0; /* Remove padding from the card itself */
+        }
+        /* Apply padding directly to the page content in hosted mode */
+        body.hosted-mode .page-content {
+            padding: 2rem; /* Add back padding to the content itself */
+        }
+
+        /* Content editor specific styles */
+        .content-editor-container {
+            position: relative;
+            min-height: 300px;
+            /* Default to no border */
+            border: none;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            background-color: #1a202c; /* Black for editor background */
+            color: #e2e8f0; /* White text for editor content */
+            transition: border-color 0.3s ease-in-out;
+        }
+        /* Border color changes only when editable */
+        .content-editor-container.editable {
+            border: 1px dashed #4a5568; /* Add dashed border when editable */
+            border-color: #8b5cf6; /* And purple color */
+        }
+
+        .content-editor {
+            outline: none; /* Remove default focus outline */
+            min-height: inherit;
+            width: 100%;
+            line-height: 1.6; /* Improved readability */
+        }
+        /* Ensure contenteditable elements have white text */
+        .content-editor p,
+        .content-editor h1,
+        .content-editor h2,
+        .content-editor h3,
+        .content-editor h4,
+        .content-editor h5,
+        .content-editor h6,
+        .content-editor ul,
+        .content-editor ol,
+        .content-editor li,
+        .content-editor strong,
+        .content-editor em {
+            color: #e2e8f0; /* White text for all editable content */
+        }
+
+        .add-content-button {
+            position: fixed; /* Changed to fixed for floating */
+            bottom: 20px; /* Adjust as needed */
+            right: 20px; /* Adjust as needed */
+            transform: none; /* Reset transform */
+            display: none; /* Hidden by default, shown by JS based on edit state */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            opacity: 0;
+            z-index: 50; /* High z-index to be on top of everything */
+            background: linear-gradient(to right, #8b5cf6, #d946ef); /* Purple gradient */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite; /* Subtle pulse animation */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* General Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100; /* High z-index to be on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8); /* Darker overlay */
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background-color: #2d3748; /* Darker Black/Gray for modal content */
+            color: #e2e8f0; /* White text on dark background */
+            margin: auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-button {
+            color: #a0aec0; /* Gray for close button */
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s ease-in-out;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: #cbd5e0; /* Lighter gray on hover */
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Content type option buttons in modal */
+        .content-type-option {
+            background-color: #4a5568; /* Even darker gray for options */
+            color: #e2e8f0;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .content-type-option:hover {
+            background-color: #616e7f; /* Even darker on hover */
+            transform: translateY(-2px);
+        }
+        .content-type-option i {
+            color: #d946ef; /* Purple for icons in content type options */
+        }
+
+        /* Input fields in modals */
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="url"],
+        .modal-content textarea {
+            background-color: #1a202c; /* Black for input fields */
+            color: #e2e8f0; /* White text in input fields */
+            border: 1px solid #4a5568; /* Dark border */
+            border-radius: 0.375rem; /* Rounded corners */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="number"]:focus,
+        .modal-content input[type="url"]:focus,
+        .modal-content textarea:focus {
+            border-color: #8b5cf6; /* Purple border on focus */
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5); /* Purple glow on focus */
+        }
+        .modal-content input::placeholder,
+        .modal-content textarea::placeholder {
+            color: #a0aec0; /* Lighter gray placeholder text */
+        }
+
+        /* Specific content type styling */
+        .code-block {
+            background-color: #1a202c; /* Black background for code */
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            position: relative;
+            overflow-x: auto; /* Horizontal scroll for code */
+            border: 1px solid #4a5568;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #a0aec0; /* Gray text */
+        }
+        .code-header .copy-button {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .code-header .copy-button:hover {
+            color: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .formula-block {
+            background-color: #1a202c; /* Black background for formulas */
+            color: #e2e8f0; /* White text for formulas */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto; /* Horizontal scroll for formulas */
+            border: 1px solid #4a5568; /* Dark border */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* KaTeX specific styling to ensure dark background */
+        .formula-block .katex-display, .formula-block .katex {
+            background-color: transparent !important;
+            color: #e2e8f0 !important;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Horizontal scroll for tables */
+            margin-top: 1rem;
+            border: 1px solid #4a5568; /* Dark border */
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .generated-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e2e8f0; /* White text for tables */
+        }
+        .generated-table th, .generated-table td {
+            border: 1px solid #4a5568; /* Dark border */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .generated-table th {
+            background-color: #2d3748; /* Darker background for table headers */
+            font-weight: bold;
+            color: #e2e8f0; /* White text for table headers */
+        }
+        .generated-table tr:nth-child(even) {
+            background-color: #1a202c; /* Alternate row color */
+        }
+        .generated-table tr:nth-child(odd) {
+            background-color: #2d3748; /* Alternate row color */
+        }
+
+        /* Responsive adjustments for icons/text */
+        @media (max-width: 768px) {
+            .header-text {
+                display: none; /* Hide text in header on small screens */
+            }
+            .sidebar-text {
+                display: none; /* Hide text in sidebar on small screens */
+            }
+            .mobile-only-icon {
+                display: block; /* Show icons on small screens */
+            }
+            .desktop-only-text {
+                display: none; /* Hide desktop text on small screens */
+            }
+        }
+        @media (min-width: 769px) {
+            .mobile-only-icon {
+                display: none; /* Hide icons on larger screens */
+            }
+            .desktop-only-text {
+                display: inline; /* Show desktop text on larger screens */
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-md p-4 flex items-center justify-between lg:justify-start fixed top-0 left-0 right-0 z-30">
+        <button id="menuButton" class="lg:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white transition-all duration-200 ease-in-out">
+            <i class="fas fa-bars text-xl"></i> <!-- Only icon, no logo -->
+        </button>
+        <div class="flex items-center space-x-2 ml-4 lg:ml-0">
+            <img id="headerLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-8 h-8 rounded-full mr-2 cursor-pointer">
+            <input type="text" id="websiteNameInput" class="text-2xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 text-white" value="My Awesome Site">
+        </div>
+
+        <!-- Conditional Buttons based on Mode -->
+        <button id="hostSiteButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+            <i class="fas fa-cloud-upload-alt mr-2"></i> Host Site
+        </button>
+        <button id="toggleEditModeButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+            <i class="fas fa-edit mr-2"></i> Edit
+        </button>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="main-layout-container">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar bg-gray-800 text-white w-72 p-4 shadow-lg lg:shadow-none">
+            <div class="flex items-center justify-center mb-6 lg:mb-8">
+                <img id="sidebarLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-12 h-12 rounded-full cursor-pointer">
+                <!-- Removed sidebarWebsiteName as requested -->
+            </div>
+
+            <button id="addNewPageButton" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full mb-4 flex items-center justify-center shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                <i class="fas fa-plus mr-2 mobile-only-icon"></i>
+                <span class="desktop-only-text">Add New Page</span>
+            </button>
+
+            <nav id="pageList" class="flex-grow">
+                <!-- Pages will be dynamically added here -->
+                <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Pages</h3>
+                <ul id="pagesContainer">
+                    <!-- Default "Home" page will be added by JS -->
+                </ul>
+            </nav>
+
+            <div class="mt-auto pt-4 border-t border-gray-700">
+                <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Legal</h3>
+                <ul>
+                    <li class="mb-2">
+                        <div class="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md p-2 cursor-pointer page-item transition-all duration-200 ease-in-out hover:scale-[1.02]" data-page-id="copyright-terms">
+                            <span class="flex-grow text-lg font-medium page-name-display truncate">Terms & Copyright</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content flex-grow p-4 lg:p-8">
+            <div class="main-content-card rounded-lg shadow-lg">
+                <!-- Page Name Editor -->
+                <div class="flex items-center justify-between mb-4">
+                    <input type="text" id="currentPageNameInput" class="text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 flex-grow text-white" value="Home" readonly>
+                </div>
+                <hr class="mb-6 border-gray-700">
+
+                <!-- Content Editor -->
+                <div id="contentEditorContainer" class="content-editor-container">
+                    <div id="contentEditor" class="content-editor" contenteditable="false" spellcheck="false">
+                        <p>Welcome to your new page! Click the 'Edit' button in the header to start customizing.</p>
+                    </div>
+                </div>
+
+                <!-- Floating Add Content Button -->
+                <button id="addContentFloatingButton" class="add-content-button bg-purple-600 hover:bg-purple-700 text-white text-3xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
+                    <i class="fas fa-plus"></i>
+                </button>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <button id="prevPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                    <button id="nextPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                        <i class="fas fa-chevron-right text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Content Type Selection Modal (Existing) -->
+    <div id="contentTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeContentTypeModalButton">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Add Content</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="header">
+                    <i class="fas fa-heading text-xl mb-1 text-purple-400"></i> Header
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="paragraph">
+                    <i class="fas fa-paragraph text-xl mb-1 text-purple-400"></i> Paragraph
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="list">
+                    <i class="fas fa-list-ul text-xl mb-1 text-purple-400"></i> List
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="bold">
+                    <i class="fas fa-bold text-xl mb-1 text-purple-400"></i> Bold
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="italic">
+                    <i class="fas fa-italic text-xl mb-1 text-purple-400"></i> Italic
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="image">
+                    <i class="fas fa-image text-xl mb-1 text-purple-400"></i> Image
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="video">
+                    <i class="fas fa-video text-xl mb-1 text-purple-400"></i> Video
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="pdf">
+                    <i class="fas fa-file-pdf text-xl mb-1 text-purple-400"></i> PDF
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="iframe">
+                    <i class="fas fa-globe text-xl mb-1 text-purple-400"></i> Website (IFrame)
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="table">
+                    <i class="fas fa-table text-xl mb-1 text-purple-400"></i> Table
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="code">
+                    <i class="fas fa-code text-xl mb-1 text-purple-400"></i> Code
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="formula">
+                    <i class="fas fa-square-root-alt text-xl mb-1 text-purple-400"></i> Formula (LaTeX)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Input Modal -->
+    <div id="inputModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeInputModalButton">&times;</span>
+            <h2 id="inputModalTitle" class="text-2xl font-bold mb-4">Add Content</h2>
+            <div id="inputModalFields" class="space-y-4">
+                <!-- Input fields will be dynamically added here -->
+            </div>
+            <button id="inputModalSubmitButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                Add to Page
+            </button>
+        </div>
+    </div>
+
+    <!-- Logo Change Modal -->
+    <div id="logoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeLogoModalButton">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Change Website Logo</h2>
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="newLogoUrlInput">New Logo Image URL:</label>
+            <input type="url" id="newLogoUrlInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/new-logo.png">
+            <button id="saveLogoButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                Save Logo
+            </button>
+        </div>
+    </div>
+
+    <!-- Highlight.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74cuRSKdbYddKAyHDVRUo+cJcPxMjmTZHzKAGKOMGpTKsoUngM4awi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-43gviini6WaqVDbuOfBfpVaWYKUfr0XUv5Phtfmi4zHbSoCxiOxdVXcRkRtFNfrC" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+    <script>
+        // DOM Elements
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const websiteNameInput = document.getElementById('websiteNameInput');
+        const headerLogo = document.getElementById('headerLogo');
+        const sidebarLogo = document.getElementById('sidebarLogo');
+        const addNewPageButton = document.getElementById('addNewPageButton');
+        const pagesContainer = document.getElementById('pagesContainer');
+        const currentPageNameInput = document.getElementById('currentPageNameInput');
+        const contentEditorContainer = document.getElementById('contentEditorContainer');
+        const contentEditor = document.getElementById('contentEditor');
+        const addContentFloatingButton = document.getElementById('addContentFloatingButton');
+
+        // Header Buttons
+        const hostSiteButton = document.getElementById('hostSiteButton');
+        const toggleEditModeButton = document.getElementById('toggleEditModeButton');
+
+        // Modals
+        const contentTypeModal = document.getElementById('contentTypeModal');
+        const closeContentTypeModalButton = document.getElementById('closeContentTypeModalButton');
+        const contentTypeOptions = document.querySelectorAll('.content-type-option');
+
+        const inputModal = document.getElementById('inputModal');
+        const closeInputModalButton = document.getElementById('closeInputModalButton');
+        const inputModalTitle = document.getElementById('inputModalTitle');
+        const inputModalFields = document.getElementById('inputModalFields');
+        const inputModalSubmitButton = document.getElementById('inputModalSubmitButton');
+
+        const logoModal = document.getElementById('logoModal');
+        const closeLogoModalButton = document.getElementById('closeLogoModalButton');
+        const newLogoUrlInput = document.getElementById('newLogoUrlInput');
+        const saveLogoButton = document.getElementById('saveLogoButton');
+
+        const prevPageButton = document.getElementById('prevPageButton');
+        const nextPageButton = document.getElementById('nextPageButton');
+
+        // Global state
+        let pages = [];
+        let currentPageId = 'home'; // Default to 'home' page
+        // isGeneratorMode: true if this is the builder's tool, false if it's the hosted site
+        let isGeneratorMode = localStorage.getItem('isGeneratorMode') !== 'false'; // Default to true if not set
+        // isEditModeActive: true if the hosted site is in editable mode
+        let isEditModeActive = localStorage.getItem('isEditModeActive') === 'true';
+
+        // Helper to generate unique IDs
+        const generateUniqueId = () => '_' + Math.random().toString(36).substr(2, 9);
+
+        // --- Local Storage Functions ---
+        const savePages = () => {
+            localStorage.setItem('websitePages', JSON.stringify(pages));
+        };
+
+        const loadPages = () => {
+            const storedPages = localStorage.getItem('websitePages');
+            if (storedPages) {
+                pages = JSON.parse(storedPages);
+            } else {
+                // Initialize with a default 'Home' page
+                pages = [
+                    { id: 'home', name: 'Home', content: '<p>Welcome to your new page! Click the \'Edit\' button in the header to start customizing.</p>' },
+                ];
+            }
+            // Ensure 'home' page exists if pages array is empty after loading (e.g., all pages were deleted)
+            if (pages.length === 0) {
+                 pages.unshift({ id: 'home', name: 'Home', content: '<p>Welcome to your new page! Click the \'Edit\' button in the header to start customizing.</p>' });
+            }
+        };
+
+        const saveWebsiteSettings = () => {
+            localStorage.setItem('websiteName', websiteNameInput.value);
+        };
+
+        const loadWebsiteSettings = () => {
+            const savedName = localStorage.getItem('websiteName');
+            if (savedName) {
+                websiteNameInput.value = savedName;
+            }
+        };
+
+        const saveLogoUrl = (url) => {
+            localStorage.setItem('websiteLogoUrl', url);
+        };
+
+        const loadLogoUrl = () => {
+            const savedLogoUrl = localStorage.getItem('websiteLogoUrl');
+            if (savedLogoUrl) {
+                headerLogo.src = savedLogoUrl;
+                sidebarLogo.src = savedLogoUrl;
+            } else {
+                // Set default logo if none saved
+                headerLogo.src = "https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp";
+                sidebarLogo.src = "https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp";
+            }
+        };
+
+
+        // --- UI Update Functions ---
+        const renderPageList = () => {
+            pagesContainer.innerHTML = ''; // Clear existing list
+
+            pages.forEach(page => {
+                const li = document.createElement('li');
+                li.className = 'mb-2';
+                li.innerHTML = `
+                    <div class="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md p-2 cursor-pointer page-item transition-all duration-200 ease-in-out hover:scale-[1.02]" data-page-id="${page.id}">
+                        <span class="flex-grow text-lg font-medium page-name-display truncate">${page.name}</span>
+                        <button class="delete-page-button text-gray-400 hover:text-red-400 ml-2 p-1 rounded-full hover:bg-gray-500 transition-all duration-200 ease-in-out transform hover:scale-110">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                pagesContainer.appendChild(li);
+            });
+
+            // Add active class to current page
+            document.querySelectorAll('.page-item').forEach(item => {
+                if (item.dataset.pageId === currentPageId) {
+                    item.classList.add('bg-purple-700', 'hover:bg-purple-700');
+                    item.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                } else {
+                    item.classList.remove('bg-purple-700', 'hover:bg-purple-700');
+                    item.classList.add('bg-gray-700', 'hover:bg-gray-600');
+                }
+            });
+        };
+
+        const loadPageContent = (pageId) => {
+            let page;
+            const isCopyrightPage = pageId === 'copyright-terms';
+
+            if (isCopyrightPage) {
+                page = {
+                    id: 'copyright-terms',
+                    name: 'Terms & Copyright',
+                    content: generateCopyrightContent()
+                };
+                // Copyright page is never editable
+                currentPageNameInput.setAttribute('readonly', true);
+                contentEditor.setAttribute('contenteditable', false);
+            } else {
+                page = pages.find(p => p.id === pageId);
+                // If page is not found (e.g., deleted), default to the first available page
+                if (!page) {
+                    page = pages[0];
+                    pageId = pages[0].id;
+                }
+            }
+
+            if (page) {
+                currentPageId = page.id;
+                currentPageNameInput.value = page.name;
+                contentEditor.innerHTML = page.content;
+                renderPageList(); // Update active state in sidebar
+                highlightCodeBlocks(); // Re-highlight code
+                renderMathFormulas(); // Re-render math
+                updateNavigationButtons(); // Update prev/next buttons
+            } else {
+                console.error('Page not found:', pageId);
+                if (pages.length === 0) {
+                    pages.push({ id: 'home', name: 'Home', content: '<p>Welcome to your new page! Click the \'Edit\' button in the header to start customizing.</p>' });
+                    savePages();
+                }
+                loadPageContent('home'); // Load home page if selected page is not found
+            }
+
+            // Apply the current mode and edit state after loading page content
+            applyModeAndEditState();
+        };
+
+        const updateNavigationButtons = () => {
+            const allNavigablePages = [...pages, { id: 'copyright-terms', name: 'Terms & Copyright' }];
+            const currentIndex = allNavigablePages.findIndex(p => p.id === currentPageId);
+
+            prevPageButton.disabled = currentIndex <= 0;
+            nextPageButton.disabled = currentIndex >= allNavigablePages.length - 1;
+        };
+
+        // --- Content Editor Functions ---
+        const saveCurrentPageContent = () => {
+            const pageIndex = pages.findIndex(p => p.id === currentPageId);
+            if (pageIndex !== -1) {
+                pages[pageIndex].name = currentPageNameInput.value;
+                pages[pageIndex].content = contentEditor.innerHTML;
+                savePages();
+            }
+        };
+
+        const insertContentAtCursor = (html) => {
+            contentEditor.focus();
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                const fragment = document.createDocumentFragment();
+                let lastNode;
+                while (div.firstChild) {
+                    lastNode = div.firstChild;
+                    fragment.appendChild(lastNode);
+                }
+                range.insertNode(fragment);
+                if (lastNode) {
+                    range.setStartAfter(lastNode);
+                    range.setEndAfter(lastNode);
+                }
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                contentEditor.innerHTML += html; // Fallback if no selection
+            }
+            // Re-highlight and re-render math after content insertion
+            highlightCodeBlocks();
+            renderMathFormulas();
+        };
+
+        const highlightCodeBlocks = () => {
+            document.querySelectorAll('.code-block pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+        };
+
+        const renderMathFormulas = () => {
+            // Remove existing KaTeX renderings to prevent duplicates
+            document.querySelectorAll('.katex-display, .katex').forEach(el => el.remove());
+            // Re-render all math elements
+            renderMathInElement(contentEditor, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false},
+                ],
+                throwOnError : false
+            });
+        };
+
+        // --- Input Modal Logic ---
+        let currentContentType = null; // To keep track of which content type is being added
+
+        const openInputModal = (type) => {
+            currentContentType = type;
+            inputModalFields.innerHTML = ''; // Clear previous fields
+            inputModalTitle.textContent = `Add ${type.charAt(0).toUpperCase() + type.slice(1)}`; // Set modal title
+
+            let fieldsHtml = '';
+            switch (type) {
+                case 'header':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="headerText">Header Text:</label>
+                        <input type="text" id="headerText" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="My Section Title" value="New Header">
+                        <label class="block text-gray-300 text-sm font-bold mb-2 mt-4" for="headerLevel">Header Level (1-6):</label>
+                        <input type="number" id="headerLevel" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" min="1" max="6" value="2">
+                    `;
+                    break;
+                case 'paragraph':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="paragraphText">Paragraph Text:</label>
+                        <textarea id="paragraphText" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline h-32" placeholder="This is a new paragraph."></textarea>
+                    `;
+                    break;
+                case 'list':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="listItems">List Items (one per line):</label>
+                        <textarea id="listItems" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline h-32" placeholder="Item 1\nItem 2\nItem 3"></textarea>
+                        <div class="flex items-center mt-4">
+                            <input type="checkbox" id="orderedList" class="mr-2 leading-tight">
+                            <label class="text-gray-300" for="orderedList">Numbered List</label>
+                        </div>
+                    `;
+                    break;
+                case 'bold':
+                case 'italic':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="textInput">Text to make ${type}:</label>
+                        <input type="text" id="textInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter text here" value="${type.charAt(0).toUpperCase() + type.slice(1)} Text">
+                    `;
+                    break;
+                case 'image':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="imageUrl">Image URL:</label>
+                        <input type="url" id="imageUrl" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/image.jpg" value="https://placehold.co/400x200/cccccc/000000?text=Image">
+                        <label class="block text-gray-300 text-sm font-bold mb-2 mt-4" for="imageAlt">Alt Text (for accessibility):</label>
+                        <input type="text" id="imageAlt" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="Description of image">
+                    `;
+                    break;
+                case 'video':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="videoUrl">Video URL (MP4 or YouTube embed link):</label>
+                        <input type="url" id="videoUrl" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/video.mp4 or YouTube URL" value="https://www.w3schools.com/html/mov_bbb.mp4">
+                    `;
+                    break;
+                case 'pdf':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="pdfUrl">PDF URL:</label>
+                        <input type="url" id="pdfUrl" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/document.pdf" value="https://www.africau.edu/images/default/sample.pdf">
+                    `;
+                    break;
+                case 'iframe':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="iframeUrl">Website URL for IFrame:</label>
+                        <input type="url" id="iframeUrl" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com" value="https://www.google.com/webhp?igu=1">
+                    `;
+                    break;
+                case 'table':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="tableRows">Number of Rows:</label>
+                        <input type="number" id="tableRows" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" min="1" value="3">
+                        <label class="block text-gray-300 text-sm font-bold mb-2 mt-4" for="tableCols">Number of Columns:</label>
+                        <input type="number" id="tableCols" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" min="1" value="2">
+                    `;
+                    break;
+                case 'code':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="codeLanguage">Code Language (e.g., javascript, python, html):</label>
+                        <input type="text" id="codeLanguage" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="javascript" value="javascript">
+                        <label class="block text-gray-300 text-sm font-bold mb-2 mt-4" for="codeFileName">File Name with Extension (e.g., script.js):</label>
+                        <input type="text" id="codeFileName" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="example.js" value="example.js">
+                        <label class="block text-gray-300 text-sm font-bold mb-2 mt-4" for="codeContent">Code Content:</label>
+                        <textarea id="codeContent" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline h-48" placeholder="// Your code goes here"></textarea>
+                    `;
+                    break;
+                case 'formula':
+                    fieldsHtml = `
+                        <label class="block text-gray-300 text-sm font-bold mb-2" for="formulaText">LaTeX Formula (use $$ for display, $ for inline):</label>
+                        <textarea id="formulaText" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline h-32" placeholder="$$E=mc^2$$"></textarea>
+                    `;
+                    break;
+            }
+            inputModalFields.innerHTML = fieldsHtml;
+            inputModal.style.display = 'flex'; // Show the input modal
+        };
+
+        const handleInputModalSubmit = () => {
+            let contentHtml = '';
+
+            switch (currentContentType) {
+                case 'header':
+                    const headerText = document.getElementById('headerText').value;
+                    const headerLevel = parseInt(document.getElementById('headerLevel').value) || 2;
+                    if (headerText) {
+                        const hTag = `h${Math.min(6, Math.max(1, headerLevel))}`;
+                        contentHtml = `<${hTag}>${escapeHtml(headerText)}</${hTag}>`;
+                    }
+                    break;
+                case 'paragraph':
+                    const paragraphText = document.getElementById('paragraphText').value;
+                    if (paragraphText) {
+                        contentHtml = `<p>${escapeHtml(paragraphText).replace(/\n/g, '<br>')}</p>`; // Allow new lines
+                    }
+                    break;
+                case 'list':
+                    const listItems = document.getElementById('listItems').value;
+                    const orderedList = document.getElementById('orderedList').checked;
+                    if (listItems) {
+                        const itemsArray = listItems.split('\n').map(item => `<li>${escapeHtml(item.trim())}</li>`).join('');
+                        const listTag = orderedList ? 'ol' : 'ul';
+                        contentHtml = `<${listTag}>${itemsArray}</${listTag}>`;
+                    }
+                    break;
+                case 'bold':
+                    const boldText = document.getElementById('textInput').value;
+                    if (boldText) {
+                        contentHtml = `<strong>${escapeHtml(boldText)}</strong>`;
+                    }
+                    break;
+                case 'italic':
+                    const italicText = document.getElementById('textInput').value;
+                    if (italicText) {
+                        contentHtml = `<em>${escapeHtml(italicText)}</em>`;
+                    }
+                    break;
+                case 'image':
+                    const imageUrl = document.getElementById('imageUrl').value;
+                    const imageAlt = document.getElementById('imageAlt').value;
+                    if (imageUrl) {
+                        contentHtml = `<img src="${imageUrl}" alt="${escapeHtml(imageAlt)}" class="max-w-full h-auto rounded-md shadow-sm my-2" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Image+Load+Error';">`;
+                        addUrlToCopyright(imageUrl, 'Image');
+                    }
+                    break;
+                case 'video':
+                    const videoUrl = document.getElementById('videoUrl').value;
+                    if (videoUrl) {
+                        if (videoUrl.includes('youtube.com/watch?v=')) {
+                            const youtubeId = videoUrl.split('v=')[1].split('&')[0];
+                            contentHtml = `<div class="relative" style="padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                                <iframe class="absolute top-0 left-0 w-full h-full rounded-md shadow-sm my-2" src="https://www.youtube.com/embed/${youtubeId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>`;
+                        } else {
+                            contentHtml = `<video controls class="w-full h-auto rounded-md shadow-sm my-2"><source src="${videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                        }
+                        addUrlToCopyright(videoUrl, 'Video');
+                    }
+                    break;
+                case 'pdf':
+                    const pdfUrl = document.getElementById('pdfUrl').value;
+                    if (pdfUrl) {
+                        contentHtml = `<div class="w-full h-96 my-2 rounded-md shadow-sm overflow-hidden"><iframe src="${pdfUrl}" class="w-full h-full border-none"></iframe></div>`;
+                        addUrlToCopyright(pdfUrl, 'PDF');
+                    }
+                    break;
+                case 'iframe':
+                    const iframeUrl = document.getElementById('iframeUrl').value;
+                    if (iframeUrl) {
+                        contentHtml = `<div class="w-full h-96 my-2 rounded-md shadow-sm overflow-hidden"><iframe src="${iframeUrl}" class="w-full h-full border-none" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals"></iframe></div>`;
+                        addUrlToCopyright(iframeUrl, 'IFrame Website');
+                    }
+                    break;
+                case 'table':
+                    const rows = parseInt(document.getElementById('tableRows').value) || 0;
+                    const cols = parseInt(document.getElementById('tableCols').value) || 0;
+                    if (rows > 0 && cols > 0) {
+                        let tableHtml = '<div class="table-container"><table class="generated-table">';
+                        tableHtml += '<thead><tr>';
+                        for (let c = 0; c < cols; c++) {
+                            tableHtml += `<th>Header ${c + 1}</th>`;
+                        }
+                        tableHtml += '</tr></thead>';
+                        tableHtml += '<tbody>';
+                        for (let r = 0; r < rows; r++) {
+                            tableHtml += '<tr>';
+                            for (let c = 0; c < cols; c++) {
+                                tableHtml += `<td>Row ${r + 1}, Col ${c + 1}</td>`;
+                            }
+                            tableHtml += '</tr>';
+                        }
+                        tableHtml += '</tbody></table></div>';
+                        contentHtml = tableHtml;
+                    }
+                    break;
+                case 'code':
+                    const codeLanguage = document.getElementById('codeLanguage').value;
+                    const codeFileName = document.getElementById('codeFileName').value;
+                    const codeContent = document.getElementById('codeContent').value;
+                    if (codeContent) {
+                        contentHtml = `
+                            <div class="code-block">
+                                <div class="code-header">
+                                    <span>${escapeHtml(codeFileName)}</span>
+                                    <button class="copy-button" onclick="copyCode(this)"><i class="fas fa-copy"></i></button>
+                                </div>
+                                <pre><code class="language-${escapeHtml(codeLanguage)}">${escapeHtml(codeContent)}</code></pre>
+                            </div>
+                        `;
+                    }
+                    break;
+                case 'formula':
+                    const formulaText = document.getElementById('formulaText').value;
+                    if (formulaText) {
+                        contentHtml = `<div class="formula-block">${escapeHtml(formulaText)}</div>`;
+                    }
+                    break;
+            }
+            if (contentHtml) {
+                insertContentAtCursor(contentHtml);
+                saveCurrentPageContent(); // Save page after adding content
+            }
+            inputModal.style.display = 'none'; // Hide the input modal
+        };
+
+        // Utility to escape HTML for code blocks
+        const escapeHtml = (unsafe) => {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        };
+
+        // Function to copy code to clipboard (for generator UI)
+        window.copyCode = (button) => {
+            const codeBlock = button.closest('.code-block');
+            const codeElement = codeBlock.querySelector('pre code');
+            const textToCopy = codeElement.innerText;
+
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const originalIcon = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            setTimeout(() => {
+                button.innerHTML = originalIcon;
+            }, 1500);
+        };
+
+        // --- Copyright Page Logic ---
+        let usedUrls = []; // Stores URLs for copyright page
+
+        const addUrlToCopyright = (url, type) => {
+            // Check if URL already exists to avoid duplicates
+            if (!usedUrls.some(item => item.url === url && item.type === type)) {
+                usedUrls.push({ url, type, timestamp: new Date().toLocaleString() });
+                localStorage.setItem('usedUrls', JSON.stringify(usedUrls));
+            }
+        };
+
+        const loadUsedUrls = () => {
+            const storedUrls = localStorage.getItem('usedUrls');
+            if (storedUrls) {
+                usedUrls = JSON.parse(storedUrls);
+            }
+        };
+
+        const generateCopyrightContent = () => {
+            let content = `
+                <h1 class="text-3xl font-bold mb-4 text-purple-400">Terms & Copyright</h1>
+                <p class="mb-4">This page outlines the terms of use and copyright information for the content generated on this website.</p>
+                <h2 class="text-2xl font-semibold mb-3 text-purple-300">Terms of Use</h2>
+                <p class="mb-4">All content created using this website generator is owned by the user who generated it. This tool is provided "as is" without warranty of any kind, express or implied. The creator of this tool is not responsible for any content generated by users.</p>
+                <h2 class="text-2xl font-semibold mb-3 text-purple-300">Copyright Information for External Resources</h2>
+                <p class="mb-4">Below is a list of external URLs that have been embedded or referenced in the pages generated by this tool. Users are responsible for ensuring they have the necessary rights and permissions to use any external content.</p>
+                <ul class="list-disc pl-5 mb-6">
+            `;
+
+            if (usedUrls.length > 0) {
+                usedUrls.forEach(item => {
+                    content += `<li><strong>${item.type}:</strong> <a href="${item.url}" target="_blank" class="text-purple-600 hover:underline break-all">${item.url}</a> (Added: ${item.timestamp})</li>`;
+                });
+            } else {
+                content += `<li>No external URLs have been added yet.</li>`;
+            }
+
+            content += `
+                </ul>
+                <p class="text-sm text-gray-500 mt-8">© ${new Date().getFullYear()} Website Generator. All rights reserved.</p>
+            `;
+            return content;
+        };
+
+        // --- Mode and Edit State Application ---
+        const applyModeAndEditState = () => {
+            // Adjust body class based on mode
+            if (isGeneratorMode) {
+                document.body.classList.remove('hosted-mode');
+                document.body.classList.remove('edit-active'); // Ensure hosted-mode edit-active is off
+            } else {
+                document.body.classList.add('hosted-mode');
+                if (isEditModeActive) {
+                    document.body.classList.add('edit-active');
+                } else {
+                    document.body.classList.remove('edit-active');
+                }
+            }
+
+            // Handle header button visibility
+            hostSiteButton.style.display = isGeneratorMode ? 'flex' : 'none';
+            toggleEditModeButton.style.display = isGeneratorMode ? 'none' : 'flex';
+
+            // Handle editability and floating button for current page
+            const isCopyrightPage = currentPageId === 'copyright-terms';
+
+            if (isGeneratorMode) {
+                // In Generator Mode, content is always editable for the builder
+                currentPageNameInput.removeAttribute('readonly');
+                contentEditor.setAttribute('contenteditable', true);
+                contentEditorContainer.classList.add('editable');
+                addContentFloatingButton.style.opacity = '1';
+                addContentFloatingButton.style.display = 'flex';
+            } else { // Hosted Mode
+                if (isCopyrightPage) {
+                    currentPageNameInput.setAttribute('readonly', true);
+                    contentEditor.setAttribute('contenteditable', false);
+                    contentEditorContainer.classList.remove('editable');
+                    addContentFloatingButton.style.opacity = '0';
+                    addContentFloatingButton.style.display = 'none';
+                } else if (isEditModeActive) { // Hosted Mode, Edit State
+                    currentPageNameInput.removeAttribute('readonly');
+                    contentEditor.setAttribute('contenteditable', true);
+                    contentEditorContainer.classList.add('editable');
+                    addContentFloatingButton.style.opacity = '1';
+                    addContentFloatingButton.style.display = 'flex';
+                    toggleEditModeButton.innerHTML = '<i class="fas fa-check mr-2"></i> Save';
+                } else { // Hosted Mode, View State
+                    currentPageNameInput.setAttribute('readonly', true);
+                    contentEditor.setAttribute('contenteditable', false);
+                    contentEditorContainer.classList.remove('editable');
+                    addContentFloatingButton.style.opacity = '0';
+                    addContentFloatingButton.style.display = 'none';
+                    toggleEditModeButton.innerHTML = '<i class="fas fa-edit mr-2"></i> Edit';
+                }
+            }
+
+            // Handle sidebar visibility for mobile
+            if (window.innerWidth < 1024) { // Mobile
+                // Sidebar is hidden by default, toggled by menu button
+                // Its 'open' class is managed by the menu button click listener
+            } else { // Desktop
+                // On desktop, sidebar is always visible unless it's the copyright page in hosted view mode
+                if (isGeneratorMode || !isCopyrightPage) {
+                    sidebar.classList.add('open'); // Ensure it's not collapsed by mobile logic
+                } else {
+                    sidebar.classList.remove('open'); // Collapse if not in generator or hosted-edit mode
+                }
+            }
+        };
+
+
+        // --- Event Listeners ---
+        menuButton.addEventListener('click', () => {
+            // On mobile, the sidebar should always be toggleable for navigation
+            // The content within the sidebar (add page, delete buttons) will be hidden/shown by applyModeAndEditState.
+            if (window.innerWidth < 1024) { // Only for mobile
+                sidebar.classList.toggle('open');
+            }
+        });
+
+        websiteNameInput.addEventListener('input', (e) => {
+            saveWebsiteSettings();
+        });
+
+        // Event listener for clicking header logo to change it
+        headerLogo.addEventListener('click', () => {
+            if (isGeneratorMode || isEditModeActive) { // Only allow changing logo in editable modes
+                newLogoUrlInput.value = headerLogo.src === "https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" ? "" : headerLogo.src; // Pre-fill if not default
+                logoModal.style.display = 'flex';
+            }
+        });
+
+        // Event listener for clicking sidebar logo to change it
+        sidebarLogo.addEventListener('click', () => {
+            if (isGeneratorMode || isEditModeActive) { // Only allow changing logo in editable modes
+                newLogoUrlInput.value = sidebarLogo.src === "https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" ? "" : sidebarLogo.src; // Pre-fill if not default
+                logoModal.style.display = 'flex';
+            }
+        });
+
+        closeLogoModalButton.addEventListener('click', () => {
+            logoModal.style.display = 'none';
+        });
+
+        saveLogoButton.addEventListener('click', () => {
+            const newUrl = newLogoUrlInput.value.trim();
+            if (newUrl) {
+                headerLogo.src = newUrl;
+                sidebarLogo.src = newUrl;
+                saveLogoUrl(newUrl);
+            } else {
+                // If empty, revert to default or a placeholder
+                headerLogo.src = "https://placehold.co/400x200/cccccc/000000?text=Logo";
+                sidebarLogo.src = "https://placehold.co/400x200/cccccc/000000?text=Logo";
+                saveLogoUrl(""); // Save empty string to indicate no custom logo
+            }
+            logoModal.style.display = 'none';
+        });
+
+
+        addNewPageButton.addEventListener('click', () => {
+            const newPageId = generateUniqueId();
+            const newPageName = `New Page ${pages.length + 1}`;
+            const newPage = {
+                id: newPageId,
+                name: newPageName,
+                content: `<p>This is the content for ${newPageName}.</p>`
+            };
+            pages.push(newPage);
+            savePages();
+            renderPageList();
+            loadPageContent(newPageId); // Load the newly created page
+        });
+
+        pagesContainer.addEventListener('click', (e) => {
+            const pageItem = e.target.closest('.page-item');
+            if (pageItem) {
+                const pageId = pageItem.dataset.pageId;
+                // If clicking delete button (only visible in generator mode or hosted edit mode)
+                if ((isGeneratorMode || isEditModeActive) && e.target.closest('.delete-page-button')) {
+                    if (pageId === 'copyright-terms') {
+                        return; // Cannot delete copyright page
+                    }
+                    if (confirm('Are you sure you want to delete this page?')) {
+                        pages = pages.filter(p => p.id !== pageId);
+                        savePages();
+                        renderPageList();
+
+                        if (currentPageId === pageId) {
+                            if (pages.length > 0) {
+                                loadPageContent(pages[0].id);
+                            } else {
+                                pages.push({ id: 'home', name: 'Home', content: '<p>Welcome to your new page! Click the \'Edit\' button in the header to start customizing.</p>' });
+                                savePages();
+                                loadPageContent('home');
+                            }
+                        }
+                    }
+                } else if (!e.target.closest('.delete-page-button')) {
+                    // If not clicking delete button, load the page
+                    loadPageContent(pageId);
+                }
+            }
+        });
+
+        // Host Site Button (only visible in Generator Mode)
+        hostSiteButton.addEventListener('click', () => {
+            // First, trigger the download of the current HTML content
+            generateAndDownloadCurrentHTML();
+
+            // After download, switch to hosted mode and reload
+            localStorage.setItem('isGeneratorMode', 'false');
+            localStorage.setItem('isEditModeActive', 'false'); // Default hosted site to view mode
+            // Use a slight delay to ensure download starts before reload, though Blob download is fast
+            setTimeout(() => {
+                location.reload(); // Reload the page to apply hosted mode
+            }, 100);
+        });
+
+        // Function to generate and download the current HTML file
+        const generateAndDownloadCurrentHTML = () => {
+            const siteName = websiteNameInput.value || 'My Generated Website';
+            const htmlContent = document.documentElement.outerHTML; // Get the entire current HTML
+
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${siteName.replace(/\s+/g, '-')}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url); // Clean up the object URL
+        };
+
+        // Toggle Edit Mode Button (only visible in Hosted Mode)
+        toggleEditModeButton.addEventListener('click', () => {
+            if (currentPageId === 'copyright-terms') {
+                return; // Cannot edit copyright page
+            }
+            // Save content before toggling out of edit mode
+            if (isEditModeActive) { // If currently in edit mode, save changes
+                saveCurrentPageContent();
+            }
+            isEditModeActive = !isEditModeActive;
+            localStorage.setItem('isEditModeActive', isEditModeActive);
+            applyModeAndEditState();
+        });
+
+        addContentFloatingButton.addEventListener('click', () => {
+            contentTypeModal.style.display = 'flex'; // Show content type selection modal
+        });
+
+        closeContentTypeModalButton.addEventListener('click', () => {
+            contentTypeModal.style.display = 'none'; // Hide content type selection modal
+        });
+
+        closeInputModalButton.addEventListener('click', () => {
+            inputModal.style.display = 'none'; // Hide input modal
+        });
+
+        inputModalSubmitButton.addEventListener('click', handleInputModalSubmit);
+
+        // Close modals if clicked outside
+        window.addEventListener('click', (event) => {
+            if (event.target === contentTypeModal) {
+                contentTypeModal.style.display = 'none';
+            }
+            if (event.target === inputModal) {
+                inputModal.style.display = 'none';
+            }
+            if (event.target === logoModal) {
+                logoModal.style.display = 'none';
+            }
+        });
+
+        contentTypeOptions.forEach(button => {
+            button.addEventListener('click', () => {
+                const type = button.dataset.type;
+                contentTypeModal.style.display = 'none'; // Hide content type selection modal
+                openInputModal(type); // Open the specific input modal for all types
+            });
+        });
+
+        prevPageButton.addEventListener('click', () => {
+            const allNavigablePages = [...pages, { id: 'copyright-terms', name: 'Terms & Copyright' }];
+            const currentIndex = allNavigablePages.findIndex(p => p.id === currentPageId);
+            if (currentIndex > 0) {
+                loadPageContent(allNavigablePages[currentIndex - 1].id);
+            }
+        });
+
+        nextPageButton.addEventListener('click', () => {
+            const allNavigablePages = [...pages, { id: 'copyright-terms', name: 'Terms & Copyright' }];
+            const currentIndex = allNavigablePages.findIndex(p => p.id === currentPageId);
+            if (currentIndex < allNavigablePages.length - 1) {
+                loadPageContent(allNavigablePages[currentIndex + 1].id);
+            }
+        });
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWebsiteSettings();
+            loadPages();
+            loadUsedUrls();
+            loadLogoUrl(); // Load custom logo on startup
+            loadPageContent(currentPageId); // Load the initial page (default to 'home')
+            highlightCodeBlocks(); // Initial highlight
+            renderMathFormulas(); // Initial math render
+            applyModeAndEditState(); // Apply the stored mode and edit state on load
+        });
+
+        // Ensure sidebar is hidden/shown correctly on resize for mobile/desktop
+        window.addEventListener('resize', () => {
+            applyModeAndEditState(); // Re-apply state to handle sidebar visibility and main content margin
+        });
+    </script>
+</body>
+</html>
