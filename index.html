@@ -3,1924 +3,563 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learning Labs</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'><path fill='currentColor' d='M320 0c-17.7 0-32 14.3-32 32V64c0 17.7 14.3 32 32 32H576c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32H576c70.7 0 128-57.3 128-128V160c0-70.7-57.3-128-128-128H320zM288 160c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160zM192 160c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160zM96 160c0-17.7-14.3-32-32-32S32 142.3 32 160V416c0 17.7 14.3 32 32 32s32-14.3 32-32V160z'/></svg>">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <title>Website Generator</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Highlight.js CSS (Default theme) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" xintegrity="sha384-wcIxkf4k55uNT5sSzdaE9GAeeqiPx4mtVeyjO+R/7pvN2PNisR8yBLTkiwDKBLg" crossorigin="anonymous">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* Custom styles for the website generator */
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #1a1a2e 25%, #16213e 50%, #0f0f0f 100%);
-            color: white;
-            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll from sidebar */
+            background-color: #1a202c; /* 60% Black - Base Background */
+            color: #e2e8f0; /* White - Default text color */
+            padding-top: 80px; /* Space for fixed header */
+        }
+        .main-layout-container {
+            display: flex;
+            flex-direction: column; /* Stack sidebar and main content on mobile */
+            flex-grow: 1;
+            /* padding-top removed here, handled by body */
         }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        .sidebar {
+            width: 280px; /* Fixed width for desktop sidebar */
+            transform: translateX(-100%); /* Hidden by default on mobile */
+            transition: transform 0.3s ease-in-out;
+            z-index: 20; /* Above main content */
+            background-color: #2d3748; /* Darker Black/Gray for Sidebar */
+            overflow-y: auto; /* Enable vertical scrolling for sidebar */
+            display: flex; /* Always display sidebar in both modes, visibility controlled by transform on mobile */
+            flex-direction: column; /* Ensure content stacks vertically */
+            position: fixed; /* Fixed position on mobile */
+            height: 100%; /* Full height on mobile */
+            top: 0; /* Align to top on mobile */
+            left: 0; /* Align to left on mobile */
+            padding-top: 80px; /* Space for fixed header on mobile */
+        }
+        .sidebar.open {
+            transform: translateX(0); /* Visible on mobile */
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #a855f7, #ec4899, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        /* Elements specific to Generator Mode */
+        body:not(.hosted-mode) #addNewPageButton,
+        body:not(.hosted-mode) .delete-page-button,
+        body:not(.hosted-mode) #hostSiteButton {
+            display: flex; /* Use flex for buttons to center content */
         }
-
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-glow {
-            from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-            to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
-        }
-
-        .animate-pulse-glow-sm {
-            animation: pulse-glow-sm 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse-glow-sm {
-            from { box-shadow: 0 0 10px rgba(168, 85, 247, 0.3); }
-            to { box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); }
-        }
-
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform, box-shadow;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(168, 85, 247, 0.3);
-        }
-
-        .liquid-bg {
-            background: linear-gradient(45deg, 
-                rgba(168, 85, 247, 0.1) 0%, 
-                rgba(236, 72, 153, 0.1) 25%, 
-                rgba(139, 92, 246, 0.1) 50%, 
-                rgba(168, 85, 247, 0.1) 100%);
-            background-size: 400% 400%;
-            animation: liquid-move 8s ease infinite;
-        }
-
-        @keyframes liquid-move {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .nav-item {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border-radius: 0.5rem;
-        }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), transparent);
-            transition: left 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .nav-item:hover::before {
-            left: 100%;
-        }
-
-        .page {
+        body:not(.hosted-mode) #toggleEditModeButton { /* Hide generator's edit button in generator mode */
             display: none;
-            opacity: 0;
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-            transform: translateY(20px);
         }
 
-        .page.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
+        /* Elements specific to Hosted Mode */
+        body.hosted-mode #hostSiteButton {
+            display: none; /* Hide host button in hosted mode */
+        }
+        body.hosted-mode #toggleEditModeButton { /* Show hosted site's edit button in hosted mode */
+            display: flex;
+        }
+        /* Hide add new page and delete buttons in hosted mode by default */
+        body.hosted-mode #addNewPageButton,
+        body.hosted-mode .delete-page-button {
+            display: none;
+        }
+        /* Show add new page and delete buttons only when edit-active in hosted mode */
+        body.hosted-mode.edit-active #addNewPageButton,
+        body.hosted-mode.edit-active .delete-page-button {
+            display: flex;
         }
 
-        .chapter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+        .main-content {
+            flex-grow: 1;
+            transition: margin-left 0.3s ease-in-out;
+            z-index: 10;
+            background-color: #1a202c; /* Main content background */
+            /* No margin-left here for mobile, handled by desktop media query */
+        }
+        /* Desktop styles */
+        @media (min-width: 1024px) {
+            .main-layout-container {
+                flex-direction: row; /* Sidebar and main content side-by-side on desktop */
+                padding-top: 0; /* No padding-top on container, as body handles it */
+            }
+            .sidebar {
+                position: relative; /* Sidebar takes up space in flow on desktop */
+                transform: translateX(0); /* Always visible on desktop */
+                padding-top: 0; /* No padding-top on sidebar, as body handles it */
+            }
+            .main-content {
+                margin-left: 0; /* Reset margin-left, as flex handles positioning */
+                padding-top: 0; /* No padding-top on main content, as body handles it */
+            }
+            .menu-button {
+                display: none; /* Hide menu button on desktop */
+            }
+            #sidebarLogo {
+                margin-right: 0; /* Ensure no extra margin if name is gone */
+            }
         }
 
-        .resource-btn {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
-            border: 1px solid rgba(168, 85, 247, 0.3);
-            transition: all 0.3s ease;
-            will-change: transform, background;
-        }
-
-        .resource-btn:hover {
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.4), rgba(236, 72, 153, 0.4));
-            transform: translateY(-2px);
-        }
-
-        .section-hidden {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-
-        .section-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .particle-bg {
-            position: absolute;
+        /* Header specific styles */
+        header {
+            background-color: #2d3748; /* Darker Black/Gray for Header */
+            position: fixed; /* Keep header fixed at top */
+            width: 100%; /* Full width */
             top: 0;
             left: 0;
+            right: 0;
+        }
+
+        /* Main content card */
+        .main-content-card {
+            background-color: #2d3748; /* Darker Black/Gray for main content card */
+            color: #e2e8f0; /* White text on dark card */
+            border-radius: 0.75rem; /* More rounded corners */
+            box-shadow: 0 10px 15px rgba(0,0,0,0.2); /* Stronger shadow */
+            transition: all 0.3s ease-in-out;
+            padding: 2rem; /* Default padding for generator mode */
+        }
+
+        /* Hosted Mode Specific Styling for Content Card */
+        body.hosted-mode .main-content-card {
+            background-color: transparent; /* Make card background same as body */
+            box-shadow: none; /* Remove shadow */
+            border: none; /* Remove border */
+            padding: 0; /* Remove padding from the card itself */
+        }
+        /* Apply padding directly to the page content in hosted mode */
+        body.hosted-mode .page-content {
+            padding: 2rem; /* Add back padding to the content itself */
+        }
+
+        /* Content editor specific styles */
+        .content-editor-container {
+            position: relative;
+            min-height: 300px;
+            /* Default to no border */
+            border: none;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            background-color: #1a202c; /* Black for editor background */
+            color: #e2e8f0; /* White text for editor content */
+            transition: border-color 0.3s ease-in-out;
+        }
+        /* Border color changes only when editable */
+        .content-editor-container.editable {
+            border: 1px dashed #4a5568; /* Add dashed border when editable */
+            border-color: #8b5cf6; /* And purple color */
+        }
+
+        .content-editor {
+            outline: none; /* Remove default focus outline */
+            min-height: inherit;
+            width: 100%;
+            line-height: 1.6; /* Improved readability */
+        }
+        /* Ensure contenteditable elements have white text */
+        .content-editor p,
+        .content-editor h1,
+        .content-editor h2,
+        .content-editor h3,
+        .content-editor h4,
+        .content-editor h5,
+        .content-editor h6,
+        .content-editor ul,
+        .content-editor ol,
+        .content-editor li,
+        .content-editor strong,
+        .content-editor em {
+            color: #e2e8f0; /* White text for all editable content */
+        }
+
+        .add-content-button {
+            position: fixed; /* Changed to fixed for floating */
+            bottom: 20px; /* Adjust as needed */
+            right: 20px; /* Adjust as needed */
+            transform: none; /* Reset transform */
+            display: none; /* Hidden by default, shown by JS based on edit state */
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+            opacity: 0;
+            z-index: 50; /* High z-index to be on top of everything */
+            background: linear-gradient(to right, #8b5cf6, #d946ef); /* Purple gradient */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: pulse 2s infinite; /* Subtle pulse animation */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* General Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100; /* High z-index to be on top */
+            left: 0;
+            top: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 0;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8); /* Darker overlay */
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
         }
-
-        .particle {
-            position: absolute;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: move-particle 15s infinite ease-in-out;
-            opacity: 0;
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-
-        @keyframes move-particle {
-            0% { transform: translate(0, 0); opacity: 0; }
-            25% { opacity: 1; }
-            50% { transform: translate(var(--x), var(--y)); }
-            75% { opacity: 1; }
-            100% { transform: translate(calc(var(--x) * 2), calc(var(--y) * 2)); opacity: 0; }
-        }
-
-        .navbar-scrolled {
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(25px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            transition: all 0.3s ease-in-out;
-        }
-
-        .input-glow:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.5);
-            border-color: #a855f7;
-            transition: all 0.3s ease;
-        }
-
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid #a855f7;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .message-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
+        .modal-content {
+            background-color: #2d3748; /* Darker Black/Gray for modal content */
+            color: #e2e8f0; /* White text on dark background */
+            margin: auto;
             padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            max-width: 90%;
-            color: white;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .message-box.show {
-            display: flex;
-            opacity: 1;
+        .close-button {
+            color: #a0aec0; /* Gray for close button */
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            transition: color 0.2s ease-in-out;
         }
-
-        .notification-box {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
-            max-width: 300px;
-        }
-
-        .notification-box.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .notification-box.info { border-left: 5px solid #60a5fa; }
-        .notification-box.success { border-left: 5px solid #34d399; }
-        .notification-box.warning { border-left: 5px solid #fbbf24; }
-        .notification-box.error { border-left: 5px solid #ef4444; }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: #ef4444;
-            border-radius: 50%;
-            width: 10px;
-            height: 10px;
-            min-width: 0;
-            padding: 0;
-            animation: bounce 0.6s infinite alternate;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: transparent;
-        }
-
-        #mobile-menu .nav-item .notification-badge {
-            right: 15px;
-            top: 10px;
-        }
-
-        @keyframes bounce {
-            from { transform: scale(1); }
-            to { transform: scale(1.1); }
-        }
-
-        .notification-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 4px solid transparent;
-            transition: background 0.3s ease, border-left-color 0.3s ease;
-        }
-
-        .notification-item.unread {
-            border-left-color: #a855f7;
-        }
-
-        .notification-item.info { border-left-color: #60a5fa; }
-        .notification-item.success { border-left-color: #34d399; }
-        .notification-item.warning { border-left-color: #fbbf24; }
-        .notification-item.error { border-left-color: #ef4444; }
-
-        #floating-notifications-container {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1002;
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
-            align-items: flex-end;
-        }
-
-        .floating-notification-toast {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            padding: 15px 20px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            color: white;
-            opacity: 0;
-            transform: translateX(100%);
-            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        .close-button:hover,
+        .close-button:focus {
+            color: #cbd5e0; /* Lighter gray on hover */
+            text-decoration: none;
             cursor: pointer;
-            max-width: 280px;
-            position: relative; 
+        }
+
+        /* Content type option buttons in modal */
+        .content-type-option {
+            background-color: #4a5568; /* Even darker gray for options */
+            color: #e2e8f0;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+            border-radius: 0.5rem;
+        }
+        .content-type-option:hover {
+            background-color: #616e7f; /* Even darker on hover */
+            transform: translateY(-2px);
+        }
+        .content-type-option i {
+            color: #d946ef; /* Purple for icons in content type options */
+        }
+
+        /* Input fields in modals */
+        .modal-content input[type="text"],
+        .modal-content input[type="number"],
+        .modal-content input[type="url"],
+        .modal-content textarea {
+            background-color: #1a202c; /* Black for input fields */
+            color: #e2e8f0; /* White text in input fields */
+            border: 1px solid #4a5568; /* Dark border */
+            border-radius: 0.375rem; /* Rounded corners */
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .modal-content input[type="text"]:focus,
+        .modal-content input[type="number"]:focus,
+        .modal-content input[type="url"]:focus,
+        .modal-content textarea:focus {
+            border-color: #8b5cf6; /* Purple border on focus */
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5); /* Purple glow on focus */
+        }
+        .modal-content input::placeholder,
+        .modal-content textarea::placeholder {
+            color: #a0aec0; /* Lighter gray placeholder text */
+        }
+
+        /* Specific content type styling */
+        .code-block {
+            background-color: #1a202c; /* Black background for code */
+            color: #f8f8f2;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            position: relative;
+            overflow-x: auto; /* Horizontal scroll for code */
+            border: 1px solid #4a5568;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .code-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: #a0aec0; /* Gray text */
         }
-
-        .floating-notification-toast.show {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        .floating-notification-toast.hide {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-
-        .floating-notification-toast .close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
+        .code-header .copy-button {
             background: none;
             border: none;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 0.8rem;
+            color: #a0aec0;
             cursor: pointer;
-            padding: 5px;
-            border-radius: 50%;
-            transition: color 0.2s ease, background-color 0.2s ease;
+            font-size: 1rem;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
         }
-        .floating-notification-toast .close-btn:hover {
-            color: white;
-            background-color: rgba(255, 255, 255, 0.2);
+        .code-header .copy-button:hover {
+            color: #e2e8f0;
+            transform: translateY(-1px);
         }
 
+        .formula-block {
+            background-color: #1a202c; /* Black background for formulas */
+            color: #e2e8f0; /* White text for formulas */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            overflow-x: auto; /* Horizontal scroll for formulas */
+            border: 1px solid #4a5568; /* Dark border */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        /* KaTeX specific styling to ensure dark background */
+        .formula-block .katex-display, .formula-block .katex {
+            background-color: transparent !important;
+            color: #e2e8f0 !important;
+        }
+
+        .table-container {
+            overflow-x: auto; /* Horizontal scroll for tables */
+            margin-top: 1rem;
+            border: 1px solid #4a5568; /* Dark border */
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .generated-table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #e2e8f0; /* White text for tables */
+        }
+        .generated-table th, .generated-table td {
+            border: 1px solid #4a5568; /* Dark border */
+            padding: 0.75rem;
+            text-align: left;
+        }
+        .generated-table th {
+            background-color: #2d3748; /* Darker background for table headers */
+            font-weight: bold;
+            color: #e2e8f0; /* White text for table headers */
+        }
+        .generated-table tr:nth-child(even) {
+            background-color: #1a202c; /* Alternate row color */
+        }
+        .generated-table tr:nth-child(odd) {
+            background-color: #2d3748; /* Alternate row color */
+        }
+
+        /* Responsive adjustments for icons/text */
         @media (max-width: 768px) {
-            .text-6xl { font-size: 2.5rem; }
-            .text-8xl { font-size: 4rem; }
-            .text-5xl { font-size: 2rem; }
-            .text-4xl { font-size: 1.5rem; }
-            .text-2xl { font-size: 1.1rem; }
-            .px-8 { padding-left: 1rem; padding-right: 1rem; }
-            .py-4 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-            .chapter-grid {
-                grid-template-columns: 1fr;
+            .header-text {
+                display: none; /* Hide text in header on small screens */
             }
-            .notification-box {
-                width: calc(100% - 40px);
-                right: 20px;
-                left: 20px;
-                transform: translateX(0);
+            .sidebar-text {
+                display: none; /* Hide text in sidebar on small screens */
             }
-            #floating-notifications-container {
-                right: 10px;
-                left: 10px;
-                bottom: 10px;
-                max-width: unset;
-                align-items: center;
+            .mobile-only-icon {
+                display: block; /* Show icons on small screens */
             }
-            .floating-notification-toast {
-                max-width: calc(100% - 20px);
-                transform: translateX(0);
+            .desktop-only-text {
+                display: none; /* Hide desktop text on small screens */
+            }
+        }
+        @media (min-width: 769px) {
+            .mobile-only-icon {
+                display: none; /* Hide icons on larger screens */
+            }
+            .desktop-only-text {
+                display: inline; /* Show desktop text on larger screens */
             }
         }
     </style>
 </head>
-<body>
-    <div id="message-box" class="message-box">
-        <p id="message-text" class="mb-4 text-lg"></p>
-        <button onclick="hideMessageBox()" class="glass-effect px-6 py-2 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500">
-            OK
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-md p-4 flex items-center justify-between lg:justify-start fixed top-0 left-0 right-0 z-30">
+        <button id="menuButton" class="lg:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white transition-all duration-200 ease-in-out">
+            <i class="fas fa-bars text-xl"></i> <!-- Only icon, no logo -->
         </button>
-    </div>
-
-    <div id="notification-box" class="notification-box">
-        <p id="notification-text"></p>
-    </div>
-
-    <div id="floating-notifications-container"></div>
-
-    <nav class="fixed top-0 w-full z-50 glass-effect" id="navbar">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="text-2xl font-bold gradient-text">
-                    <i class="fas fa-book-open-reader mr-2"></i>
-                    Learning Labs
-                </div>
-                <div class="hidden md:flex space-x-6">
-                    <button onclick="showPage('home')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Home page">
-                        <i class="fas fa-home mr-2"></i>Home
-                    </button>
-                    <button onclick="showPage('library')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Library page">
-                        <i class="fas fa-book mr-2"></i>Library
-                    </button>
-                    <button onclick="showPage('profile')" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Profile page">
-                        <i class="fas fa-user mr-2"></i>Profile
-                    </button>
-                    <button onclick="showNotificationsPage()" class="nav-item px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="View notifications">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span id="unread-notifications-badge" class="notification-badge hidden"></span>
-                    </button>
-                </div>
-                <button id="mobile-menu-toggle" class="md:hidden text-white text-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="Open mobile menu">
-                    <i class="fas fa-bars"></i>
-                    <span id="unread-notifications-badge-mobile" class="notification-badge hidden"></span>
-                </button>
-            </div>
-            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
-                <button onclick="showPage('home'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Home page">
-                    <i class="fas fa-home mr-2"></i>Home
-                </button>
-                <button onclick="showPage('library'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Library page">
-                    <i class="fas fa-book mr-2"></i>Library
-                </button>
-                <button onclick="showPage('profile'); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go to Profile page">
-                    <i class="fas fa-user mr-2"></i>Profile
-                </button>
-                <button onclick="showNotificationsPage(); toggleMobileMenu();" class="block w-full text-left px-4 py-2 rounded-lg hover:bg-purple-600/20 focus:outline-none focus:ring-2 focus:ring-purple-500 relative" aria-label="View notifications">
-                    <i class="fas fa-bell mr-2"></i>Notifications
-                    <span id="unread-notifications-badge-mobile-menu" class="notification-badge hidden"></span>
-                </button>
-            </div>
+        <div class="flex items-center space-x-2 ml-4 lg:ml-0">
+            <img id="headerLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-8 h-8 rounded-full mr-2 cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';">
+            <input type="text" id="websiteNameInput" class="text-2xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 text-white" value="My Awesome Site" readonly>
         </div>
-    </nav>
 
-    <div id="home" class="page active min-h-screen">
-        <section class="h-screen flex items-center justify-center relative section-hidden" id="hero-section">
-            <div class="absolute inset-0 liquid-bg opacity-30"></div>
-            <div class="particle-bg"></div>
-            <div class="text-center z-10 px-6 max-w-4xl mx-auto">
-                <div class="floating-animation">
-                    <h1 class="text-6xl md:text-8xl font-bold gradient-text mb-6 leading-tight">
-                        Learn Beyond Limits
-                    </h1>
-                </div>
-                <p class="text-xl md:text-2xl mb-8 text-gray-300">
-                    Discover the future of education with our interactive learning platform designed for excellence
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button onclick="showPage('library')" class="glass-effect px-8 py-4 rounded-full pulse-glow hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Start Learning now">
-                        <i class="fas fa-rocket mr-2"></i>Start Learning
-                    </button>
-                    <button onclick="showPage('watch-demo')" class="glass-effect px-8 py-4 rounded-full hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Watch a demo video">
-                        <i class="fas fa-play mr-2"></i>Watch Demo
-                    </button>
-                </div>
-            </div>
-            
-            <div class="absolute top-20 left-10 floating-animation hidden md:block" style="animation-delay: -2s;">
-                <i class="fas fa-atom text-4xl text-purple-400 opacity-60"></i>
-            </div>
-            <div class="absolute top-40 right-20 floating-animation hidden md:block" style="animation-delay: -4s;">
-                <i class="fas fa-dna text-3xl text-pink-400 opacity-60"></i>
-            </div>
-            <div class="absolute bottom-40 left-20 floating-animation hidden md:block" style="animation-delay: -1s;">
-                <i class="fas fa-calculator text-3xl text-blue-400 opacity-60"></i>
-            </div>
-        </section>
+        <!-- Conditional Buttons based on Mode -->
+        <button id="hostSiteButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+            <i class="fas fa-cloud-upload-alt mr-2"></i> Host Site
+        </button>
+        <button id="toggleEditModeButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+            <i class="fas fa-edit mr-2"></i> Edit
+        </button>
+    </header>
 
-        <section class="min-h-screen flex items-center px-6 py-16 section-hidden" id="features-section">
-            <div class="container mx-auto">
-                <h2 class="text-5xl font-bold text-center gradient-text mb-16">
-                    Why Choose Our Platform?
-                </h2>
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="glass-effect p-8 card-hover text-center">
-                        <div class="text-5xl mb-4 gradient-text">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">AI-Powered Learning</h3>
-                        <p class="text-gray-300">Personalized learning paths adapted to your pace and style</p>
-                    </div>
-                    <div class="glass-effect p-8 card-hover text-center">
-                        <div class="text-5xl mb-4 gradient-text">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Interactive Community</h3>
-                        <p class="text-gray-300">Connect with peers and learn together in collaborative environment</p>
-                    </div>
-                    <div class="glass-effect p-8 card-hover text-center">
-                        <div class="text-5xl mb-4 gradient-text">
-                            <i class="fas fa-trophy"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Achievement System</h3>
-                        <p class="text-gray-300">Track progress with gamified learning and earn certificates</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="min-h-screen flex items-center px-6 py-16 liquid-bg section-hidden" id="stats-section">
-            <div class="container mx-auto text-center">
-                <h2 class="text-5xl font-bold gradient-text mb-16">Our Impact</h2>
-                <div class="grid md:grid-cols-4 gap-8">
-                    <div class="glass-effect p-8 card-hover">
-                        <div class="text-4xl font-bold gradient-text mb-2">
-                            <span id="total-videos">0</span>+
-                        </div>
-                        <p class="text-gray-300">Video Lessons</p>
-                    </div>
-                    <div class="glass-effect p-8 card-hover">
-                        <div class="text-4xl font-bold gradient-text mb-2">
-                            <span id="total-notes">0</span>+
-                        </div>
-                        <p class="text-gray-300">Notes</p>
-                    </div>
-                    <div class="glass-effect p-8 card-hover">
-                        <div class="text-4xl font-bold gradient-text mb-2">
-                            <span id="total-practice-sets">0</span>+
-                        </div>
-                        <p class="text-gray-300">Practice Sets</p>
-                    </div>
-                    <div class="glass-effect p-8 card-hover">
-                        <div class="text-4xl font-bold gradient-text mb-2">
-                            <span id="total-q-and-a">0</span>+
-                        </div>
-                        <p class="text-gray-300">Q&A</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="min-h-screen flex items-center px-6 py-16 section-hidden" id="cta-section">
-            <div class="container mx-auto text-center">
-                <h2 class="text-5xl font-bold gradient-text mb-8">Ready to Transform Your Learning?</h2>
-                <p class="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-                    Join thousands of students already advancing their knowledge with our cutting-edge platform
-                </p>
-                <button onclick="showPage('library')" class="glass-effect px-12 py-6 rounded-full text-xl pulse-glow hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Enter the Library to start learning">
-                    <i class="fas fa-arrow-right mr-2"></i>Enter Library
-                </button>
-            </div>
-        </section>
-    </div>
-
-    <div id="library" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="text-center mb-16">
-                <h1 class="text-5xl font-bold gradient-text mb-4">
-                    <i class="fas fa-book-open-reader mr-4"></i>Subject Library
-                </h1>
-                <p class="text-xl text-gray-300">Choose your subject to begin your learning journey</p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div onclick="showSubject('science')" tabindex="0" role="button" aria-label="Explore Science subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Science</h3>
-                        <p class="text-gray-300 mb-4">Explore physics, chemistry, and biology</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-
-                <div onclick="showSubject('mathematics')" tabindex="0" role="button" aria-label="Explore Mathematics subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Mathematics</h3>
-                        <p class="text-gray-300 mb-4">Algebra, geometry, and calculus</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-
-                <div onclick="showSubject('social-science')" tabindex="0" role="button" aria-label="Explore Social Science subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-globe"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Social Science</h3>
-                        <p class="text-gray-300 mb-4">History, geography, and civics</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-
-                <div onclick="showSubject('english')" tabindex="0" role="button" aria-label="Explore English subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-language"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">English</h3>
-                        <p class="text-gray-300 mb-4">Master grammar, literature, and writing</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-
-                <div onclick="showSubject('hindi')" tabindex="0" role="button" aria-label="Explore Hindi subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-pen-fancy"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">हिन्दी</h3>
-                        <p class="text-gray-300 mb-4">व्याकरण, साहित्य और लेखन सीखें</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-
-                <div onclick="showSubject('financial-market')" tabindex="0" role="button" aria-label="Explore Financial Market subjects" class="glass-effect p-8 card-hover cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4 gradient-text">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold mb-4">Financial Market</h3>
-                        <p class="text-gray-300 mb-4">Introduction to Financial Markets (CBSE Class 10th)</p>
-                        <div class="text-sm text-purple-300">Chapters Available</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="subject-index" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="flex items-center mb-8">
-                <button onclick="showPage('library')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Subject Library">
-                    ◀
-                </button>
-                <h1 id="subject-title" class="text-4xl font-bold gradient-text">Subject Chapters</h1>
-            </div>
-            
-            <div id="chapters-container" class="chapter-grid"></div>
-        </div>
-    </div>
-
-    <div id="chapter-detail" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="flex items-center mb-8">
-                <button id="back-to-subject" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Chapter list">
-                    ◀
-                </button>
-                <h1 id="chapter-title" class="text-4xl font-bold gradient-text">Chapter Resources</h1>
-            </div>
-            
-            <div id="chapter-resources-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
-        </div>
-    </div>
-
-    <div id="profile" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="text-center mb-16">
-                <h1 class="text-5xl font-bold gradient-text mb-4">
-                    <i class="fas fa-user-circle mr-4"></i>Your Profile
-                </h1>
-                <p class="text-xl text-gray-300">Manage your account and track your progress</p>
-                <p class="text-sm text-gray-400 mt-2">Your User ID: <span id="display-user-id" class="font-mono text-purple-300 break-all">Loading...</span></p>
+    <!-- Main Layout Container -->
+    <div class="main-layout-container">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar bg-gray-800 text-white w-72 p-4 shadow-lg lg:shadow-none">
+            <div class="flex items-center justify-center mb-6 lg:mb-8">
+                <img id="sidebarLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-12 h-12 rounded-full cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';">
+                <!-- Removed sidebarWebsiteName as requested -->
             </div>
 
-            <div class="glass-effect p-8 max-w-3xl mx-auto mb-12">
-                <div class="flex flex-col md:flex-row items-center md:items-start gap-8">
-                    <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-purple-500 flex-shrink-0 animate-pulse-glow-sm">
-                        <img id="profile-pic" src="https://placehold.co/128x128/8b5cf6/ffffff?text=User" alt="User Profile Picture" class="w-full h-full object-cover">
-                        <input type="file" id="profile-pic-upload" accept="image/png, image/jpeg, image/gif" class="hidden">
-                        <button onclick="document.getElementById('profile-pic-upload').click()" class="absolute bottom-0 right-0 bg-purple-600 rounded-full p-2 text-white hover:bg-purple-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Change profile picture">
-                            <i class="fas fa-camera text-sm"></i>
-                        </button>
-                    </div>
-                    <div class="text-center md:text-left flex-grow">
-                        <h2 class="text-3xl font-bold gradient-text mb-2" id="profile-username">Loading...</h2>
-                        <p class="text-gray-300 mb-4" id="profile-email">Loading...</p>
-                        <p class="text-gray-300 text-sm mb-2">My Profile Picture Uploads: <span id="profile-uploads-count" class="font-bold text-purple-300">0</span></p>
-                        <button onclick="saveProfile()" class="glass-effect px-6 py-3 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Save profile information">
-                            <i class="fas fa-save mr-2"></i>Save Changes
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <button id="addNewPageButton" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full mb-4 flex items-center justify-center shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                <i class="fas fa-plus mr-2 mobile-only-icon"></i>
+                <span class="desktop-only-text">Add New Page</span>
+            </button>
 
-            <div class="loading-spinner" id="profile-loading-spinner"></div>
-
-            <div id="profile-content" class="hidden">
-                <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                    <div class="glass-effect p-8 md:col-span-2">
-                        <h3 class="text-2xl font-bold gradient-text mb-6 flex items-center">
-                            <i class="fas fa-history mr-3"></i>Recent Activity
-                        </h3>
-                        <ul class="space-y-4 text-gray-300" id="recent-activity-list">
-                        </ul>
-                    </div>
-
-                    <div class="glass-effect p-8 md:col-span-2">
-                        <h3 class="text-2xl font-bold gradient-text mb-6 flex items-center">
-                            <i class="fas fa-cog mr-3"></i>Account Settings
-                        </h3>
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="name-input" class="block text-gray-300 text-sm font-bold mb-2">Name</label>
-                                <input type="text" id="name-input" value="" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white input-glow" aria-label="Edit your name">
-                            </div>
-                            <div>
-                                <label for="email-input" class="block text-gray-300 text-sm font-bold mb-2">Email</label>
-                                <input type="email" id="email-input" value="" class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white input-glow" aria-label="Edit your email address">
-                            </div>
-                            <div class="md:col-span-2 flex justify-end">
-                                <button onclick="saveProfile()" class="glass-effect px-6 py-3 rounded-full text-sm hover:scale-105 transition-all duration-300 border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Save profile settings">
-                                    <i class="fas fa-save mr-2"></i>Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="notifications-page" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="flex items-center justify-between mb-8">
-                <div class="flex items-center">
-                    <button onclick="showPage('home')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Home page">
-                        ◀
-                    </button>
-                    <h1 class="text-4xl font-bold gradient-text">
-                        <i class="fas fa-bell mr-4"></i>Notifications
-                    </h1>
-                </div>
-            </div>
-            
-            <div id="notifications-list" class="space-y-4">
-            </div>
-        </div>
-    </div>
-
-    <div id="watch-demo" class="page min-h-screen pt-20">
-        <div class="container mx-auto px-6 py-12">
-            <div class="flex items-center mb-8">
-                <button onclick="showPage('home')" class="glass-effect p-3 rounded-full mr-4 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Go back to Home page">
-                    ◀
-                </button>
-                <h1 class="text-4xl font-bold gradient-text">
-                    <i class="fas fa-play-circle mr-4"></i>Watch Demo
-                </h1>
-            </div>
-            
-            <div class="glass-effect p-8 rounded-xl max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold gradient-text mb-6">Welcome to the Learning Labs Demo!</h2>
-                <p class="text-gray-300 mb-6 leading-relaxed">
-                    This demo provides a quick overview of how Learning Labs can transform your educational journey. 
-                    We focus on personalized, interactive, and engaging learning experiences.
-                </p>
-
-                <h3 class="text-2xl font-bold gradient-text mb-4">Key Features You'll Experience:</h3>
-                <ul class="list-disc list-inside text-gray-300 space-y-2 mb-6">
-                    <li><strong class="text-purple-300">Comprehensive Subject Library:</strong> Browse through a wide range of subjects, each broken down into easy-to-understand chapters.</li>
-                    <li><strong class="text-purple-300">Diverse Learning Resources:</strong> Each chapter offers multiple resource types, including detailed notes, interactive Q&A sections, engaging video lectures, and challenging practice tests.</li>
-                    <li><strong class="text-purple-300">Personalized Progress Tracking:</strong> Your profile page keeps a record of your recent activities and allows you to manage your personal information.</li>
-                    <li><strong class="text-purple-300">Real-time Notifications:</strong> Stay updated with new content, important announcements, and personalized tips through our integrated notification system.</li>
-                    <li><strong class="text-purple-300">Dynamic Impact Statistics:</strong> See the collective growth of our community with real-time updates on total video lessons, notes, practice sets, and Q&A available.</li>
+            <nav id="pageList" class="flex-grow">
+                <!-- Pages will be dynamically added here -->
+                <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Pages</h3>
+                <ul id="pagesContainer">
+                    <!-- Default "Home" page will be added by JS -->
                 </ul>
+            </nav>
 
-                <h3 class="text-2xl font-bold gradient-text mb-4">How to Get Started:</h3>
-                <ol class="list-decimal list-inside text-gray-300 space-y-2 mb-6">
-                    <li>Navigate to the <strong class="text-purple-300">"Library"</strong> page to explore available subjects.</li>
-                    <li>Select a subject to view its chapters.</li>
-                    <li>Click on any chapter to access its learning resources.</li>
-                    <li>Visit your <strong class="text-purple-300">"Profile"</strong> to update your details and track your activity.</li>
-                    <li>Check the <strong class="text-purple-300">"Notifications"</strong> icon for important updates.</li>
-                </ol>
+            <div class="mt-auto pt-4 border-t border-gray-700">
+                <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Legal</h3>
+                <ul>
+                    <li class="mb-2">
+                        <div class="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md p-2 cursor-pointer page-item transition-all duration-200 ease-in-out hover:scale-[1.02]" data-page-id="copyright-terms">
+                            <span class="flex-grow text-lg font-medium page-name-display truncate">Terms & Copyright</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
 
-                <p class="text-gray-300 mb-6 leading-relaxed">
-                    Our platform is designed to be intuitive and user-friendly, ensuring a seamless learning experience across all devices. 
-                    We continuously add new content and features to help you achieve your academic goals.
-                </p>
+        <!-- Main Content Area -->
+        <main id="mainContent" class="main-content flex-grow p-4 lg:p-8">
+            <div class="main-content-card rounded-lg shadow-lg">
+                <!-- Page Name Editor -->
+                <div class="flex items-center justify-between mb-4">
+                    <input type="text" id="currentPageNameInput" class="text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 flex-grow text-white" value="Home" readonly>
+                </div>
+                <hr class="mb-6 border-gray-700">
 
-                <p class="text-gray-300 text-center font-semibold">
-                    Ready to dive in? Head over to the Library and start your learning journey!
-                </p>
+                <!-- Content Editor -->
+                <div id="contentEditorContainer" class="content-editor-container">
+                    <div id="contentEditor" class="content-editor" contenteditable="false" spellcheck="false">
+                        <p>Welcome to your new page! Click the 'Edit' button in the header to start customizing.</p>
+                    </div>
+                </div>
+
+                <!-- Floating Add Content Button -->
+                <button id="addContentFloatingButton" class="add-content-button bg-purple-600 hover:bg-purple-700 text-white text-3xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
+                    <i class="fas fa-plus"></i>
+                </button>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <button id="prevPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                        <i class="fas fa-chevron-left text-xl"></i>
+                    </button>
+                    <button id="nextPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                        <i class="fas fa-chevron-right text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Content Type Selection Modal (Existing) -->
+    <div id="contentTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeContentTypeModalButton">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Add Content</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="header">
+                    <i class="fas fa-heading text-xl mb-1 text-purple-400"></i> Header
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="paragraph">
+                    <i class="fas fa-paragraph text-xl mb-1 text-purple-400"></i> Paragraph
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="list">
+                    <i class="fas fa-list-ul text-xl mb-1 text-purple-400"></i> List
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="bold">
+                    <i class="fas fa-bold text-xl mb-1 text-purple-400"></i> Bold
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="italic">
+                    <i class="fas fa-italic text-xl mb-1 text-purple-400"></i> Italic
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="image">
+                    <i class="fas fa-image text-xl mb-1 text-purple-400"></i> Image
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="video">
+                    <i class="fas fa-video text-xl mb-1 text-purple-400"></i> Video
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="pdf">
+                    <i class="fas fa-file-pdf text-xl mb-1 text-purple-400"></i> PDF
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="iframe">
+                    <i class="fas fa-globe text-xl mb-1 text-purple-400"></i> Website (IFrame)
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="table">
+                    <i class="fas fa-table text-xl mb-1 text-purple-400"></i> Table
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="code">
+                    <i class="fas fa-code text-xl mb-1 text-purple-400"></i> Code
+                </button>
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="formula">
+                    <i class="fas fa-square-root-alt text-xl mb-1 text-purple-400"></i> Formula (LaTeX)
+                </button>
             </div>
         </div>
     </div>
 
-    <footer class="glass-effect py-8 mt-16">
-        <div class="container mx-auto text-center text-gray-400">
-            <p>&copy; 2025 Learning Labs. All rights reserved.</p>
+    <!-- New Input Modal -->
+    <div id="inputModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeInputModalButton">&times;</span>
+            <h2 id="inputModalTitle" class="text-2xl font-bold mb-4">Add Content</h2>
+            <div id="inputModalFields" class="space-y-4">
+                <!-- Input fields will be dynamically added here -->
+            </div>
+            <button id="inputModalSubmitButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                Add to Page
+            </button>
         </div>
-    </footer>
-
-    <script>
-        let currentUserId = null;
-        let currentUserData = null;
-        let globalStats = {
-            totalVideos: 0,
-            totalNotes: 0,
-            totalPracticeSets: 0,
-            totalQandA: 0
-        };
-        let floatingNotificationsShown = new Set();
-
-        const messageBox = document.getElementById('message-box');
-        const messageText = document.getElementById('message-text');
-
-        function showMessageBox(message) {
-            messageText.textContent = message;
-            messageBox.classList.add('show');
-        }
-
-        function hideMessageBox() {
-            messageBox.classList.remove('show');
-        }
-
-        const notificationBox = document.getElementById('notification-box');
-        const notificationText = document.getElementById('notification-text');
-        let notificationTimeout;
-
-        function showNotification(message, type = 'info', duration = 3000) {
-            clearTimeout(notificationTimeout);
-
-            notificationBox.className = 'notification-box'; 
-            notificationBox.classList.add(type);
-            notificationText.textContent = message;
-            notificationBox.classList.add('show');
-
-            notificationTimeout = setTimeout(() => {
-                notificationBox.classList.remove('show');
-            }, duration);
-        }
-        window.showNotification = showNotification;
-
-        function generateNotification(message, type = 'info') {
-            if (!currentUserData) {
-                console.warn("User data not loaded, cannot generate notification.");
-                return;
-            }
-            const newNotification = {
-                id: crypto.randomUUID(),
-                message: message,
-                type: type,
-                timestamp: new Date().toISOString(),
-                read: false
-            };
-            currentUserData.notifications.unshift(newNotification); 
-            saveUserDataToLocalStorage();
-            updateNotificationCount();
-            showNotification(message, type);
-        }
-        window.generateNotification = generateNotification;
-
-        function loadUserDataFromLocalStorage() {
-            const storedUserData = localStorage.getItem('learningLabsUser');
-            
-            if (storedUserData) {
-                currentUserData = JSON.parse(storedUserData);
-                currentUserId = currentUserData.userId;
-                if (!currentUserData.notifications) currentUserData.notifications = [];
-                if (currentUserData.profilePic === undefined) currentUserData.profilePic = null;
-                if (currentUserData.profileUploadCount === undefined) currentUserData.profileUploadCount = 0;
-
-            } else {
-                currentUserId = crypto.randomUUID();
-                currentUserData = {
-                    userId: currentUserId,
-                    username: `User-${currentUserId.substring(0, 8)}`,
-                    email: `${currentUserId.substring(0, 8)}@example.com`,
-                    profilePic: null, 
-                    profileUploadCount: 0,
-                    recentActivity: [
-                        { icon: 'fas fa-check-circle', color: 'green-400', text: 'Started your learning journey!' },
-                        { icon: 'fas fa-book-open-reader', color: 'blue-400', text: 'Explored the Library.' }
-                    ],
-                    notifications: [
-                        { id: crypto.randomUUID(), message: 'Welcome to Learning Labs! Explore our new features!', type: 'info', timestamp: new Date().toISOString(), read: false },
-                        { id: crypto.randomUUID(), message: 'New CBSE Class 10th subjects are now available!', type: 'success', timestamp: new Date(Date.now() - 86400000).toISOString(), read: false },
-                        { id: crypto.randomUUID(), message: 'Don\'t miss the Introduction to Financial Market course!', type: 'warning', timestamp: new Date(Date.now() - 172800000).toISOString(), read: false }
-                    ]
-                };
-                saveUserDataToLocalStorage();
-                showNotification("Welcome! Your profile has been created.", "success");
-            }
-            updateProfileUI(currentUserData);
-            updateNotificationCount();
-            calculateGlobalStats(); 
-            updateGlobalStatsUI();
-            document.getElementById('profile-loading-spinner').classList.add('hidden');
-            document.getElementById('profile-content').classList.remove('hidden');
-        }
-
-        function saveUserDataToLocalStorage() {
-            localStorage.setItem('learningLabsUser', JSON.stringify(currentUserData));
-        }
-
-        function updateProfileUI(data) {
-            document.getElementById('display-user-id').textContent = data.userId || 'N/A';
-            document.getElementById('profile-username').textContent = data.username || 'N/A';
-            document.getElementById('profile-email').textContent = data.email || 'N/A';
-            document.getElementById('name-input').value = data.username || '';
-            document.getElementById('email-input').value = data.email || '';
-            document.getElementById('profile-uploads-count').textContent = data.profileUploadCount || 0;
-
-            const profilePicElement = document.getElementById('profile-pic');
-            if (data.profilePic) {
-                profilePicElement.src = data.profilePic;
-            } else {
-                profilePicElement.src = "https://placehold.co/128x128/8b5cf6/ffffff?text=User";
-            }
-            profilePicElement.onerror = () => {
-                profilePicElement.src = "https://placehold.co/128x128/8b5cf6/ffffff?text=User";
-            };
-
-            const activityList = document.getElementById('recent-activity-list');
-            activityList.innerHTML = '';
-            if (data.recentActivity && data.recentActivity.length > 0) {
-                data.recentActivity.forEach(activity => {
-                    const li = document.createElement('li');
-                    li.className = 'flex items-center';
-                    li.innerHTML = `<i class="${activity.icon || 'fas fa-info-circle'} text-${activity.color || 'gray-400'} mr-3"></i>${activity.text}`;
-                    activityList.appendChild(li);
-                });
-            } else {
-                activityList.innerHTML = '<li class="text-gray-400">No recent activity. Start learning!</li>';
-            }
-        }
-
-        function calculateGlobalStats() {
-            let totalVideos = 0;
-            let totalNotes = 0;
-            let totalPracticeTests = 0;
-            let totalQandA = 0;
-
-            for (const subjectKey in subjects) {
-                const subject = subjects[subjectKey];
-                subject.chapters.forEach(chapter => {
-                    chapter.resources.forEach(resource => {
-                        if (resource.type === 'Video Lecture') {
-                            totalVideos++;
-                        } else if (resource.type === 'Notes') {
-                            totalNotes++;
-                        } else if (resource.type === 'Practice Test') {
-                            totalPracticeTests++;
-                        } else if (resource.type === 'Q&A') {
-                            totalQandA++;
-                        }
-                    });
-                });
-            }
-
-            globalStats.totalVideos = totalVideos;
-            globalStats.totalNotes = totalNotes;
-            globalStats.totalPracticeSets = totalPracticeTests;
-            globalStats.totalQandA = totalQandA;
-
-            localStorage.setItem('learningLabsStats', JSON.stringify(globalStats));
-        }
-
-        function updateGlobalStatsUI() {
-            document.getElementById('total-videos').textContent = globalStats.totalVideos.toLocaleString();
-            document.getElementById('total-notes').textContent = globalStats.totalNotes.toLocaleString();
-            document.getElementById('total-practice-sets').textContent = globalStats.totalPracticeSets.toLocaleString();
-            document.getElementById('total-q-and-a').textContent = globalStats.totalQandA.toLocaleString();
-        }
-
-        function saveProfile() {
-            if (!currentUserData) {
-                showMessageBox("User data not loaded. Cannot save profile.");
-                return;
-            }
-
-            const newUsername = document.getElementById('name-input').value;
-            const newEmail = document.getElementById('email-input').value;
-
-            currentUserData.username = newUsername;
-            currentUserData.email = newEmail;
-            
-            currentUserData.recentActivity.unshift({
-                icon: 'fas fa-save',
-                color: 'purple-400',
-                text: `Profile updated on ${new Date().toLocaleDateString()}.`
-            });
-            if (currentUserData.recentActivity.length > 5) {
-                currentUserData.recentActivity.pop();
-            }
-
-            saveUserDataToLocalStorage();
-            updateProfileUI(currentUserData);
-            showMessageBox("Profile updated successfully!");
-            generateNotification("Your profile changes have been saved!", "success");
-        }
-        window.saveProfile = saveProfile;
-
-        document.getElementById('profile-pic-upload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (!file.type.startsWith('image/')) {
-                    showMessageBox("Please upload an image file (jpg, jpeg, png, gif).", "error");
-                    return;
-                }
-                if (file.size > 2 * 1024 * 1024) {
-                    showMessageBox("Image size exceeds 2MB. Please upload a smaller image.", "warning");
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentUserData.profilePic = e.target.result;
-                    currentUserData.profileUploadCount = (currentUserData.profileUploadCount || 0) + 1;
-                    saveUserDataToLocalStorage();
-                    updateProfileUI(currentUserData);
-                    showMessageBox("Profile picture updated!", "success");
-                    generateNotification("Your profile picture has been updated!", "info");
-                };
-                reader.onerror = function() {
-                    showMessageBox("Failed to read image file.", "error");
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function updateNotificationCount() {
-            if (!currentUserData || !currentUserData.notifications) {
-                document.getElementById('unread-notifications-badge').classList.add('hidden');
-                document.getElementById('unread-notifications-badge-mobile').classList.add('hidden');
-                document.getElementById('unread-notifications-badge-mobile-menu').classList.add('hidden');
-                return;
-            }
-            const unreadCount = currentUserData.notifications.filter(n => !n.read).length;
-            const badgeDesktop = document.getElementById('unread-notifications-badge');
-            const badgeMobile = document.getElementById('unread-notifications-badge-mobile');
-            const badgeMobileMenu = document.getElementById('unread-notifications-badge-mobile-menu');
-
-            if (unreadCount > 0) {
-                badgeDesktop.classList.remove('hidden');
-                badgeMobile.classList.remove('hidden');
-                badgeMobileMenu.classList.remove('hidden');
-            } else {
-                badgeDesktop.classList.add('hidden');
-                badgeMobile.classList.add('hidden');
-                badgeMobileMenu.classList.add('hidden');
-            }
-        }
-
-        function showNotificationsPage() {
-            showPage('notifications-page');
-            renderNotifications();
-            setTimeout(() => {
-                markAllNotificationsAsRead(false);
-                saveUserDataToLocalStorage();
-                updateNotificationCount();
-            }, 500);
-        }
-        window.showNotificationsPage = showNotificationsPage;
-
-        function renderNotifications() {
-            const notificationsList = document.getElementById('notifications-list');
-            notificationsList.innerHTML = '';
-
-            if (!currentUserData || !currentUserData.notifications || currentUserData.notifications.length === 0) {
-                const noNotificationsMessage = document.createElement('div');
-                noNotificationsMessage.className = 'glass-effect p-6 rounded-xl text-gray-400 text-center';
-                noNotificationsMessage.textContent = 'No new notifications.';
-                notificationsList.appendChild(noNotificationsMessage);
-                return;
-            }
-
-            currentUserData.notifications.forEach(notification => {
-                const notificationItem = document.createElement('div');
-                notificationItem.className = `glass-effect p-4 rounded-xl flex items-start space-x-4 notification-item ${notification.type} ${notification.read ? '' : 'unread'}`;
-                
-                const iconMap = {
-                    'info': 'fas fa-info-circle text-blue-400',
-                    'success': 'fas fa-check-circle text-green-400',
-                    'warning': 'fas fa-exclamation-triangle text-yellow-400',
-                    'error': 'fas fa-times-circle text-red-400'
-                };
-                const iconClass = iconMap[notification.type] || 'fas fa-bell text-gray-400';
-
-                const notificationDate = new Date(notification.timestamp);
-                const timeAgo = formatTimeAgo(notificationDate);
-
-                notificationItem.innerHTML = `
-                    <i class="${iconClass} text-2xl flex-shrink-0 mt-1"></i>
-                    <div class="flex-grow">
-                        <p class="text-gray-200 text-base">${notification.message}</p>
-                        <p class="text-gray-400 text-xs mt-1">${timeAgo}</p>
-                    </div>
-                `;
-                notificationsList.appendChild(notificationItem);
-            });
-        }
-
-        function formatTimeAgo(date) {
-            const seconds = Math.floor((new Date() - date) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + " years ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + " months ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + " days ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + " hours ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + " minutes ago";
-            return Math.floor(seconds) + " seconds ago";
-        }
-
-        function markAllNotificationsAsRead(saveImmediately = true) {
-            if (!currentUserData || !currentUserData.notifications) return;
-
-            let changed = false;
-            currentUserData.notifications.forEach(notification => {
-                if (!notification.read) {
-                    notification.read = true;
-                    changed = true;
-                }
-            });
-
-            if (changed) {
-                if (saveImmediately) {
-                    saveUserDataToLocalStorage();
-                    showNotification("All notifications marked as read.", "info");
-                }
-                updateNotificationCount();
-                renderNotifications();
-            }
-        }
-        window.markAllNotificationsAsRead = markAllNotificationsAsRead;
-
-        function displayFloatingNotification(notification) {
-            if (floatingNotificationsShown.has(notification.id)) {
-                return;
-            }
-
-            const container = document.getElementById('floating-notifications-container');
-            container.style.display = 'flex'; 
-
-            const toast = document.createElement('div');
-            toast.className = `floating-notification-toast ${notification.type}`;
-            toast.setAttribute('data-id', notification.id);
-
-            const iconMap = {
-                'info': 'fas fa-info-circle text-blue-400',
-                'success': 'fas fa-check-circle text-green-400',
-                'warning': 'fas fa-exclamation-triangle text-yellow-400',
-                'error': 'fas fa-times-circle text-red-400'
-            };
-            const iconClass = iconMap[notification.type] || 'fas fa-bell text-gray-400';
-
-            toast.innerHTML = `
-                <i class="${iconClass} text-xl flex-shrink-0"></i>
-                <p class="flex-grow text-sm">${notification.message}</p>
-                <button class="close-btn" aria-label="Dismiss notification">✖</button>
-            `;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-
-            const dismissTimeout = setTimeout(() => {
-                dismissToast(toast, notification.id);
-            }, 5000);
-
-            toast.addEventListener('click', (event) => {
-                if (event.target.classList.contains('close-btn')) {
-                    clearTimeout(dismissTimeout);
-                    dismissToast(toast, notification.id);
-                } else {
-                    clearTimeout(dismissTimeout);
-                    dismissToast(toast, notification.id);
-                }
-            });
-
-            floatingNotificationsShown.add(notification.id);
-        }
-
-        function dismissToast(toastElement, notificationId) {
-            toastElement.classList.add('hide');
-            toastElement.addEventListener('transitionend', () => {
-                toastElement.remove();
-                const container = document.getElementById('floating-notifications-container');
-                if (container.children.length === 0) {
-                    container.style.display = 'none';
-                }
-            });
-
-            if (currentUserData && currentUserData.notifications) {
-                const notif = currentUserData.notifications.find(n => n.id === notificationId);
-                if (notif && !notif.read) {
-                    notif.read = true;
-                    saveUserDataToLocalStorage();
-                    updateNotificationCount();
-                }
-            }
-        }
-
-        const subjects = {
-            science: {
-                title: 'Science',
-                chapters: [
-                    { name: 'Chemical Reactions and Equations', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Acids, Bases and Salts', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Metals and Non-metals', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Carbon and its Compounds', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Life Processes', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Control and Coordination', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: 'sb2-s.html' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: 'SB2.html' }
-                    ]},
-                    { name: 'How do Organisms Reproduce?', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Heredity and Evolution', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Light - Reflection and Refraction', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'The Human Eye and Colourful World', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Electricity', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Magnetic Effects of Electric Current', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Our Environment', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Management of Natural Resources', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]}
-                ]
-            },
-            mathematics: {
-                title: 'Mathematics',
-                chapters: [
-                    { name: 'Real Numbers', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Polynomials', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Pair of Linear Equations in Two Variables', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Quadratic Equations', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Arithmetic Progressions', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Triangles', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Coordinate Geometry', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Introduction to Trigonometry', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Some Applications of Trigonometry', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Circles', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Areas Related to Circles', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Surface Areas and Volumes', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Statistics', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Probability', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]}
-                ]
-            },
-            'social-science': {
-                title: 'Social Science',
-                chapters: [
-                    { name: 'The Rise of Nationalism in Europe', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Nationalism in India', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'The Making of a Global World', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'The Age of Industrialisation', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Print Culture and the Modern World', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Resources and Development', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Forest and Wildlife Resources', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Water Resources', resources: [
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Agriculture', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Minerals and Energy Resources', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Manufacturing Industries', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Lifelines of National Economy', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Power Sharing', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Federalism', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Democracy and Diversity', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Gender, Religion and Caste', resources: [
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Political Parties', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Outcomes of Democracy', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Development', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Sectors of the Indian Economy', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Money and Credit', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Globalization and the Indian Economy', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Consumer Rights', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]}
-                ]
-            },
-            english: {
-                title: 'English',
-                chapters: [
-                    { name: 'A Letter to God', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Dust of Snow', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Fire and Ice', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'A Tiger in the Zoo', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'How to Tell Wild Animals', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'The Ball Poem', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'From the Diary of Anne Frank', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Animals', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'The Trees', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Fog', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'The Tale of Custard the Dragon', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'For Anne Gregory', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Nelson Mandela: Long Walk to Freedom', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'Two Stories about Flying', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'The Black Aeroplane', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Glimpses of India', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Mijbil the Otter', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'Madam Rides the Bus', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'The Sermon at Benares', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'The Proposal', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]}
-                ]
-            },
-            hindi: {
-                title: 'हिन्दी',
-                chapters: [
-                    { name: 'सूरदास के पद', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'राम-लक्ष्मण-परशुराम संवाद', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'सवैये', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'आत्मकथ्य', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'उत्साह', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' }
-                    ]},
-                    { name: 'अट नहीं रही है', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'यह दंतुरित मुस्कान', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'फसल', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'छाया मत छूना', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]},
-                    { name: 'कन्यादान', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]}
-                ]
-            },
-            'financial-market': {
-                title: 'Introduction to Financial Market (FM)',
-                chapters: [
-                    { name: 'Introduction to Financial Markets', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Primary Market', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Secondary Market', resources: [
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' }
-                    ]},
-                    { name: 'Financial Institutions', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Mutual Funds', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' }
-                    ]},
-                    { name: 'Stock Exchanges', resources: [
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' },
-                        { type: 'Chapter PDF', icon: 'fas fa-file-pdf', color: 'red-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' }
-                    ]},
-                    { name: 'Role of SEBI', resources: [
-                        { type: 'Notes', icon: 'fas fa-book', color: 'blue-400', url: '#' },
-                        { type: 'Video Lecture', icon: 'fas fa-play-circle', color: 'green-400', url: '#' },
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' }
-                    ]},
-                    { name: 'Investor Protection', resources: [
-                        { type: 'Practice Test', icon: 'fas fa-clipboard-check', color: 'yellow-400', url: '#' },
-                        { type: 'Short Notes', icon: 'fas fa-sticky-note', color: 'pink-400', url: '#' },
-                        { type: 'Q&A', icon: 'fas fa-question-circle', color: 'purple-400', url: '#' }
-                    ]}
-                ]
-            }
-        };
-
-        let currentSubjectKey = '';
-        let currentChapterName = '';
-
-        function showPage(pageId) {
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => {
-                if (page.id === pageId) {
-                    page.classList.add('active');
-                    void page.offsetWidth; 
-                    page.style.opacity = '1';
-                    page.style.transform = 'translateY(0)';
-                } else {
-                    page.style.opacity = '0';
-                    page.style.transform = 'translateY(20px)';
-                    setTimeout(() => page.classList.remove('active'), 600); 
-                }
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            if (pageId === 'profile' && currentUserData) {
-                document.getElementById('profile-loading-spinner').classList.add('hidden');
-                document.getElementById('profile-content').classList.remove('hidden');
-            } else if (pageId === 'profile' && !currentUserData) {
-                document.getElementById('profile-loading-spinner').classList.remove('hidden');
-                document.getElementById('profile-content').classList.add('hidden');
-            }
-            updateNotificationCount();
-        }
-
-        function showSubject(subjectKey) {
-            currentSubjectKey = subjectKey;
-            const subject = subjects[subjectKey];
-            
-            document.getElementById('subject-title').textContent = subject.title + ' - Chapters';
-            
-            const chaptersContainer = document.getElementById('chapters-container');
-            chaptersContainer.innerHTML = '';
-            
-            subject.chapters.forEach((chapter, index) => {
-                const chapterDiv = document.createElement('div');
-                chapterDiv.className = 'glass-effect p-6 card-hover cursor-pointer';
-                chapterDiv.setAttribute('tabindex', '0');
-                chapterDiv.setAttribute('role', 'button');
-                chapterDiv.setAttribute('aria-label', `Access resources for chapter ${chapter.name}`);
-                chapterDiv.onclick = () => showChapter(chapter.name);
-                chapterDiv.onkeydown = (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        showChapter(chapter.name);
-                    }
-                };
-                
-                chapterDiv.innerHTML = `
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center mr-4 text-white font-bold text-lg">
-                            ${index + 1}
-                        </div>
-                        <h3 class="text-xl font-bold gradient-text">${chapter.name}</h3>
-                    </div>
-                    <p class="text-gray-300 text-sm">Complete study materials and resources</p>
-                    <div class="flex items-center mt-4 text-purple-300">
-                        <i class="fas fa-play mr-2"></i>
-                        <span class="text-sm">Click to access resources</span>
-                    </div>
-                `;
-                
-                chaptersContainer.appendChild(chapterDiv);
-            });
-            
-            showPage('subject-index');
-        }
-
-        function showChapter(chapterName) {
-            currentChapterName = chapterName;
-            document.getElementById('chapter-title').textContent = chapterName;
-            document.getElementById('back-to-subject').onclick = () => showSubject(currentSubjectKey);
-            document.getElementById('back-to-subject').onkeydown = (event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    showSubject(currentSubjectKey);
-                }
-            };
-
-            const chapterResourcesContainer = document.getElementById('chapter-resources-container');
-            chapterResourcesContainer.innerHTML = '';
-
-            const currentSubject = subjects[currentSubjectKey];
-            const chapterData = currentSubject.chapters.find(ch => ch.name === chapterName);
-
-            if (chapterData && chapterData.resources && chapterData.resources.length > 0) {
-                chapterData.resources.forEach(resource => {
-                    const resourceButton = document.createElement('a');
-                    resourceButton.href = resource.url;
-                    resourceButton.target = "_blank";
-                    resourceButton.rel = "noopener noreferrer";
-                    resourceButton.className = `resource-btn p-6 rounded-xl text-left hover:scale-105 transition-all duration-300 block cursor-pointer focus:outline-none focus:ring-2 focus:ring-${resource.color.split('-')[0]}-500`;
-                    resourceButton.setAttribute('aria-label', `Access ${resource.type} for ${chapterName}`);
-
-                    resourceButton.innerHTML = `
-                        <div class="flex items-center mb-3">
-                            <i class="${resource.icon} text-2xl text-${resource.color} mr-3"></i>
-                            <h3 class="text-xl font-bold">${resource.type}</h3>
-                        </div>
-                        <p class="text-gray-300 text-sm">${resource.description || 'No description available.'}</p>
-                    `;
-                    chapterResourcesContainer.appendChild(resourceButton);
-                });
-            } else {
-                chapterResourcesContainer.innerHTML = `
-                    <div class="col-span-full text-center py-10 glass-effect p-8 rounded-xl">
-                        <p class="text-xl text-gray-400">No resources available for this chapter yet. Please check back later!</p>
-                    </div>
-                `;
-            }
-
-            showPage('chapter-detail');
-        }
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.remove('section-hidden');
-                    entry.target.classList.add('section-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        function createParticles() {
-            const particleBg = document.querySelector('.particle-bg');
-            if (!particleBg) return;
-
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 5 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.animationDelay = `${Math.random() * 10}s`;
-                particle.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-                particle.style.setProperty('--y', `${(Math.random() - 0.5) * 200}px`);
-                particleBg.appendChild(particle);
-            }
-        }
-
-        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-        const mobileMenu = document.getElementById('mobile-menu');
-
-        function toggleMobileMenu() {
-            mobileMenu.classList.toggle('hidden');
-        }
-
-        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
-
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
-        });
-
-        window.addEventListener('load', () => {
-            loadUserDataFromLocalStorage();
-
-            if (currentUserData && currentUserData.notifications) {
-                const unreadNotifications = currentUserData.notifications.filter(n => !n.read);
-                let delay = 0;
-                unreadNotifications.forEach(notif => {
-                    setTimeout(() => {
-                        displayFloatingNotification(notif);
-                    }, delay);
-                    delay += 700;
-                });
-            }
-
-            document.querySelectorAll('.section-hidden').forEach(section => {
-                observer.observe(section);
-            });
-
-            createParticles();
-
-            document.querySelectorAll('#home .card-hover').forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                setTimeout(() => {
-                    card.style.transition = 'all 0.6s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100 + 500);
-            });
-        });
-
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallax = document.querySelector('.liquid-bg');
-            if (parallax) {
-                parallax.style.transform = `translateY(${scrolled * 0.3}px)`; 
-            }
-        });
-
-        // Area for adding new notifications
-        // You can call generateNotification('Your new message here', 'info');
-        // Example: generateNotification('A new lesson on Quantum Physics is available!', 'info');
-        // Example: generateNotification('Your practice test results are ready!', 'success');
-        // Example: generateNotification('Reminder: Complete your pending assignments.', 'warning');
-        // Example: generateNotification('Error: Failed to sync profile data.', 'error');
-    </script>
+    </div>
+
+    <!-- Logo Change Modal -->
+    <div id="logoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeLogoModalButton">&times;</span>
+            <h2 class="text-2xl font-bold mb-4">Change Website Logo</h2>
+            <label class="block text-gray-300 text-sm font-bold mb-2" for="newLogoUrlInput">New Logo Image URL:</label>
+            <input type="url" id="newLogoUrlInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/new-logo.png">
+            <button id="saveLogoButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+                Save Logo
+            </button>
+        </div>
+    </div>
+
+    <!-- Highlight.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74cuRSKdbYddKAyHDVRUo+cJcPxMjmTZHzKAGKOMGpTKsoUngM4awi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-43gviini6WaqVDbuOfBfpVaWYKUfr0XUv5Phtfmi4zHbSoCxiOxdVXcRkRtFNfrC" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
