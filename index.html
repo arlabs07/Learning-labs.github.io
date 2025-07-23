@@ -29,7 +29,6 @@
             display: flex;
             flex-direction: column; /* Stack sidebar and main content on mobile */
             flex-grow: 1;
-            /* padding-top removed here, handled by body */
         }
 
         .sidebar {
@@ -84,7 +83,6 @@
             transition: margin-left 0.3s ease-in-out;
             z-index: 10;
             background-color: #1a202c; /* Main content background */
-            /* No margin-left here for mobile, handled by desktop media query */
         }
         /* Desktop styles */
         @media (min-width: 1024px) {
@@ -396,19 +394,19 @@
 
     <!-- Header -->
     <header class="bg-gray-800 shadow-md p-4 flex items-center justify-between lg:justify-start fixed top-0 left-0 right-0 z-30">
-        <button id="menuButton" class="lg:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white transition-all duration-200 ease-in-out">
-            <i class="fas fa-bars text-xl"></i> <!-- Only icon, no logo -->
+        <button id="menuButton" class="lg:hidden p-2 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-white transition-all duration-200 ease-in-out" aria-label="Open menu">
+            <i class="fas fa-bars text-xl"></i>
         </button>
         <div class="flex items-center space-x-2 ml-4 lg:ml-0">
-            <img id="headerLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-8 h-8 rounded-full mr-2 cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';">
-            <input type="text" id="websiteNameInput" class="text-2xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 text-white" value="My Awesome Site" readonly>
+            <img id="headerLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-8 h-8 rounded-full mr-2 cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';" aria-label="Change website logo">
+            <input type="text" id="websiteNameInput" class="text-2xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 text-white" value="My Awesome Site" readonly aria-label="Website Name">
         </div>
 
         <!-- Conditional Buttons based on Mode -->
-        <button id="hostSiteButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+        <button id="hostSiteButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Host Site">
             <i class="fas fa-cloud-upload-alt mr-2"></i> Host Site
         </button>
-        <button id="toggleEditModeButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105">
+        <button id="toggleEditModeButton" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-md shadow-md ml-auto flex items-center transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Toggle Edit Mode">
             <i class="fas fa-edit mr-2"></i> Edit
         </button>
     </header>
@@ -416,21 +414,19 @@
     <!-- Main Layout Container -->
     <div class="main-layout-container">
         <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar bg-gray-800 text-white w-72 p-4 shadow-lg lg:shadow-none">
+        <aside id="sidebar" class="sidebar bg-gray-800 text-white w-72 p-4 shadow-lg lg:shadow-none" aria-label="Website Navigation">
             <div class="flex items-center justify-center mb-6 lg:mb-8">
-                <img id="sidebarLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-12 h-12 rounded-full cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';">
-                <!-- Removed sidebarWebsiteName as requested -->
+                <img id="sidebarLogo" src="https://arlabs07.github.io/Arhub07.github.io/Images/llabs.webp" alt="Website Logo" class="w-12 h-12 rounded-full cursor-pointer" onerror="this.onerror=null;this.src='https://placehold.co/400x200/cccccc/000000?text=Logo';" aria-label="Change website logo">
             </div>
 
-            <button id="addNewPageButton" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full mb-4 flex items-center justify-center shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+            <button id="addNewPageButton" class="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full mb-4 flex items-center justify-center shadow-md transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Add New Page">
                 <i class="fas fa-plus mr-2 mobile-only-icon"></i>
                 <span class="desktop-only-text">Add New Page</span>
             </button>
 
             <nav id="pageList" class="flex-grow">
-                <!-- Pages will be dynamically added here -->
                 <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Pages</h3>
-                <ul id="pagesContainer">
+                <ul id="pagesContainer" role="navigation">
                     <!-- Default "Home" page will be added by JS -->
                 </ul>
             </nav>
@@ -439,7 +435,7 @@
                 <h3 class="text-gray-400 uppercase text-sm font-semibold mb-2">Legal</h3>
                 <ul>
                     <li class="mb-2">
-                        <div class="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md p-2 cursor-pointer page-item transition-all duration-200 ease-in-out hover:scale-[1.02]" data-page-id="copyright-terms">
+                        <div class="flex items-center justify-between bg-gray-700 hover:bg-gray-600 rounded-md p-2 cursor-pointer page-item transition-all duration-200 ease-in-out hover:scale-[1.02]" data-page-id="copyright-terms" role="button" tabindex="0" aria-label="Terms & Copyright Page">
                             <span class="flex-grow text-lg font-medium page-name-display truncate">Terms & Copyright</span>
                         </div>
                     </li>
@@ -452,28 +448,28 @@
             <div class="main-content-card rounded-lg shadow-lg">
                 <!-- Page Name Editor -->
                 <div class="flex items-center justify-between mb-4">
-                    <input type="text" id="currentPageNameInput" class="text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 flex-grow text-white" value="Home" readonly>
+                    <input type="text" id="currentPageNameInput" class="text-3xl font-bold bg-transparent border-none focus:outline-none focus:ring-0 flex-grow text-white" value="Home" readonly aria-label="Current Page Name">
                 </div>
                 <hr class="mb-6 border-gray-700">
 
                 <!-- Content Editor -->
                 <div id="contentEditorContainer" class="content-editor-container">
-                    <div id="contentEditor" class="content-editor" contenteditable="false" spellcheck="false">
+                    <div id="contentEditor" class="content-editor" contenteditable="false" spellcheck="false" aria-label="Page Content Editor">
                         <p>Welcome to your new page! Click the 'Edit' button in the header to start customizing.</p>
                     </div>
                 </div>
 
                 <!-- Floating Add Content Button -->
-                <button id="addContentFloatingButton" class="add-content-button bg-purple-600 hover:bg-purple-700 text-white text-3xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300">
+                <button id="addContentFloatingButton" class="add-content-button bg-purple-600 hover:bg-purple-700 text-white text-3xl w-12 h-12 rounded-full flex items-center justify-center shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-300" aria-label="Add new content block">
                     <i class="fas fa-plus"></i>
                 </button>
 
                 <!-- Navigation Buttons -->
                 <div class="flex justify-between mt-8">
-                    <button id="prevPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                    <button id="prevPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Previous Page">
                         <i class="fas fa-chevron-left text-xl"></i>
                     </button>
-                    <button id="nextPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105">
+                    <button id="nextPageButton" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md shadow-md flex items-center disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Next Page">
                         <i class="fas fa-chevron-right text-xl"></i>
                     </button>
                 </div>
@@ -481,46 +477,46 @@
         </main>
     </div>
 
-    <!-- Content Type Selection Modal (Existing) -->
-    <div id="contentTypeModal" class="modal">
+    <!-- Content Type Selection Modal -->
+    <div id="contentTypeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="contentTypeModalTitle">
         <div class="modal-content">
-            <span class="close-button" id="closeContentTypeModalButton">&times;</span>
-            <h2 class="text-2xl font-bold mb-4">Add Content</h2>
+            <span class="close-button" id="closeContentTypeModalButton" aria-label="Close content type selection modal">&times;</span>
+            <h2 id="contentTypeModalTitle" class="text-2xl font-bold mb-4">Add Content</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="header">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="header" aria-label="Add Header">
                     <i class="fas fa-heading text-xl mb-1 text-purple-400"></i> Header
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="paragraph">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="paragraph" aria-label="Add Paragraph">
                     <i class="fas fa-paragraph text-xl mb-1 text-purple-400"></i> Paragraph
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="list">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="list" aria-label="Add List">
                     <i class="fas fa-list-ul text-xl mb-1 text-purple-400"></i> List
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="bold">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="bold" aria-label="Add Bold Text">
                     <i class="fas fa-bold text-xl mb-1 text-purple-400"></i> Bold
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="italic">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="italic" aria-label="Add Italic Text">
                     <i class="fas fa-italic text-xl mb-1 text-purple-400"></i> Italic
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="image">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="image" aria-label="Add Image">
                     <i class="fas fa-image text-xl mb-1 text-purple-400"></i> Image
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="video">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="video" aria-label="Add Video">
                     <i class="fas fa-video text-xl mb-1 text-purple-400"></i> Video
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="pdf">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="pdf" aria-label="Add PDF">
                     <i class="fas fa-file-pdf text-xl mb-1 text-purple-400"></i> PDF
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="iframe">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="iframe" aria-label="Embed Website (IFrame)">
                     <i class="fas fa-globe text-xl mb-1 text-purple-400"></i> Website (IFrame)
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="table">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="table" aria-label="Add Table">
                     <i class="fas fa-table text-xl mb-1 text-purple-400"></i> Table
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="code">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="code" aria-label="Add Code Block">
                     <i class="fas fa-code text-xl mb-1 text-purple-400"></i> Code
                 </button>
-                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="formula">
+                <button class="content-type-option bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-md flex flex-col items-center justify-center text-sm" data-type="formula" aria-label="Add LaTeX Formula">
                     <i class="fas fa-square-root-alt text-xl mb-1 text-purple-400"></i> Formula (LaTeX)
                 </button>
             </div>
@@ -528,29 +524,46 @@
     </div>
 
     <!-- New Input Modal -->
-    <div id="inputModal" class="modal">
+    <div id="inputModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="inputModalTitle">
         <div class="modal-content">
-            <span class="close-button" id="closeInputModalButton">&times;</span>
+            <span class="close-button" id="closeInputModalButton" aria-label="Close input modal">&times;</span>
             <h2 id="inputModalTitle" class="text-2xl font-bold mb-4">Add Content</h2>
             <div id="inputModalFields" class="space-y-4">
                 <!-- Input fields will be dynamically added here -->
             </div>
-            <button id="inputModalSubmitButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+            <button id="inputModalSubmitButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Add content to page">
                 Add to Page
             </button>
         </div>
     </div>
 
     <!-- Logo Change Modal -->
-    <div id="logoModal" class="modal">
+    <div id="logoModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="logoModalTitle">
         <div class="modal-content">
-            <span class="close-button" id="closeLogoModalButton">&times;</span>
-            <h2 class="text-2xl font-bold mb-4">Change Website Logo</h2>
+            <span class="close-button" id="closeLogoModalButton" aria-label="Close logo change modal">&times;</span>
+            <h2 id="logoModalTitle" class="text-2xl font-bold mb-4">Change Website Logo</h2>
             <label class="block text-gray-300 text-sm font-bold mb-2" for="newLogoUrlInput">New Logo Image URL:</label>
-            <input type="url" id="newLogoUrlInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/new-logo.png">
-            <button id="saveLogoButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105">
+            <input type="url" id="newLogoUrlInput" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline" placeholder="https://example.com/new-logo.png" aria-label="New logo image URL">
+            <button id="saveLogoButton" class="mt-6 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 text-white font-bold py-2 px-4 rounded-md w-full shadow-md transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Save new logo">
                 Save Logo
             </button>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmationModalTitle" aria-describedby="confirmationModalMessage">
+        <div class="modal-content">
+            <span class="close-button" id="closeConfirmationModalButton" aria-label="Close confirmation dialog">&times;</span>
+            <h2 id="confirmationModalTitle" class="text-2xl font-bold mb-4">Confirm Action</h2>
+            <p id="confirmationModalMessage" class="mb-6">Are you sure you want to proceed with this action?</p>
+            <div class="flex justify-end space-x-4">
+                <button id="cancelConfirmationButton" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-md transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Cancel">
+                    Cancel
+                </button>
+                <button id="confirmActionButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition-all duration-200 ease-in-out transform hover:scale-105" aria-label="Confirm">
+                    Confirm
+                </button>
+            </div>
         </div>
     </div>
 
@@ -558,8 +571,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <!-- KaTeX JS -->
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" xintegrity="sha384-hIoBPJpTUs74cuRSKdbYddKAyHDVRUo+cJcPxMjmTZHzKAGKOMGpTKsoUngM4awi" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-43gviini6WaqVDbuOfBfpVaWYKUfr0XUv5Phtfmi4zHbSoCxiOxdVXcRkRtFNfrC" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" xintegrity="sha384-43gviini6WaqVDbuOfBfpVaWYKUfr0XUv5Phtfmi4zHbSoCxiOxdVXcRkRtFNfrC" crossorigin="anonymous"></script>
 
+    <!-- External JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
